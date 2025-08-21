@@ -87,7 +87,7 @@ function CourseKid() {
                 className="px-5 py-2 cursor-pointer bg-white/20 
                 backdrop-blur-md rounded-2xl text-white hover:bg-[#b69bf9]"
                 onClick={() =>
-                  navigate("/courses/detail", {
+                  navigate("/kids/courses/detail", {
                     state: {
                       title: item.title,
                       description: item.description,
