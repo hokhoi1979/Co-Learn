@@ -2,6 +2,10 @@ import { createBrowserRouter, Navigate } from "react-router-dom";
 import Home from "../pages/Home/Home";
 import RootLayout from "../layouts/RootLayout";
 import Register from "../pages/Register/Register";
+import HomeKids from "../pages/HomeKids/HomeKids";
+import CourseKid from "../pages/HomeKids/CourseKid";
+import CourseDetail from "../pages/HomeKids/CourseDetail";
+import ScheduleKid from "../pages/HomeKids/ScheduleKid";
 
 const router = createBrowserRouter([
   {
@@ -9,8 +13,28 @@ const router = createBrowserRouter([
     element: <RootLayout />,
     children: [
       // { path: "", element: <Home /> },
+      {
+        path: "",
+        element: <HomeKids />,
+        children: [
+          {
+            index: true,
+            element: <CourseKid />,
+          },
+          {
+            path: "courses",
+            element: <CourseKid />,
+          },
+          {
+            path: "courses/detail",
+            element: <CourseDetail />,
+          },
 
-      { path: "", element: <Home /> },
+          { path: "space", element: <div>My Space</div> },
+          { path: "schedule", element: <ScheduleKid /> },
+        ],
+      },
+
       { path: "/register", element: <Register /> },
 
       // Example
