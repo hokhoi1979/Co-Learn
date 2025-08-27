@@ -1,45 +1,62 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router";
+import React from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { Icon } from "@iconify/react";
 
 const menuItems = [
-  { key: "materials", label: "My Classes", icon: "mdi:book-education-outline" },
-  { key: "profile", label: "Students", icon: "mdi:account-group-outline" },
-  { key: "medical", label: "Teaching Schedule", icon: "mdi:calendar-clock" },
+  {
+    key: "materials",
+    label: "My Classes",
+    icon: "mdi:book-education-outline",
+    nav: "/teacher/classes",
+  },
+  {
+    key: "profile",
+    label: "Students",
+    icon: "mdi:account-group-outline",
+    nav: "/teacher/students",
+  },
+  {
+    key: "medical",
+    label: "Teaching Schedule",
+    icon: "mdi:calendar-clock",
+    nav: "/teacher/schedule",
+  },
   {
     key: "vaccine",
     label: "Update Content",
     icon: "mdi:content-save-edit-outline",
+    nav: "/teacher/content",
   },
 ];
 
-const SideBarTeacher = () => {
-  const [click, setClick] = useState("");
-  const [toggle, setToggle] = useState(false);
+const SideBarTeacher = ({ toggle, setToggle, active, setActive }) => {
   const navigate = useNavigate();
 
   const handleToggle = () => setToggle((pre) => !pre);
 
   const MenuItem = ({ item }) => {
-    const active = click === item.key;
+    const isActive = active === item.key;
     return (
       <div
-        onClick={() => setClick(item.key)}
+        onClick={() => {
+          setActive(item.key);
+          navigate(item.nav);
+        }}
         className={`flex items-center gap-4 mt-2 cursor-pointer p-2 rounded-xl transition-all
-          ${toggle ? "justify-center" : ""}
-          ${
-            active
-              ? "bg-gradient-to-r from-[#b0ebe6] to-[#E7F4F3] text-[#046961]"
-              : "hover:bg-gradient-to-r hover:from-[#b0ebe6] hover:to-[#E7F4F3] text-[#5B5454]"
-          }`}
+        ${toggle ? "justify-center" : ""}
+        ${
+          isActive
+            ? "bg-gradient-to-r from-[#b0ebe6] to-[#E7F4F3] text-[#046961]"
+            : "hover:bg-gradient-to-r hover:from-[#b0ebe6] hover:to-[#E7F4F3] text-[#5B5454]"
+        }`}
       >
         <Icon
           icon={item.icon}
           width="28"
-          className={`${active ? "text-[#046961]" : "text-[#5B5454]"}`}
+          className={`${isActive ? "text-[#046961]" : "text-[#5B5454]"}`}
         />
         {!toggle && (
-          <Link to={""} className="text-[16px] font-medium">
+          <Link to={item.nav} className="text-[16px] font-medium">
             {item.label}
           </Link>
         )}
@@ -50,11 +67,10 @@ const SideBarTeacher = () => {
   return (
     <div className="relative">
       <div
-        className={`mt-9 h-full bg-white pt-4 pb-4 flex flex-col fixed shadow-lg 
+        className={`mt-9 h-full bg-white pt-7 pb-4 flex flex-col fixed shadow-lg 
           ${toggle ? "w-[8%]" : "w-[18%]"} 
-          transition-all duration-300 ease-in-out`}
+          transition-all duration-500 ease-in-out`}
       >
-        <div className="w-full h-[1px] bg-gray-300 mt-4"></div>
         <div
           onClick={handleToggle}
           className="absolute top-15 right-5 bg-white border rounded-full shadow-md cursor-pointer p-1 hover:bg-gray-100 transition"
@@ -65,6 +81,7 @@ const SideBarTeacher = () => {
             <Icon icon="mdi:chevron-double-left" width="15" />
           )}
         </div>
+
         <div className="pl-3 pr-3 pt-8 flex flex-col gap-1">
           {menuItems.map((item) => (
             <MenuItem key={item.key} item={item} />
@@ -101,8 +118,6 @@ const SideBarTeacher = () => {
           </div>
         </div>
       </div>
-
-      {/* Toggle Button (mũi tên) */}
     </div>
   );
 };

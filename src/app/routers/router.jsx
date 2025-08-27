@@ -10,6 +10,8 @@ import Home from "../pages/Home/Home";
 import TeacherLayout from "../pages/Teacher/TeacherLayout";
 import TeacherCourses from "../pages/Teacher/TeacherCourses/TeacherCourses";
 import TeacherClass from "../pages/Teacher/TeacherClass/TeacherClass";
+import TeacherSchedule from "../pages/Teacher/TeacherSchedule/TeacherSchedule";
+import TeacherContent from "../pages/Teacher/TeacherContent/TeacherContent";
 
 const router = createBrowserRouter([
   {
@@ -36,6 +38,8 @@ const router = createBrowserRouter([
         children: [
           { path: "", element: <Navigate to="classes" /> },
           { path: "classes", element: <TeacherClass /> },
+          { path: "schedule", element: <TeacherSchedule /> },
+          { path: "content", element: <TeacherContent /> },
 
           { path: "courses", element: <TeacherCourses /> },
         ],
