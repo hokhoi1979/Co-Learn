@@ -12,6 +12,7 @@ import TeacherCourses from "../pages/Teacher/TeacherCourses/TeacherCourses";
 import TeacherClass from "../pages/Teacher/TeacherClass/TeacherClass";
 import TeacherSchedule from "../pages/Teacher/TeacherSchedule/TeacherSchedule";
 import TeacherContent from "../pages/Teacher/TeacherContent/TeacherContent";
+import TeacherFeedBack from "../pages/Teacher/TeacherFeedBack/TeacherFeedBack";
 
 const router = createBrowserRouter([
   {
@@ -40,6 +41,7 @@ const router = createBrowserRouter([
           { path: "classes", element: <TeacherClass /> },
           { path: "schedule", element: <TeacherSchedule /> },
           { path: "content", element: <TeacherContent /> },
+          { path: "feedback", element: <TeacherFeedBack /> },
 
           { path: "courses", element: <TeacherCourses /> },
         ],

@@ -4,28 +4,34 @@ import { Icon } from "@iconify/react";
 
 const menuItems = [
   {
-    key: "materials",
+    key: "classes",
     label: "My Classes",
     icon: "mdi:book-education-outline",
     nav: "/teacher/classes",
   },
   {
-    key: "profile",
+    key: "studenss",
     label: "Students",
     icon: "mdi:account-group-outline",
     nav: "/teacher/students",
   },
   {
-    key: "medical",
+    key: "schedule",
     label: "Teaching Schedule",
     icon: "mdi:calendar-clock",
     nav: "/teacher/schedule",
   },
   {
-    key: "vaccine",
+    key: "content",
     label: "Update Content",
     icon: "mdi:content-save-edit-outline",
     nav: "/teacher/content",
+  },
+  {
+    key: "feedback",
+    label: "FeedBack",
+    icon: "mdi:content-save-edit-outline",
+    nav: "/teacher/feedback",
   },
 ];
 

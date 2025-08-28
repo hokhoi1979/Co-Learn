@@ -1,10 +1,20 @@
 import React, { useState } from "react";
-import { Modal, Form, Input, Button, Upload } from "antd";
+import {
+  Modal,
+  Form,
+  Input,
+  Button,
+  Upload,
+  Select,
+  TimePicker,
+  DatePicker,
+} from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { Icon } from "@iconify/react";
 
 function ModalTeacher({ isModalOpen, handleOk, handleCancel, onSubmitData }) {
   const [form] = Form.useForm();
+  const liveStatus = Form.useWatch("live", form);
 
   const onSubmit = () => {
     form.validateFields().then((values) => {
@@ -15,6 +25,8 @@ function ModalTeacher({ isModalOpen, handleOk, handleCancel, onSubmitData }) {
         ...values,
         thumbnail: thumbnailUrl,
       };
+
+      console.log("DATA", newCourse);
 
       onSubmitData(newCourse);
       handleOk();
