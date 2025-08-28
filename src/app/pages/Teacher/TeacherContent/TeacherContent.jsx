@@ -4,6 +4,7 @@ import { useState } from "react";
 import { BookOutlined } from "@ant-design/icons";
 
 import ModalTeacher from "../ComponentTeacher/ModalTeacher";
+import CarouselTeacher from "../ComponentTeacher/CarouselTeacher";
 
 function TeacherContent() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -36,7 +37,7 @@ function TeacherContent() {
 
         <Earning />
 
-        <div className="px-15">
+        <div className="px-15 mb-10">
           <div className="flex justify-between mt-5">
             <div>
               <h1 className="text-2xl font-bold">My Course</h1>
@@ -161,6 +162,7 @@ function TeacherContent() {
             </>
           )}
         </div>
+        <CarouselTeacher />
       </div>
       <ModalTeacher
         isModalOpen={isModalOpen}

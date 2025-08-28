@@ -4,6 +4,7 @@ import { Progress, Tag } from "antd";
 import { ClockCircleOutlined } from "@ant-design/icons";
 import { Icon } from "@iconify/react";
 import { MdOutlineRoom } from "react-icons/md";
+import CarouselTeacher from "../ComponentTeacher/CarouselTeacher";
 
 const days = [
   "Monday",
@@ -125,7 +126,7 @@ function TeacherSchedule() {
 
         <Earning />
 
-        <div className="bg-white rounded-2xl shadow-md p-5 w-[90%] mx-auto mt-5">
+        <div className="bg-white rounded-2xl shadow-md p-5 w-[90%] mx-auto mb-10 mt-5">
           <div className="flex justify-between items-center mb-5">
             <h1 className="text-2xl font-bold">Teaching Schedule</h1>
           </div>
@@ -207,7 +208,9 @@ function TeacherSchedule() {
             )}
           </div>
         </div>
-        <div className="w-full h-20"></div>
+        <CarouselTeacher />
+
+        <div className="w-full h-10"></div>
       </div>
     </>
   );

@@ -4,6 +4,7 @@ import { Button, Image } from "antd";
 import Earning from "../ComponentTeacher/Earning";
 import ModalClass from "../ComponentTeacher/ModalClass";
 import { BookOutlined } from "@ant-design/icons";
+import CarouselTeacher from "../ComponentTeacher/CarouselTeacher";
 function TeacherClass() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -95,8 +96,8 @@ function TeacherClass() {
         </Button>
       </div>
 
-      <div className="w-[90%]  m-auto h-auto flex gap-4 mt-5">
-        <div className="w-[70%] bg-white rounded-2xl  h-auto p-2">
+      <div className="w-[90%]  m-auto h-auto gap-4 mt-5">
+        <div className="w-[100%] bg-white rounded-2xl mb-15 h-auto p-2">
           {data.length === 0 ? (
             <>
               <div className="flex flex-col items-center justify-center h-96 bg-gray-50 rounded-2xl shadow-inner p-6">
@@ -112,7 +113,7 @@ function TeacherClass() {
             </>
           ) : (
             <>
-              <div className="flex justify-between px-5">
+              <div className="flex justify-between px-5 ">
                 {data.length > 0 && (
                   <div className="flex gap-2 items-center cursor-pointer group">
                     <h1 className="text-[#00B582] font-bold text-[18px] group-hover:underline group-hover:text-[#008a66]">
@@ -146,11 +147,11 @@ function TeacherClass() {
                     : 0;
 
                 return (
-                  <div className="w-[95%] rounded-md mt-5 m-auto h-42 bg-[#F0F6F6] p-3">
+                  <div className="w-[95%] rounded-md mt-5 m-auto h-50 bg-[#F0F6F6] p-3">
                     <div className="flex gap-2">
                       <img
                         src={item.thumbnail}
-                        className="w-[30%] h-36 rounded-2xl"
+                        className="w-[30%] h-44 rounded-2xl"
                         alt=""
                       />
 
@@ -161,7 +162,17 @@ function TeacherClass() {
                               <h1 className="text-[20px] font-bold">
                                 {item.title || item.name}
                               </h1>
-                              <div className="flex gap-3 text-[14px] text-gray-400 items-center">
+                              {item.live === "Online" && (
+                                <>
+                                  <div className="flex">
+                                    <p className="text-[14px] text-gray-400">
+                                      Link Google Meet:
+                                    </p>
+                                    <p className="text-[14px] ">{item.link}</p>
+                                  </div>
+                                </>
+                              )}
+                              <div className="flex gap-1 text-[14px] text-gray-400 items-center">
                                 <p>
                                   {item.maxStudents || item.student} students
                                 </p>
@@ -190,10 +201,31 @@ function TeacherClass() {
                           </div>
 
                           <div>
-                            <h1>{item.time}</h1>
-                            <p className="text-[14px] text-gray-400 text-right">
-                              Next session
-                            </p>
+                            {item.live === "Online" && (
+                              <>
+                                <div className="flex gap-1.5">
+                                  <h1 className="text-gray-400">
+                                    Start Class:
+                                  </h1>
+
+                                  <h1>{item.time}</h1>
+                                </div>
+
+                                <div className="flex gap-1.5">
+                                  <h1 className="text-gray-400">Schedule:</h1>
+                                  <h1>{item.schedule.join(", ")}</h1>
+                                </div>
+                              </>
+                            )}
+                            <div className="flex gap-1">
+                              <p className="text-[14px] text-right text-gray-400">
+                                {" "}
+                                Status:
+                              </p>
+                              <p className="text-[14px] text-red-400 text-right">
+                                {item.live}
+                              </p>
+                            </div>
                           </div>
                         </div>
                         <div className="mt-2">
@@ -259,10 +291,12 @@ function TeacherClass() {
           )}
         </div>
 
-        <div className="w-[30%]">
+        {/* <div className="w-[10%]">
           <Image className="rounded-3xl" src={bg6} width={"100%"} />
-        </div>
+        </div> */}
       </div>
+
+      <CarouselTeacher />
       <ModalClass
         isModalOpen={isModalOpen}
         handleOk={handleOk}

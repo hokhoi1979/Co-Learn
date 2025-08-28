@@ -9,12 +9,12 @@ const menuItems = [
     icon: "mdi:book-education-outline",
     nav: "/teacher/classes",
   },
-  {
-    key: "studenss",
-    label: "Students",
-    icon: "mdi:account-group-outline",
-    nav: "/teacher/students",
-  },
+  // {
+  //   key: "studenss",
+  //   label: "Students",
+  //   icon: "mdi:account-group-outline",
+  //   nav: "/teacher/students",
+  // },
   {
     key: "schedule",
     label: "Teaching Schedule",
