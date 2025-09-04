@@ -1,10 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 import { Icon } from "@iconify/react";
 
 function HeaderKid() {
+  const [notice, setNotice] = useState(false);
+
+  const ggMeet = [
+    { title: "Course 1", link: "https://meet.google.com/kbz-pneq-odu" },
+  ];
   return (
     <>
-      <div className="w-full h-30  flex px-20 justify-between bg-gradient-to-r from-[#7321e6] via-[#d11887] to-[#e8be33] shadow-2xl">
+      <div className="w-full h-30 relative flex px-20 justify-between bg-gradient-to-r from-[#7321e6] via-[#d11887] to-[#e8be33] shadow-2xl">
         <div className="flex gap-3 items-center">
           <div
             className="w-13 h-13 flex items-center justify-center rounded-xl
@@ -74,6 +79,31 @@ function HeaderKid() {
 
           <div
             className="flex items-center gap-2 w-fit px-4 h-10 
+                rounded-full 
+                bg-white/20 
+                backdrop-blur-md               
+                text-white cursor-pointer hover:bg-[#e0cf7bc7]"
+            onClick={() => setNotice(!notice)}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+            >
+              <g fill="none" stroke="#fff" stroke-width="2">
+                <path d="M7.342 12.946a4.722 4.722 0 0 1 9.315 0l.104.617c.155.935.6 1.797 1.269 2.467a.568.568 0 0 1-.402.97H6.372a.568.568 0 0 1-.402-.97a4.55 4.55 0 0 0 1.27-2.467z" />
+                <path
+                  stroke-linecap="round"
+                  d="m11 9l1-6m1 6l-1-6m-1.932 17.63c.114.106.365.2.715.267c.349.067.777.103 1.217.103s.868-.036 1.217-.103s.6-.161.715-.268"
+                />
+              </g>
+            </svg>
+            <p>Notice</p>
+          </div>
+
+          <div
+            className="flex items-center gap-2 w-fit px-4 h-10 
                 rounded-3xl 
                 bg-white/20 
                 backdrop-blur-md               
@@ -98,6 +128,38 @@ function HeaderKid() {
             </svg>
           </div>
         </div>
+        {notice && (
+          <div className="mt-5 absolute top-20 right-10 w-80 bg-gray-100 rounded-2xl shadow-2xl p-4 z-50">
+            <h2 className="text-lg font-bold text-gray-700 mb-3">
+              Upcoming Classes
+            </h2>
+            <div className="flex flex-col gap-3">
+              {ggMeet.map((item, index) => (
+                <div
+                  key={index}
+                  className="flex justify-between items-center border-b pb-2 last:border-b-0"
+                >
+                  <div>
+                    <p className="text-sm font-semibold text-gray-800">
+                      {item.title}
+                    </p>
+                    <p className="text-xs text-gray-500 truncate w-44">
+                      {item.link}
+                    </p>
+                  </div>
+                  <a
+                    href={item.link}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="px-3 py-1 bg-[#7321e6] hover:bg-[#5a18b3] text-white text-sm rounded-full"
+                  >
+                    Join
+                  </a>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </>
   );

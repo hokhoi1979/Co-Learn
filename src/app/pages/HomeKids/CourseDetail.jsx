@@ -44,7 +44,7 @@ function CourseDetail() {
       <div>
         <div
           className="flex gap-2 items-center cursor-pointer group"
-          onClick={() => navigate("/courses")}
+          onClick={() => navigate("/kids/courses")}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"

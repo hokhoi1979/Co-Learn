@@ -33,6 +33,12 @@ const menuItems = [
     icon: "mdi:content-save-edit-outline",
     nav: "/teacher/feedback",
   },
+  {
+    key: "income",
+    label: "Income",
+    icon: "mdi:content-save-edit-outline",
+    nav: "/teacher/income",
+  },
 ];
 
 const SideBarTeacher = ({ toggle, setToggle, active, setActive }) => {
