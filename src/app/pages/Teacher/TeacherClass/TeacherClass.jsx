@@ -5,8 +5,16 @@ import Earning from "../ComponentTeacher/Earning";
 import ModalClass from "../ComponentTeacher/ModalClass";
 import { BookOutlined } from "@ant-design/icons";
 import CarouselTeacher from "../ComponentTeacher/CarouselTeacher";
+import ModalViewClass from "../ComponentTeacher/ModalView";
 function TeacherClass() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [viewModalOpen, setViewModalOpen] = useState(false);
+  const [selectedClass, setSelectedClass] = useState(null);
+
+  const handleView = (classItem) => {
+    setSelectedClass(classItem);
+    setViewModalOpen(true);
+  };
 
   const [data, setData] = useState([]);
   const showModal = () => {
@@ -243,7 +251,10 @@ function TeacherClass() {
                         </div>
 
                         <div className="mt-4 flex gap-3">
-                          <button className="bg-[#8ccfb6] hover:bg-[#8bdcbf] flex rounded-xl px-2 gap-2 items-center cursor-pointer">
+                          <button
+                            onClick={() => handleView(item)}
+                            className="bg-[#8ccfb6] hover:bg-[#8bdcbf] flex rounded-xl px-2 gap-2 items-center cursor-pointer"
+                          >
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
                               width="16"
@@ -261,25 +272,6 @@ function TeacherClass() {
                             </svg>
 
                             <p className="text-white text-[18px]">View</p>
-                          </button>
-
-                          <button className="bg-[#00B582] hover:bg-[#07d79c] flex rounded-xl px-2 gap-2 items-center cursor-pointer">
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              width="24"
-                              height="24"
-                              viewBox="0 0 21 21"
-                            >
-                              <path
-                                fill="none"
-                                stroke="#fff"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M5.5 6.5h6a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-6a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2m8 3l2.4-1.8a1 1 0 0 1 1.6.8v4a1 1 0 0 1-1.6.8l-2.4-1.8z"
-                                strokeWidth="1"
-                              />
-                            </svg>
-                            <p className="text-white text-[18px]">Join</p>
                           </button>
                         </div>
                       </div>
@@ -302,6 +294,12 @@ function TeacherClass() {
         handleOk={handleOk}
         handleCancel={handleCancel}
         onSubmitData={handleSubmit}
+      />
+
+      <ModalViewClass
+        isOpen={viewModalOpen}
+        onClose={() => setViewModalOpen(false)}
+        classData={selectedClass}
       />
     </div>
   );

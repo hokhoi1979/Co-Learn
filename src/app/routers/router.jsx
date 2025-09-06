@@ -14,6 +14,7 @@ import TeacherSchedule from "../pages/Teacher/TeacherSchedule/TeacherSchedule";
 import TeacherContent from "../pages/Teacher/TeacherContent/TeacherContent";
 import TeacherFeedBack from "../pages/Teacher/TeacherFeedBack/TeacherFeedBack";
 import TeacherIncome from "../pages/Teacher/TeacherIncome/TeacherIncome";
+import PaymentSuccess from "../pages/PaymentSuccess/PaymentSuccess";
 
 const router = createBrowserRouter([
   {
@@ -48,6 +49,7 @@ const router = createBrowserRouter([
           { path: "courses", element: <TeacherCourses /> },
         ],
       },
+      { path: "payment", element: <PaymentSuccess /> },
 
       { path: "login", element: <Login /> },
       { path: "register", element: <Register /> },

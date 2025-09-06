@@ -109,53 +109,48 @@ function ModalClass({ isModalOpen, handleOk, handleCancel, onSubmitData }) {
             rules={[{ required: true, message: "Please select status" }]}
           >
             <Select placeholder="Choose status">
-              <Option value="Offline">Offline</Option>
               <Option value="Online">Online</Option>
             </Select>
           </Form.Item>
 
-          {liveStatus === "Online" && (
-            <Form.Item
-              label="Zoom/Meet Link"
-              name="link"
-              rules={[{ required: true, message: "Please enter meeting link" }]}
-            >
-              <Input placeholder="e.g., https://zoom.us/my/classlink" />
-            </Form.Item>
-          )}
+          <Form.Item
+            label="Zoom/Meet Link"
+            name="link"
+            rules={[{ required: true, message: "Please enter meeting link" }]}
+          >
+            <Input placeholder="e.g., https://zoom.us/my/classlink" />
+          </Form.Item>
         </div>
 
-        {liveStatus === "Online" && (
-          <div className="grid grid-cols-2 gap-4">
-            <Form.Item
-              label="Schedule (Days)"
-              name="schedule"
-              rules={[{ required: true, message: "Please select class days" }]}
-            >
-              <Select mode="multiple" placeholder="Choose days">
-                <Option value="Mon">Monday</Option>
-                <Option value="Tue">Tuesday</Option>
-                <Option value="Wed">Wednesday</Option>
-                <Option value="Thu">Thursday</Option>
-                <Option value="Fri">Friday</Option>
-                <Option value="Sat">Saturday</Option>
-                <Option value="Sun">Sunday</Option>
-              </Select>
-            </Form.Item>
+        <div className="grid grid-cols-2 gap-4">
+          <Form.Item
+            label="Schedule (Days)"
+            name="schedule"
+            rules={[{ required: true, message: "Please select class days" }]}
+          >
+            <Select mode="multiple" placeholder="Choose days">
+              <Option value="Mon">Monday</Option>
+              <Option value="Tue">Tuesday</Option>
+              <Option value="Wed">Wednesday</Option>
+              <Option value="Thu">Thursday</Option>
+              <Option value="Fri">Friday</Option>
+              <Option value="Sat">Saturday</Option>
+              <Option value="Sun">Sunday</Option>
+            </Select>
+          </Form.Item>
 
-            <Form.Item
-              label="Class Time"
-              name="time"
-              rules={[{ required: true, message: "Please select class time" }]}
-            >
-              <DatePicker
-                picker="time"
-                format="HH:mm"
-                style={{ width: "100%" }}
-              />
-            </Form.Item>
-          </div>
-        )}
+          <Form.Item
+            label="Class Time"
+            name="time"
+            rules={[{ required: true, message: "Please select class time" }]}
+          >
+            <DatePicker
+              picker="time"
+              format="HH:mm"
+              style={{ width: "100%" }}
+            />
+          </Form.Item>
+        </div>
 
         <Form.Item
           label="Class Thumbnail"
