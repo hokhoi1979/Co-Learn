@@ -15,6 +15,7 @@ import TeacherContent from "../pages/Teacher/TeacherContent/TeacherContent";
 import TeacherFeedBack from "../pages/Teacher/TeacherFeedBack/TeacherFeedBack";
 import TeacherIncome from "../pages/Teacher/TeacherIncome/TeacherIncome";
 import PaymentSuccess from "../pages/PaymentSuccess/PaymentSuccess";
+import ViewContent from "../pages/Teacher/TeacherContent/ViewContent";
 
 const router = createBrowserRouter([
   {
@@ -42,7 +43,11 @@ const router = createBrowserRouter([
           { path: "", element: <Navigate to="classes" /> },
           { path: "classes", element: <TeacherClass /> },
           { path: "schedule", element: <TeacherSchedule /> },
-          { path: "content", element: <TeacherContent /> },
+          {
+            path: "content",
+            element: <TeacherContent />,
+            children: [{ path: "viewContent", element: <ViewContent /> }],
+          },
           { path: "feedback", element: <TeacherFeedBack /> },
           { path: "income", element: <TeacherIncome /> },
 
