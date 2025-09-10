@@ -11,6 +11,7 @@ import {
 } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { Icon } from "@iconify/react";
+const { RangePicker } = DatePicker;
 
 function ModalTeacher({ isModalOpen, handleOk, handleCancel, onSubmitData }) {
   const [form] = Form.useForm();
@@ -24,6 +25,13 @@ function ModalTeacher({ isModalOpen, handleOk, handleCancel, onSubmitData }) {
       const newCourse = {
         ...values,
         thumbnail: thumbnailUrl,
+        dates:
+          values.dates && values.dates.length === 2
+            ? {
+                start: values.dates[0].format("YYYY-MM-DD"),
+                end: values.dates[1].format("YYYY-MM-DD"),
+              }
+            : null,
       };
 
       console.log("DATA", newCourse);
@@ -73,13 +81,25 @@ function ModalTeacher({ isModalOpen, handleOk, handleCancel, onSubmitData }) {
           <h2 className="font-semibold text-lg">Course Information</h2>
         </div>
 
-        <Form.Item
-          label="Course Title"
-          name="title"
-          rules={[{ required: true, message: "Please enter course title" }]}
-        >
-          <Input placeholder="e.g., Python Programming for Beginners" />
-        </Form.Item>
+        <div className="grid grid-cols-2 gap-2">
+          <Form.Item
+            label="Course Title"
+            name="title"
+            rules={[{ required: true, message: "Please enter course title" }]}
+          >
+            <Input placeholder="e.g., Python Programming for Beginners" />
+          </Form.Item>
+
+          <Form.Item
+            label="Start & End Date"
+            name="dates"
+            rules={[
+              { required: true, message: "Please select start & end date" },
+            ]}
+          >
+            <RangePicker format="YYYY-MM-DD" style={{ width: "100%" }} />
+          </Form.Item>
+        </div>
 
         <Form.Item
           label="Description"

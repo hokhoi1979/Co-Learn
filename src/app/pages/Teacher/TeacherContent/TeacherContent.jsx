@@ -25,8 +25,12 @@ function TeacherContent() {
   };
 
   const handleSubmit = (newCourse) => {
-    console.log("DATA", newCourse);
     setData((pre) => [...pre, newCourse]);
+  };
+
+  const handleDelete = (values) => {
+    const deleteData = data.filter((_, i) => i !== values);
+    setData(deleteData);
   };
 
   const isViewingContent = location.pathname.includes("viewContent");
@@ -92,6 +96,14 @@ function TeacherContent() {
                           </div>
 
                           <div className="flex justify-between gap-2">
+                            <p className="text-gray-500 w-15">Duration:</p>
+                            <p className=" font-bold">
+                              {" "}
+                              {item.dates.start} to {item.dates.end}{" "}
+                            </p>
+                          </div>
+
+                          <div className="flex justify-between gap-2">
                             <p className="text-gray-500 w-15">Pricing:</p>
                             <p className="font-semibold text-green-600">
                               {item.price}$/ lessons
@@ -121,6 +133,7 @@ function TeacherContent() {
 
                             <button
                               type="secondary"
+                              onClick={() => handleDelete(index)}
                               className="bg-[#ea8576] cursor-pointer hover:bg-[#e95a44] py-1 w-full h-auto text-white font-medium rounded-md flex gap-2 items-center justify-center"
                             >
                               <svg

@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import confetti from "canvas-confetti";
 import { CheckCircleIcon } from "@heroicons/react/24/solid";
+import CarouselTeacher from "../Teacher/ComponentTeacher/CarouselTeacher";
 
 export default function PaymentSuccess() {
   const navigate = useNavigate();
@@ -19,7 +20,7 @@ export default function PaymentSuccess() {
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 px-4">
       <div className="bg-white rounded-3xl shadow-2xl p-10 max-w-lg w-full text-center animate-fadeIn">
         <div className="flex justify-center">
-          <CheckCircleIcon className="w-24 h-24 text-green-500 animate-bounce" />
+          <CheckCircleIcon className="w-24 h-24 text-[#12ad8c] animate-bounce" />
         </div>
 
         <h1 className="text-4xl font-extrabold text-gray-800 mt-6">
@@ -31,7 +32,6 @@ export default function PaymentSuccess() {
           confirmed. Start learning today!
         </p>
 
-        {/* Thông tin đơn hàng mẫu */}
         <div className="bg-green-50 border border-green-200 rounded-xl p-5 mt-6 text-left">
           <h2 className="font-semibold text-gray-800 mb-3">
             Chi tiết đơn hàng
@@ -50,11 +50,10 @@ export default function PaymentSuccess() {
           </ul>
         </div>
 
-        {/* Nút điều hướng */}
         <div className="mt-8 flex flex-col gap-3">
           <button
             onClick={() => navigate("/my-courses")}
-            className="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-5 rounded-xl shadow-lg transition-all duration-300"
+            className="w-full bg-[#12ad8c] hover:bg-[#12ad8c] text-white font-semibold py-3 px-5 rounded-xl shadow-lg transition-all duration-300"
           >
             Vào học ngay
           </button>

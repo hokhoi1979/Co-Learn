@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import bg6 from "../../../assets/img/bg6.jpg";
 import { Button, Image } from "antd";
 import Earning from "../ComponentTeacher/Earning";
 import ModalClass from "../ComponentTeacher/ModalClass";
@@ -62,26 +61,26 @@ function TeacherClass() {
   //   },
   // ];
 
-  const schedule = [
-    {
-      name: "Teach program",
-      time: "8:00 PM",
-      duration: "60 minutes",
-      student: "29",
-    },
-    {
-      name: "Teach program",
-      time: "8:00 PM",
-      duration: "60 minutes",
-      student: "29",
-    },
-    {
-      name: "Teach program",
-      time: "8:00 PM",
-      duration: "60 minutes",
-      student: "29",
-    },
-  ];
+  // const schedule = [
+  //   {
+  //     name: "Teach program",
+  //     time: "8:00 PM",
+  //     duration: "60 minutes",
+  //     student: "29",
+  //   },
+  //   {
+  //     name: "Teach program",
+  //     time: "8:00 PM",
+  //     duration: "60 minutes",
+  //     student: "29",
+  //   },
+  //   {
+  //     name: "Teach program",
+  //     time: "8:00 PM",
+  //     duration: "60 minutes",
+  //     student: "29",
+  //   },
+  // ];
   return (
     <div className=" w-full h-auto p-5 bg-gradient-to-b from-[#F0F6F6] to-[#DBFBFD]">
       <h1 className="text-2xl font-bold">Welcome back! Miss Ha </h1>

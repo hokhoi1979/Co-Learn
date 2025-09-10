@@ -8,7 +8,7 @@ function ModelUploadVideo({
   handleOk,
   handleCancel,
   onSubmitData,
-  initialValues, // NEW
+  initialValues,
 }) {
   const [form] = Form.useForm();
 

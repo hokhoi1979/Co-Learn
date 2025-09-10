@@ -16,6 +16,10 @@ import TeacherFeedBack from "../pages/Teacher/TeacherFeedBack/TeacherFeedBack";
 import TeacherIncome from "../pages/Teacher/TeacherIncome/TeacherIncome";
 import PaymentSuccess from "../pages/PaymentSuccess/PaymentSuccess";
 import ViewContent from "../pages/Teacher/TeacherContent/ViewContent";
+import ParentLayout from "../pages/Parent/ParentLayout";
+import ParentProfile from "../pages/Parent/ParentProfile/ParentProfile";
+import ParentSchedule from "../pages/Parent/ParentSchedule/ParentSchedule";
+import ParentCourse from "../pages/Parent/ParentCourse/ParentCourse";
 
 const router = createBrowserRouter([
   {
@@ -52,6 +56,17 @@ const router = createBrowserRouter([
           { path: "income", element: <TeacherIncome /> },
 
           { path: "courses", element: <TeacherCourses /> },
+        ],
+      },
+
+      {
+        path: "parent",
+        element: <ParentLayout />,
+        children: [
+          { path: "", element: <Navigate to="profile" /> },
+          { path: "profile", element: <ParentProfile /> },
+          { path: "schedule", element: <ParentSchedule /> },
+          { path: "course", element: <ParentCourse /> },
         ],
       },
       { path: "payment", element: <PaymentSuccess /> },
