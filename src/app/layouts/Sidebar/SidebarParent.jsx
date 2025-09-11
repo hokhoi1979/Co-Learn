@@ -25,7 +25,13 @@ const menuItems = [
     key: "purchased",
     label: "Purchased Course",
     icon: "mdi:cart-check",
-    nav: "/parent",
+    nav: "/parent/purchased",
+  },
+  {
+    key: "history",
+    label: "Payment History",
+    icon: "mdi:history",
+    nav: "/parent/history",
   },
   {
     key: "feedback",

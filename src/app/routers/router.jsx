@@ -20,6 +20,8 @@ import ParentLayout from "../pages/Parent/ParentLayout";
 import ParentProfile from "../pages/Parent/ParentProfile/ParentProfile";
 import ParentSchedule from "../pages/Parent/ParentSchedule/ParentSchedule";
 import ParentCourse from "../pages/Parent/ParentCourse/ParentCourse";
+import ParentHistory from "../pages/Parent/ParentHistory/ParentHistory";
+import ParentPurchased from "../pages/Parent/ParentPurchased/ParentPurchased";
 
 const router = createBrowserRouter([
   {
@@ -67,6 +69,8 @@ const router = createBrowserRouter([
           { path: "profile", element: <ParentProfile /> },
           { path: "schedule", element: <ParentSchedule /> },
           { path: "course", element: <ParentCourse /> },
+          { path: "purchased", element: <ParentPurchased /> },
+          { path: "history", element: <ParentHistory /> },
         ],
       },
       { path: "payment", element: <PaymentSuccess /> },
