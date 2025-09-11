@@ -1,14 +1,16 @@
-import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+import { Provider } from "react-redux";
 import "./index.css";
 import App from "./App.jsx";
 import "./app/i18n.js";
 import { AuthProvider } from "./app/contexts/auth-context";
+import store, { persistor } from "./app/redux/store.js";
+import { PersistGate } from "redux-persist/integration/react";
 
 createRoot(document.getElementById("root")).render(
-  <StrictMode>
-    <AuthProvider>
+  <Provider store={store}>
+    <PersistGate persistor={persistor}>
       <App />
-    </AuthProvider>
-  </StrictMode>
+    </PersistGate>
+  </Provider>
 );
