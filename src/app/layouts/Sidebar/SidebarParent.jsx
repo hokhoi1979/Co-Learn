@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Icon } from "@iconify/react";
+import ConfirmLogout from "../../components/ConfirmLogout/ConfirmLogout";
 
 const menuItems = [
   {
@@ -37,13 +38,13 @@ const menuItems = [
     key: "feedback",
     label: "Feedback",
     icon: "mdi:message-text-outline",
-    nav: "/parent",
+    nav: "/parent/feedback",
   },
 ];
 
 const SideBarParent = ({ toggle, setToggle, active, setActive }) => {
   const navigate = useNavigate();
-
+  const [openLogout, setOpenLogout] = useState(false);
   const handleToggle = () => setToggle((pre) => !pre);
 
   const MenuItem = ({ item }) => {
@@ -117,10 +118,11 @@ const SideBarParent = ({ toggle, setToggle, active, setActive }) => {
 
           <div
             onClick={() => {
-              const confirmed = window.confirm("Do you want to logout?");
-              if (confirmed) {
-                // handleLogout();
-              }
+              // const confirmed = window.confirm("Do you want to logout?");
+              // if (confirmed) {
+              //   // handleLogout();
+              // }
+              setOpenLogout(true);
             }}
             className={`flex items-center p-2  rounded-xl cursor-pointer 
               hover:bg-gradient-to-r hover:from-[#b0ebe6] hover:to-[#E7F4F3] 
@@ -130,6 +132,7 @@ const SideBarParent = ({ toggle, setToggle, active, setActive }) => {
           </div>
         </div>
       </div>
+      <ConfirmLogout open={openLogout} cancel={() => setOpenLogout(false)} />
     </div>
   );
 };

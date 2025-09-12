@@ -2,12 +2,10 @@ import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import confetti from "canvas-confetti";
 import { CheckCircleIcon } from "@heroicons/react/24/solid";
-import CarouselTeacher from "../Teacher/ComponentTeacher/CarouselTeacher";
 
 export default function PaymentSuccess() {
   const navigate = useNavigate();
 
-  // 🎉 Bắn confetti khi vào trang
   useEffect(() => {
     confetti({
       particleCount: 120,
@@ -52,14 +50,14 @@ export default function PaymentSuccess() {
 
         <div className="mt-8 flex flex-col gap-3">
           <button
-            onClick={() => navigate("/my-courses")}
-            className="w-full bg-[#12ad8c] hover:bg-[#12ad8c] text-white font-semibold py-3 px-5 rounded-xl shadow-lg transition-all duration-300"
+            onClick={() => navigate("/parent/purchased")}
+            className="w-full bg-[#12ad8c] hover:bg-[#12ad8c] cursor-pointer text-white font-semibold py-3 px-5 rounded-xl shadow-lg transition-all duration-300"
           >
-            Vào học ngay
+            View Course
           </button>
           <button
             onClick={() => navigate("/")}
-            className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-3 px-5 rounded-xl transition-all duration-300"
+            className="w-full bg-gray-100 hover:bg-gray-200 cursor-pointer text-gray-700 font-medium py-3 px-5 rounded-xl transition-all duration-300"
           >
             Back to Home
           </button>

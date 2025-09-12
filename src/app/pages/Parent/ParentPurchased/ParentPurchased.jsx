@@ -56,7 +56,7 @@ function ParentPurchased() {
                     src={img}
                     height={170}
                     width="100%"
-                    className="bg-cover rounded-xl"
+                    className="bg-cover"
                   />
                   <div className="absolute top-3 right-3">
                     <div className="bg-green-100 text-green-700 px-3 py-1 rounded-xl shadow-sm flex items-center gap-1 font-medium text-xs">

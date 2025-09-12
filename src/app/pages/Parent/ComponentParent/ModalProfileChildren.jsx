@@ -1,8 +1,9 @@
-import { Button, Form, Input, Modal } from "antd";
+import { Button, Form, Input, InputNumber, Modal } from "antd";
 import { useForm } from "antd/es/form/Form";
 import FormItem from "antd/es/form/FormItem";
 import { Mail, Phone, User } from "lucide-react";
 import React, { useEffect } from "react";
+import { toast } from "react-toastify";
 
 function ModalProfileChildren({
   isModalOpen,
@@ -28,6 +29,7 @@ function ModalProfileChildren({
       handleOk();
       form.resetFields();
     });
+    toast.success("Update successful!");
   };
 
   return (
@@ -150,7 +152,10 @@ function ModalProfileChildren({
               },
             ]}
           >
-            <Input placeholder="Enter age" className="rounded-lg h-11" />
+            <InputNumber
+              placeholder="Enter your age"
+              className="rounded-lg w-full h-11"
+            />
           </FormItem>
         </div>
       </Form>

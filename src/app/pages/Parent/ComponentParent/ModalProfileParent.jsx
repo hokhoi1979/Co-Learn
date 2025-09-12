@@ -3,6 +3,7 @@ import { useForm } from "antd/es/form/Form";
 import FormItem from "antd/es/form/FormItem";
 import { Mail, Phone, User } from "lucide-react";
 import React, { useEffect } from "react";
+import { toast } from "react-toastify";
 
 function ModalProfileParent({
   isModalOpen,
@@ -27,6 +28,7 @@ function ModalProfileParent({
       handleOk();
       form.resetFields();
     });
+    toast.success("Update successful!");
   };
 
   return (
