@@ -1,18 +1,32 @@
 // profile Parent
 
-{
-  age: number;
-  children: string;
-  email: string;
-  parent: string;
-  phone: string;
-}
+// {
+//   age: number;
+//   children: string;
+//   email: string;
+//   parent: string;
+//   phone: string;
+// }
 
 // profile Children
 
-{
-  age: number;
-  children: string;
-  email: string;
-  parent: string;
-}
+// {
+//   age: number;
+//   children: string;
+//   email: string;
+//   parent: string;
+// }
+
+//profile teacher
+
+// {
+//   fullName: "string",
+//   born: "YYYY-MM-DD",
+//   age: 0,
+//   phone: "string",
+//   email: "string",
+//   gender: "male|female|other",
+//   experience: 0,
+//   languages: ["string"],
+//   description: "string",
+// };

@@ -23,6 +23,7 @@ import ParentCourse from "../pages/Parent/ParentCourse/ParentCourse";
 import ParentHistory from "../pages/Parent/ParentHistory/ParentHistory";
 import ParentPurchased from "../pages/Parent/ParentPurchased/ParentPurchased";
 import ParentFeedback from "../pages/Parent/ParentFeedback/ParentFeedback";
+import TeacherProfile from "../pages/Teacher/TeacherProfile/TeacherProfile";
 
 const router = createBrowserRouter([
   {
@@ -47,7 +48,9 @@ const router = createBrowserRouter([
         path: "teacher",
         element: <TeacherLayout />,
         children: [
-          { path: "", element: <Navigate to="classes" /> },
+          { path: "", element: <Navigate to="profile" /> },
+          { path: "profile", element: <TeacherProfile /> },
+
           { path: "classes", element: <TeacherClass /> },
           { path: "schedule", element: <TeacherSchedule /> },
           {

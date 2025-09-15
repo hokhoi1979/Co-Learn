@@ -4,6 +4,12 @@ import { Icon } from "@iconify/react";
 
 const menuItems = [
   {
+    key: "profile",
+    label: "Profile",
+    icon: "mdi:account-child-outline",
+    nav: "/teacher",
+  },
+  {
     key: "classes",
     label: "My Classes",
     icon: "mdi:book-education-outline",
