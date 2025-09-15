@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router";
 import ModelUploadVideo from "../ComponentTeacher/ModelUploadVideo";
 import DeleteVideoModal from "../ComponentTeacher/DeleteVideoModal";
+import { toast } from "react-toastify";
 
 function ViewContent() {
   const navigate = useNavigate();
@@ -37,6 +38,7 @@ function ViewContent() {
       const deleteVideo = data.filter((_, i) => i !== deleteIndex);
       setData(deleteVideo);
       setDeleteIndex(null);
+      toast.success("Delete successful!");
     } finally {
       setLoading(false);
     }
@@ -169,7 +171,7 @@ function ViewContent() {
           open={deleteIndex !== null}
           videoTitle={deleteIndex !== null ? data[deleteIndex]?.title : ""}
           loading={loading}
-          courseTitle={data.title}
+          courseTitle={data?.[deleteIndex]?.title}
           onCancel={() => setDeleteIndex(null)}
           onConfirm={handleConfirmDelete}
         />

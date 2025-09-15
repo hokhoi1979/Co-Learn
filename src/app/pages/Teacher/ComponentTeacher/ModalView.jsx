@@ -10,6 +10,10 @@ import {
 function ModalViewClass({ isOpen, onClose, classData }) {
   if (!classData) return null;
 
+  const handleJoin = (link) => {
+    console.log("link", link);
+  };
+
   return (
     <Modal
       open={isOpen}
@@ -44,7 +48,7 @@ function ModalViewClass({ isOpen, onClose, classData }) {
               <span className="font-medium">{classData.maxStudents}</span>
             </p>
             {classData.link && (
-              <p>
+              <p onClick={() => handleJoin(classData.link)}>
                 <LinkOutlined className="mr-2 text-[#3fcba8]" />
                 <a
                   href={classData.link}

@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { Modal, Form, Input, Button, Upload } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { Icon } from "@iconify/react";
+import { toast } from "react-toastify";
 
 function ModelUploadVideo({
   isModalOpen,
@@ -37,6 +38,11 @@ function ModelUploadVideo({
       onSubmitData(newVideo);
       handleOk();
       form.resetFields();
+      if (initialValues) {
+        toast.success("Update successful!");
+      } else {
+        toast.success("Create successful!");
+      }
     });
   };
 

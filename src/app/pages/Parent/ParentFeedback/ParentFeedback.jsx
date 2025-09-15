@@ -4,6 +4,7 @@ import img from "../../../assets/img/bg3.jpg";
 import { useForm } from "antd/es/form/Form";
 import FormItem from "antd/es/form/FormItem";
 import { toast } from "react-toastify";
+import CarouselTeacher from "../../Teacher/ComponentTeacher/CarouselTeacher";
 
 const data = [
   {
@@ -100,6 +101,8 @@ function ParentFeedback() {
           ))}
         </div>
       </div>
+
+      <CarouselTeacher />
 
       <Modal
         open={open}

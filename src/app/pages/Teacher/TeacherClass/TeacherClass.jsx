@@ -9,8 +9,10 @@ function TeacherClass() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [viewModalOpen, setViewModalOpen] = useState(false);
   const [selectedClass, setSelectedClass] = useState(null);
+  const [editIndex, setEditIndex] = useState(null);
 
   const handleView = (classItem) => {
+    console.log("DATA", classItem);
     setSelectedClass(classItem);
     setViewModalOpen(true);
   };
@@ -28,59 +30,22 @@ function TeacherClass() {
     setIsModalOpen(false);
   };
 
-  const handleSubmit = (newClass) => {
-    console.log("CLASS", newClass);
-    setData((pre) => [...pre, newClass]);
+  const handleEdit = (index) => {
+    setEditIndex(index);
+    setIsModalOpen(true);
   };
 
-  // const course = [
-  //   {
-  //     name: "Python Basics for Beginners",
-  //     student: "8",
-  //     time: "Today, 4:00 PM",
-  //     duration: "10 week",
-  //     progress: 6,
-  //     totalProgress: 10,
-  //   },
+  const handleSubmit = (newClass) => {
+    if (editIndex !== null) {
+      setData((prev) =>
+        prev.map((item, i) => (i === editIndex ? newClass : item))
+      );
+      setEditIndex(null);
+    } else {
+      setData((prev) => [...prev, newClass]);
+    }
+  };
 
-  //   {
-  //     name: "Python Basics for Beginners",
-  //     student: "8",
-  //     time: "Today, 4:00 PM",
-  //     duration: "10 week",
-  //     progress: 6,
-  //     totalProgress: 10,
-  //   },
-  //   {
-  //     name: "Python Basics for Beginners",
-  //     student: "8",
-  //     time: "Today, 4:00 PM",
-  //     duration: "10 week",
-  //     progress: 6,
-  //     totalProgress: 10,
-  //   },
-  // ];
-
-  // const schedule = [
-  //   {
-  //     name: "Teach program",
-  //     time: "8:00 PM",
-  //     duration: "60 minutes",
-  //     student: "29",
-  //   },
-  //   {
-  //     name: "Teach program",
-  //     time: "8:00 PM",
-  //     duration: "60 minutes",
-  //     student: "29",
-  //   },
-  //   {
-  //     name: "Teach program",
-  //     time: "8:00 PM",
-  //     duration: "60 minutes",
-  //     student: "29",
-  //   },
-  // ];
   return (
     <div className=" w-full h-auto p-5 bg-gradient-to-b from-[#F0F6F6] to-[#DBFBFD]">
       <h1 className="text-2xl font-bold">Welcome back! Miss Ha </h1>
@@ -147,7 +112,7 @@ function TeacherClass() {
                 )}
               </div>
 
-              {[...data].map((item) => {
+              {[...data].map((item, index) => {
                 const percent =
                   item.progress && item.totalProgress
                     ? Math.round((item.progress / item.totalProgress) * 100)
@@ -235,7 +200,7 @@ function TeacherClass() {
                             </div>
                           </div>
                         </div>
-                        <div className="mt-2">
+                        {/* <div className="mt-2">
                           <div className="flex justify-between">
                             <p className=" mb-2 text-[16px]">Progress</p>
                             <p className=" mt-1 text-right">{percent}%</p>
@@ -247,12 +212,53 @@ function TeacherClass() {
                               style={{ width: `${percent}%` }}
                             ></div>
                           </div>
-                        </div>
+                        </div> */}
 
                         <div className="mt-4 flex gap-3">
                           <button
+                            onClick={() => handleEdit(index)}
+                            type="secondary"
+                            className="bg-[#76eacd] w-20 hover:bg-[#3edfb7] flex rounded-md px-2 gap-2 items-center cursor-pointer"
+                          >
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="18"
+                              height="18"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                fill="#fff"
+                                d="m14.06 9l.94.94L5.92 19H5v-.92zm3.6-6c-.25 0-.51.1-.7.29l-1.83 1.83l3.75 3.75l1.83-1.83c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.2-.2-.45-.29-.71-.29m-3.6 3.19L3 17.25V21h3.75L17.81 9.94z"
+                                stroke-width="0.5"
+                                stroke="#fff"
+                              />
+                            </svg>
+                            <p className="text-white text-[18px]">Edit</p>
+                          </button>
+
+                          <button
+                            type="secondary"
+                            className="bg-[#ea8576] w-20 cursor-pointer hover:bg-[#e95a44] py-1 h-auto text-white font-medium rounded-md flex gap-2 items-center justify-center"
+                          >
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="18"
+                              height="18"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                fill="#fff"
+                                d="M7 21q-.825 0-1.412-.587T5 19V6H4V4h5V3h6v1h5v2h-1v13q0 .825-.587 1.413T17 21zM17 6H7v13h10zM9 17h2V8H9zm4 0h2V8h-2zM7 6v13z"
+                                stroke-width="0.5"
+                                stroke="#fff"
+                              />
+                            </svg>
+                            Delete
+                          </button>
+
+                          <button
                             onClick={() => handleView(item)}
-                            className="bg-[#8ccfb6] hover:bg-[#8bdcbf] flex rounded-xl px-2 gap-2 items-center cursor-pointer"
+                            className="bg-[#20ba93] hover:bg-[#5ed1a9] w-20 flex rounded-md px-2 gap-2 items-center cursor-pointer"
                           >
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
@@ -281,10 +287,6 @@ function TeacherClass() {
             </>
           )}
         </div>
-
-        {/* <div className="w-[10%]">
-          <Image className="rounded-3xl" src={bg6} width={"100%"} />
-        </div> */}
       </div>
 
       <CarouselTeacher />
@@ -293,6 +295,7 @@ function TeacherClass() {
         handleOk={handleOk}
         handleCancel={handleCancel}
         onSubmitData={handleSubmit}
+        initialValues={editIndex !== null ? data[editIndex] : null}
       />
 
       <ModalViewClass
@@ -303,5 +306,5 @@ function TeacherClass() {
     </div>
   );
 }
-
+//https://meet.google.com/uvr-dhqp-fup
 export default TeacherClass;

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Modal,
   Form,
@@ -11,16 +11,49 @@ import {
 } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { Icon } from "@iconify/react";
+import { toast } from "react-toastify";
+import dayjs from "dayjs";
 const { RangePicker } = DatePicker;
 
-function ModalTeacher({ isModalOpen, handleOk, handleCancel, onSubmitData }) {
+function ModalTeacher({
+  isModalOpen,
+  handleOk,
+  handleCancel,
+  onSubmitData,
+  initialState,
+}) {
   const [form] = Form.useForm();
-  const liveStatus = Form.useWatch("live", form);
+
+  useEffect(() => {
+    if (initialState) {
+      form.setFieldsValue({
+        ...initialState,
+        dates:
+          initialState.dates?.start && initialState.dates?.end
+            ? [dayjs(initialState.dates.start), dayjs(initialState.dates.end)]
+            : null,
+        thumbnail: initialState.thumbnail
+          ? [
+              {
+                uid: "-1",
+                name: "thumbnail.png",
+                status: "done",
+                url: initialState.thumbnail,
+              },
+            ]
+          : [],
+      });
+    } else {
+      form.resetFields();
+    }
+  }, [initialState, form]);
 
   const onSubmit = () => {
     form.validateFields().then((values) => {
       const file = values.thumbnail?.[0]?.originFileObj;
-      const thumbnailUrl = file ? URL.createObjectURL(file) : null;
+      const thumbnailUrl = file
+        ? URL.createObjectURL(file)
+        : initialState?.thumbnail || null;
 
       const newCourse = {
         ...values,
@@ -38,6 +71,11 @@ function ModalTeacher({ isModalOpen, handleOk, handleCancel, onSubmitData }) {
 
       onSubmitData(newCourse);
       handleOk();
+      if (initialState) {
+        toast.success("Edit successful!");
+      } else {
+        toast.success("Create successful!");
+      }
       form.resetFields();
     });
   };
@@ -57,7 +95,7 @@ function ModalTeacher({ isModalOpen, handleOk, handleCancel, onSubmitData }) {
           onClick={onSubmit}
           className="!bg-[#00b0ff] hover:!bg-[#0090d9]"
         >
-          Create Course
+          {initialState ? "Edit Course" : "Create Course"}
         </Button>,
       ]}
       className="custom-modal"

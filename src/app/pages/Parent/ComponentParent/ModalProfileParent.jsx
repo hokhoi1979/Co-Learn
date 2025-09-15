@@ -26,6 +26,7 @@ function ModalProfileParent({
     form.validateFields().then((values) => {
       onSubmitData(values);
       handleOk();
+      console.log("DATA", values);
       form.resetFields();
     });
     toast.success("Update successful!");

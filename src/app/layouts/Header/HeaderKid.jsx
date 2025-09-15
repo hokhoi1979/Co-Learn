@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Icon } from "@iconify/react";
+import { useNavigate } from "react-router-dom";
 
 function HeaderKid() {
   const [notice, setNotice] = useState(false);
@@ -7,6 +8,8 @@ function HeaderKid() {
   const ggMeet = [
     { title: "Course 1", link: "https://meet.google.com/kbz-pneq-odu" },
   ];
+
+  const navigate = useNavigate();
   return (
     <>
       <div className="w-full h-30 relative flex px-20 justify-between bg-gradient-to-r from-[#7321e6] via-[#d11887] to-[#e8be33] shadow-2xl">
@@ -108,6 +111,7 @@ function HeaderKid() {
                 bg-white/20 
                 backdrop-blur-md               
                 text-white cursor-pointer hover:bg-[#e0cf7bc7]"
+            onClick={() => navigate("/login")}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"

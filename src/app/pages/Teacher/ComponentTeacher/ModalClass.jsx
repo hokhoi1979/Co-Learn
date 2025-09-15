@@ -2,19 +2,61 @@ import { Form, Input, Select, DatePicker, Upload, Button, Modal } from "antd";
 import { useForm } from "antd/es/form/Form";
 import { UploadOutlined } from "@ant-design/icons";
 import { Icon } from "@iconify/react";
-import React from "react";
+import dayjs from "dayjs";
+
+import React, { useEffect } from "react";
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 
-function ModalClass({ isModalOpen, handleOk, handleCancel, onSubmitData }) {
+function ModalClass({
+  isModalOpen,
+  handleOk,
+  handleCancel,
+  onSubmitData,
+  initialValues,
+}) {
   const [form] = useForm();
-  const liveStatus = Form.useWatch("live", form);
+
+  useEffect(
+    () => {
+      if (initialValues) {
+        form.setFieldsValue({
+          ...initialValues,
+          dates: initialValues.dates
+            ? [
+                dayjs(initialValues.dates.start, "YYYY-MM-DD"),
+                dayjs(initialValues.dates.end, "YYYY-MM-DD"),
+              ]
+            : null,
+          time: initialValues.time
+            ? dayjs(initialValues.time, "YYYY-MM-DD HH:mm")
+            : null,
+          thumbnail: initialValues.thumbnail
+            ? [
+                {
+                  uid: "-1",
+                  name: "thumbnail.png",
+                  status: "done",
+                  url: initialValues.thumbnail,
+                },
+              ]
+            : [],
+        });
+      } else {
+        form.resetFields();
+      }
+    },
+    [initialValues],
+    [form]
+  );
 
   const onSubmit = () => {
     form.validateFields().then((values) => {
       const file = values.thumbnail?.[0]?.originFileObj;
-      const thumbnailUrl = file ? URL.createObjectURL(file) : null;
+      const thumbnailUrl = file
+        ? URL.createObjectURL(file)
+        : initialValues?.thumbnail || null;
       const newClass = {
         ...values,
         thumbnail: thumbnailUrl,
@@ -50,7 +92,7 @@ function ModalClass({ isModalOpen, handleOk, handleCancel, onSubmitData }) {
           onClick={onSubmit}
           className="!bg-[#00b0ff] hover:!bg-[#0090d9]"
         >
-          Create Class
+          {initialValues ? "Update Class" : "Create Class"}
         </Button>,
       ]}
       className="custom-modal"

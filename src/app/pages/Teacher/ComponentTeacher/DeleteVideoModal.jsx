@@ -2,11 +2,12 @@ import React from "react";
 import { Modal } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
 
-export default function DeleteCourseModal({
+export default function DeleteVideoModal({
   open,
   onCancel,
   onConfirm,
   loading = false,
+  courseTitle,
 }) {
   return (
     <Modal
@@ -47,8 +48,8 @@ export default function DeleteCourseModal({
         </p>
 
         <p className="text-base">
-          Do you want to delete this course
-          <span className="font-semibold text-red-600"></span> ?
+          <span>Do you want to delete this course </span>
+          <span className="font-semibold text-red-600">{courseTitle}</span> ?
         </p>
 
         <div className="mt-3 p-2 border border-red-200 bg-red-50 rounded text-red-500 text-sm flex items-center">

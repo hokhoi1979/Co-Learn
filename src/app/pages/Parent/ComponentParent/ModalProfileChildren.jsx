@@ -121,7 +121,7 @@ function ModalProfileChildren({
             />
           </FormItem>
 
-          <FormItem
+          {/* <FormItem
             name="phone"
             label="Phone Number"
             rules={[
@@ -137,10 +137,7 @@ function ModalProfileChildren({
               placeholder="Enter phone number"
               className="rounded-lg h-11"
             />
-          </FormItem>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          </FormItem> */}
           <FormItem
             name="age"
             label="Age"
@@ -158,6 +155,8 @@ function ModalProfileChildren({
             />
           </FormItem>
         </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
       </Form>
 
       <p className="text-gray-500 text-sm mt-6 text-center">

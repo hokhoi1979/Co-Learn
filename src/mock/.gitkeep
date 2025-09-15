@@ -1,0 +1,18 @@
+// profile Parent
+
+{
+  age: number;
+  children: string;
+  email: string;
+  parent: string;
+  phone: string;
+}
+
+// profile Children
+
+{
+  age: number;
+  children: string;
+  email: string;
+  parent: string;
+}

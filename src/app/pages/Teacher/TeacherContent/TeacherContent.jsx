@@ -6,10 +6,16 @@ import { BookOutlined } from "@ant-design/icons";
 import ModalTeacher from "../ComponentTeacher/ModalTeacher";
 import CarouselTeacher from "../ComponentTeacher/CarouselTeacher";
 import { Outlet, useNavigate } from "react-router";
+import DeleteVideoModal from "../ComponentTeacher/DeleteVideoModal";
+import { toast } from "react-toastify";
 
 function TeacherContent() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editIndex, setEditIndex] = useState(null);
+  const [deleteIndex, setDeleteIndex] = useState(null);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
   const [data, setData] = useState([]);
 
   const showModal = () => {
@@ -25,12 +31,36 @@ function TeacherContent() {
   };
 
   const handleSubmit = (newCourse) => {
-    setData((pre) => [...pre, newCourse]);
+    if (editIndex != null) {
+      setData((prev) =>
+        prev.map((item, i) => (i === editIndex ? newCourse : item))
+      );
+      setEditIndex(null);
+    } else {
+      setData((prev) => [...prev, newCourse]);
+    }
+  };
+
+  const handleEdit = (index) => {
+    setEditIndex(index);
+    setIsModalOpen(true);
   };
 
   const handleDelete = (values) => {
-    const deleteData = data.filter((_, i) => i !== values);
-    setData(deleteData);
+    setDeleteIndex(values);
+    console.log(data[values]);
+  };
+
+  const handleConfirmDelete = () => {
+    setLoading(true);
+    try {
+      const deleteVideo = data.filter((_, i) => i !== deleteIndex);
+      setData(deleteVideo);
+      setDeleteIndex(null);
+      toast.success("Delete successful!");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const isViewingContent = location.pathname.includes("viewContent");
@@ -83,7 +113,7 @@ function TeacherContent() {
                       >
                         <img
                           src={item.thumbnail}
-                          className="w-full h-1/2 object-cover rounded-t-2xl"
+                          className="w-full h-60 object-cover rounded-t-2xl"
                         />
 
                         <div className="p-3">
@@ -112,6 +142,7 @@ function TeacherContent() {
 
                           <div className="mt-5 gap-1.5 grid grid-cols-3">
                             <button
+                              onClick={() => handleEdit(index)}
                               type="secondary"
                               className="bg-[#76eacd] cursor-pointer hover:bg-[#3edfb7] py-1 w-full h-auto text-white font-medium rounded-md flex gap-2 items-center justify-center"
                             >
@@ -188,11 +219,21 @@ function TeacherContent() {
         <Outlet />
         <CarouselTeacher />
       </div>
+
+      <DeleteVideoModal
+        open={deleteIndex !== null}
+        videoTitle={deleteIndex !== null ? data[deleteIndex]?.title : ""}
+        loading={loading}
+        courseTitle={data?.[deleteIndex]?.title}
+        onCancel={() => setDeleteIndex(null)}
+        onConfirm={handleConfirmDelete}
+      />
       <ModalTeacher
         isModalOpen={isModalOpen}
         handleOk={handleOk}
         handleCancel={handleCancel}
         onSubmitData={handleSubmit}
+        initialState={editIndex != null ? data[editIndex] : null}
       />
     </>
   );
