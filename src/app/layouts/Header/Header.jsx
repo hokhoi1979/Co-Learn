@@ -1,7 +1,8 @@
 import { Button } from "antd";
 import { Icon } from "@iconify/react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 function Header() {
+  const navigate = useNavigate();
   return (
     <header className="w-full border-b p-5 h-20 border-gray-200 bg-white shadow-md">
       <div className=" mx-auto  flex items-center justify-between">
@@ -54,13 +55,14 @@ function Header() {
 
         <div className="flex items-center gap-5">
           <button
-            onClick={{}}
+            onClick={() => navigate("/login")}
             style={{ cursor: "pointer" }}
             className="text-[16px] font-medium text-gray-700 hover:bg-cyan-300 px-2 py-1 rounded-[10px] hover:text-white transition"
           >
             Sign In
           </button>
           <Button
+            onClick={() => navigate("/register")}
             className="!h-10 !px-5 !rounded-lg 
                        !bg-gradient-to-r !from-cyan-500 !to-blue-500
                        !text-white !font-semibold shadow-md hover:shadow-lg transition"

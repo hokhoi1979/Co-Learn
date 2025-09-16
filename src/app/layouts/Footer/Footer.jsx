@@ -5,7 +5,7 @@ function Footer() {
     <div className="bg-[#252525] text-white p-10 ">
       <div className="grid grid-cols-1 md:grid-cols-4 px-30 ">
         <div>
-          <div className="flex items-center ">
+          <div className="flex items-center gap-2">
             <BookOpen className="w-6 h-6 text-white" />
             <span className="text-white font-bold text-lg">GoldLearns</span>
           </div>

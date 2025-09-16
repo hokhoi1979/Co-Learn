@@ -1,24 +1,41 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, Mail, Lock, Eye } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useDispatch, useSelector } from "react-redux";
+import { loginApi } from "../../redux/auth/loginSlice";
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const { t, i18n } = useTranslation();
+  const navigate = useNavigate();
+  const [email, setEmail] = useState(null);
+  const [password, setPassword] = useState(null);
+  const { user } = useSelector((state) => state.login);
+  const dispatch = useDispatch();
+
+  const handleSubmit = (values) => {
+    values.preventDefault();
+    dispatch(loginApi({ email: email, password: password }));
+  };
+  useEffect(() => {
+    if (user?.role === "1") {
+      navigate("/kids");
+    } else if (user?.role === "2") {
+      navigate("/parent");
+    } else if (user?.role === "3") {
+      navigate("/teacher");
+    }
+  }, [user, navigate]);
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
-      {/* Background gradient */}
       <div className="absolute inset-0 bg-gradient-to-br from-orange-100 via-blue-100 to-green-100 animate-gradient" />
-      {/* Decorative circles */}
       <div className="absolute top-10 left-10 w-40 h-40 bg-orange-300 opacity-30 rounded-full blur-2xl animate-pulse" />
       <div className="absolute bottom-20 right-10 w-52 h-52 bg-blue-300 opacity-30 rounded-full blur-3xl animate-pulse" />
       <div className="absolute top-1/2 left-1/2 w-72 h-72 bg-yellow-200 opacity-20 rounded-full blur-3xl animate-pulse" />
 
-      {/* Content */}
       <div className="relative w-full max-w-md z-10">
-        {/* Back to home link */}
         <Link
           to="/"
           className="inline-flex items-center text-gray-500 hover:text-gray-800 transition-colors mb-8"
@@ -28,11 +45,10 @@ export default function Login() {
         </Link>
 
         <div className="bg-white rounded-2xl border shadow-xl p-6 backdrop-blur-sm">
-          {/* Logo + Title */}
           <div className="text-center mb-6">
             <div className="flex items-center justify-center space-x-2 mb-4">
-              <div className="w-10 h-10 bg-orange-500 rounded-lg flex items-center justify-center shadow-md">
-                <span className="text-white font-bold text-xl">C&L</span>
+              <div className="w-13 h-10 bg-orange-500 rounded-lg flex items-center justify-center shadow-md ">
+                <span className="text-white font-bold text-xl ">C&L</span>
               </div>
               <span className="font-bold text-2xl text-gray-800">Co&Learn</span>
             </div>
@@ -40,9 +56,7 @@ export default function Login() {
             <p className="text-gray-500 text-sm">{t("welcomeBack")}</p>
           </div>
 
-          {/* Form */}
-          <form className="space-y-4">
-            {/* Email */}
+          <form className="space-y-4" onSubmit={handleSubmit}>
             <div>
               <label className="block text-sm font-medium text-gray-700">
                 {t("email")}
@@ -51,13 +65,14 @@ export default function Login() {
                 <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                 <input
                   type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   placeholder={t("enterEmail")}
                   className="pl-10 w-full border rounded-lg p-2 focus:ring-2 focus:ring-orange-500 outline-none"
                   required
                 />
               </div>
             </div>
-            {/* Password */}
             <div>
               <label className="block text-sm font-medium text-gray-700">
                 {t("password")}
@@ -65,6 +80,9 @@ export default function Login() {
               <div className="relative">
                 <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                 <input
+                  name="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   type={showPassword ? "text" : "password"}
                   placeholder={t("enterPassword")}
                   className="pl-10 pr-10 w-full border rounded-lg p-2 focus:ring-2 focus:ring-orange-500 outline-none"
@@ -79,8 +97,7 @@ export default function Login() {
                 </button>
               </div>
             </div>
-            {/* Remember + Forgot */}
-            <div className="flex items-center justify-between text-sm">
+            {/* <div className="flex items-center justify-between text-sm">
               <label className="flex items-center space-x-2">
                 <input type="checkbox" className="rounded border-gray-300" />
                 <span className="text-gray-500">{t("rememberMe")}</span>
@@ -91,27 +108,23 @@ export default function Login() {
               >
                 {t("forgotPassword")}
               </Link>
-            </div>
-            {/* Submit */}
+            </div> */}
             <button
               type="submit"
-              className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-4 rounded-lg transition"
+              className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-4 rounded-lg transition cursor-pointer"
             >
               {t("login")}
             </button>
           </form>
 
-          {/* Separator */}
           <div className="flex items-center my-6">
             <div className="flex-1 h-px bg-gray-200"></div>
             <span className="px-2 text-xs text-gray-400">{t("or")}</span>
             <div className="flex-1 h-px bg-gray-200"></div>
           </div>
 
-          {/* Social login */}
           <div className="space-y-3">
             <button className="w-full flex items-center justify-center border rounded-lg py-2 hover:bg-gray-50 transition">
-              {/* Google icon */}
               <svg
                 className="w-5 h-5 mr-2"
                 viewBox="0 0 24 24"
@@ -125,7 +138,6 @@ export default function Login() {
               {t("loginGoogle")}
             </button>
             <button className="w-full flex items-center justify-center border rounded-lg py-2 hover:bg-gray-50 transition">
-              {/* Facebook icon */}
               <svg
                 className="w-5 h-5 mr-2"
                 fill="currentColor"
@@ -137,7 +149,6 @@ export default function Login() {
             </button>
           </div>
 
-          {/* Register */}
           <p className="text-center text-sm text-gray-500 mt-6">
             {t("noAccount")}{" "}
             <Link
@@ -148,7 +159,6 @@ export default function Login() {
             </Link>
           </p>
 
-          {/* Switch language */}
           <div className="flex justify-center gap-2 mt-4 text-sm">
             <button
               onClick={() => i18n.changeLanguage("vi")}

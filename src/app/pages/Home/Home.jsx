@@ -2,13 +2,17 @@ import React, { useEffect } from "react";
 import Header from "../../layouts/Header/Header";
 import { Icon } from "@iconify/react";
 import { Star } from "lucide-react";
-import bg from "../../img/bg1.jpg";
-import bg3 from "../../img/bg3.jpg";
+import bg from "../../assets/img/bg1.jpg";
+import bg3 from "../../assets/img/bg3.jpg";
 import { Button, Image } from "antd";
 import { motion } from "framer-motion";
 import Footer from "../../layouts/Footer/Footer";
+import { useNavigate } from "react-router";
+import CourseTerms from "./CourseTerms";
 
 function Home() {
+  const navigate = useNavigate();
+
   const testimonials = [
     {
       name: "Sarah Mitchell",
@@ -370,7 +374,7 @@ function Home() {
           Trusted by Families Worldwide
         </motion.h1>
 
-        <div className="flex p-5 px-20 gap-6 mb-5">
+        <div className="flex p-5 px-20 gap-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10 px-5">
             {testimonials.map((item, index) => (
               <motion.div
@@ -404,7 +408,7 @@ function Home() {
           </div>
         </div>
 
-        <motion.div
+        {/* <motion.div
           initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
@@ -459,14 +463,16 @@ function Home() {
                       ? "bg-cyan-500 text-white"
                       : "bg-white border border-gray-300 text-gray-700"
                   }`}
+                  onClick={() => navigate("payment")}
                 >
                   {plan.button}
                 </button>
               </motion.div>
             ))}
           </div>
-        </motion.div>
+        </motion.div> */}
 
+        <CourseTerms />
         <Footer />
       </div>
     </>
