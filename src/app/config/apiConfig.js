@@ -1,9 +1,7 @@
-// src/services/api.ts
 import axios from "axios";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-// Tạo một instance axios riêng
 const api = axios.create({
   baseURL: API_URL,
   timeout: 10000, // 10s
@@ -12,10 +10,10 @@ const api = axios.create({
   },
 });
 
-// Thêm interceptor để tự động gắn token
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("token"); // hoặc Redux store
+    console.log("👉 Request URL:", config.baseURL + config.url);
+    const token = localStorage.getItem("token");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -24,7 +22,6 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Xử lý lỗi response chung
 api.interceptors.response.use(
   (response) => response,
   (error) => {

@@ -1,24 +1,63 @@
-// src/pages/RegisterPage.jsx
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, Mail, Lock, User, Phone, Eye } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { Calendar as CalendarIcon } from "lucide-react";
+import { useDispatch, useSelector } from "react-redux";
+import { registerApi, registerReset } from "../../redux/auth/registerSlice";
 
 export default function Register() {
   const { t, i18n } = useTranslation();
+  const [showPassword, setShowPassword] = useState(false);
+  const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
+  const navigate = useNavigate();
+  const [fullName, setFullName] = useState(null);
+  const [email, setEmail] = useState(null);
+  const [password, setPassword] = useState(null);
+  const [passwordConfirm, setPasswordConfirm] = useState(null);
+  const [phone, setPhone] = useState(null);
+  const [dateOfBirth, setDateOfBirth] = useState(null);
+  const [gender, setGender] = useState("Male");
+  const [primaryRoleId, setPrimaryRoleId] = useState("1");
+
+  const accountRegister = useSelector(
+    (state) => state.register.accountRegister
+  );
+
+  const dispatch = useDispatch();
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    const payload = {
+      fullName,
+      email,
+      phone,
+      dateOfBirth: new Date(dateOfBirth).toISOString(),
+      gender,
+      primaryRoleId: parseInt(primaryRoleId, 10),
+      password,
+      passwordConfirm,
+    };
+    dispatch(registerApi(payload));
+  };
+
+  useEffect(() => {
+    if (accountRegister) {
+      navigate("/login");
+      dispatch(registerReset());
+    }
+  }, [accountRegister, navigate, dispatch]);
 
   return (
     <div className="min-h-screen relative flex items-center justify-center p-4 overflow-y-auto">
-      {/* Background gradient */}
       <div className="absolute inset-0 min-h-screen bg-gradient-to-br from-orange-100 via-blue-100 to-green-100 animate-gradient" />
 
-      {/* Decorative circles */}
       <div className="absolute top-10 left-10 w-40 h-40 bg-orange-300 opacity-30 rounded-full blur-2xl animate-pulse" />
       <div className="absolute bottom-20 right-10 w-52 h-52 bg-blue-300 opacity-30 rounded-full blur-3xl animate-pulse" />
       <div className="absolute top-1/2 left-1/2 w-72 h-72 bg-yellow-200 opacity-20 rounded-full blur-3xl animate-pulse" />
 
       <div className="relative w-full max-w-5xl z-10">
-        {/* Back to home */}
         <Link
           to="/"
           className="inline-flex items-center text-gray-500 hover:text-gray-900 transition-colors mb-8 text-sm"
@@ -27,9 +66,7 @@ export default function Register() {
           {t("backHome")}
         </Link>
 
-        {/* Card */}
         <div className="bg-white border border-gray-200 shadow-xl rounded-2xl overflow-hidden grid grid-cols-1 md:grid-cols-2">
-          {/* Left: Register form */}
           <div className="px-8 py-10">
             <div className="text-center mb-8">
               <div className="flex items-center justify-center space-x-2 mb-4">
@@ -48,37 +85,25 @@ export default function Register() {
               </p>
             </div>
 
-            <form className="space-y-5">
-              {/* Name */}
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    {t("lastName")}
-                  </label>
-                  <div className="relative">
-                    <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                    <input
-                      type="text"
-                      placeholder={t("lastName")}
-                      className="w-full px-10 py-2 border rounded-lg focus:ring-2 focus:ring-orange-400 focus:outline-none"
-                      required
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    {t("firstName")}
-                  </label>
+            <form className="space-y-5" onSubmit={handleSubmit}>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  {t("fullName")}
+                </label>
+                <div className="relative">
+                  <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                   <input
                     type="text"
-                    placeholder={t("firstName")}
-                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-orange-400 focus:outline-none"
+                    name="fullName"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    placeholder={t("enterFullName")}
+                    className="w-full px-10 py-2 border rounded-lg focus:ring-2 focus:ring-orange-400 focus:outline-none"
                     required
                   />
                 </div>
               </div>
 
-              {/* Email */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Email
@@ -87,6 +112,9 @@ export default function Register() {
                   <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                   <input
                     type="email"
+                    name="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     placeholder={t("enterEmail")}
                     className="w-full px-10 py-2 border rounded-lg focus:ring-2 focus:ring-orange-400 focus:outline-none"
                     required
@@ -94,7 +122,6 @@ export default function Register() {
                 </div>
               </div>
 
-              {/* Phone */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   {t("phone")}
@@ -103,6 +130,9 @@ export default function Register() {
                   <Phone className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                   <input
                     type="tel"
+                    name="phone"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
                     placeholder={t("phone")}
                     className="w-full px-10 py-2 border rounded-lg focus:ring-2 focus:ring-orange-400 focus:outline-none"
                     required
@@ -110,7 +140,58 @@ export default function Register() {
                 </div>
               </div>
 
-              {/* Password */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  {t("dateOfBirth")}
+                </label>
+                <div className="relative">
+                  <CalendarIcon className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+
+                  <input
+                    type="date"
+                    name="dateOfBirth"
+                    value={dateOfBirth}
+                    onChange={(e) => setDateOfBirth(e.target.value)}
+                    className="w-full px-10 py-2 border rounded-lg focus:ring-2 focus:ring-orange-400 focus:outline-none"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  {t("gender")}
+                </label>
+                <select
+                  name="gender"
+                  value={gender}
+                  onChange={(e) => setGender(e.target.value)}
+                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-orange-400 focus:outline-none"
+                  required
+                >
+                  <option value="Male">{t("male")}</option>
+                  <option value="Female">{t("female")}</option>
+                  <option value="Other">{t("other")}</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  {t("role")}
+                </label>
+                <select
+                  name="primaryRoleId"
+                  value={primaryRoleId}
+                  onChange={(e) => setPrimaryRoleId(e.target.value)}
+                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-orange-400 focus:outline-none"
+                  required
+                >
+                  <option value="1">{t("student")}</option>
+                  <option value="2">{t("parent")}</option>
+                  <option value="3">{t("teacher")}</option>
+                </select>
+              </div>
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   {t("password")}
@@ -118,13 +199,17 @@ export default function Register() {
                 <div className="relative">
                   <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                   <input
-                    type="password"
+                    type={showPassword ? "text" : "password"}
+                    name="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                     placeholder={t("createPassword")}
                     className="w-full px-10 pr-10 py-2 border rounded-lg focus:ring-2 focus:ring-orange-400 focus:outline-none"
                     required
                   />
                   <button
                     type="button"
+                    onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
                   >
                     <Eye className="h-4 w-4" />
@@ -132,7 +217,6 @@ export default function Register() {
                 </div>
               </div>
 
-              {/* Confirm Password */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   {t("confirmPassword")}
@@ -140,13 +224,17 @@ export default function Register() {
                 <div className="relative">
                   <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                   <input
-                    type="password"
+                    type={showPasswordConfirm ? "text" : "password"}
+                    name="passwordConfirm"
+                    value={passwordConfirm}
+                    onChange={(e) => setPasswordConfirm(e.target.value)}
                     placeholder={t("confirmPassword")}
                     className="w-full px-10 pr-10 py-2 border rounded-lg focus:ring-2 focus:ring-orange-400 focus:outline-none"
                     required
                   />
                   <button
                     type="button"
+                    onClick={() => setShowPasswordConfirm(!showPasswordConfirm)}
                     className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
                   >
                     <Eye className="h-4 w-4" />
@@ -154,7 +242,6 @@ export default function Register() {
                 </div>
               </div>
 
-              {/* Terms */}
               <div className="flex items-start space-x-2">
                 <input
                   type="checkbox"
@@ -173,7 +260,6 @@ export default function Register() {
                 </span>
               </div>
 
-              {/* Submit */}
               <button
                 type="submit"
                 className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 rounded-lg transition-colors"
@@ -183,14 +269,18 @@ export default function Register() {
             </form>
           </div>
 
-          {/* Right: Social login */}
           <div className="bg-gray-50 px-8 py-10 flex flex-col items-center justify-center">
+            <div className="flex items-center justify-center space-x-2 mb-4">
+              <div className="w-12 h-12 bg-orange-500 rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-lg">C&L</span>
+              </div>
+              <span className="font-bold text-2xl text-gray-800">Co&Learn</span>
+            </div>
             <h3 className="text-lg font-semibold text-gray-800 mb-6">
               {t("quickRegister")}
             </h3>
 
             <button className="w-full flex items-center justify-center border rounded-lg py-2 text-gray-700 hover:bg-gray-100 transition mb-3">
-              {/* Google Icon */}
               <svg
                 className="w-5 h-5 mr-2"
                 viewBox="0 0 24 24"
@@ -205,7 +295,6 @@ export default function Register() {
             </button>
 
             <button className="w-full flex items-center justify-center border rounded-lg py-2 text-gray-700 hover:bg-gray-100 transition">
-              {/* Facebook Icon */}
               <svg
                 className="w-5 h-5 mr-2"
                 viewBox="0 0 24 24"
@@ -225,7 +314,6 @@ export default function Register() {
                 {t("loginNow")}
               </Link>
             </p>
-            {/* Switch language */}
             <div className="flex justify-center gap-2 mt-4 text-sm">
               <button
                 onClick={() => i18n.changeLanguage("vi")}

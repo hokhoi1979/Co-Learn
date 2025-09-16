@@ -1,5 +1,4 @@
 import { call, put, takeLatest } from "redux-saga/effects";
-import { jwtDecode } from "jwt-decode";
 import { toast } from "react-toastify";
 import api from "../../config/apiConfig";
 import {
@@ -10,30 +9,17 @@ import {
 
 export function* fetchRegister(action) {
   try {
-    const response = yield call(api.post, "/auth/register", action.payload);
-
-    const { token } = response.data;
-
-    if (token) {
-      const decodedUser = jwtDecode(token);
-
-      yield put(
-        registerApiSuccess({
-          user: decodedUser,
-          token,
-        })
-      );
-
-      toast.success("Register successful!");
-      if (action.onSuccess) action.onSuccess(response);
-    } else {
-      toast.success("Register successful! Please login.");
-      if (action.onSuccess) action.onSuccess(response);
+    const response = yield call(api.post, "/user", action.payload);
+    console.log(response);
+    if (response.status === 200 || response.status === 201) {
+      yield put(registerApiSuccess(response.data));
     }
+
+    toast.success("Register successful! Please login.");
   } catch (error) {
     yield put(registerApiFail(error.message));
     toast.error("Register failed!");
-    console.error(error);
+    console.error("Register saga error:", error);
   }
 }
 

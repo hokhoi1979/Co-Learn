@@ -1,15 +1,25 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Icon } from "@iconify/react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../../redux/auth/loginSlice";
+import { toast } from "react-toastify";
 
 function HeaderKid() {
   const [notice, setNotice] = useState(false);
-
+  const { user } = useSelector((state) => state.login);
+  const dispatch = useDispatch();
   const ggMeet = [
     { title: "Course 1", link: "https://meet.google.com/kbz-pneq-odu" },
   ];
 
   const navigate = useNavigate();
+  const handleLogout = () => {
+    dispatch(logout());
+    toast.success("Log Out successful!");
+    navigate("/login");
+  };
+
   return (
     <>
       <div className="w-full h-30 relative flex px-20 justify-between bg-gradient-to-r from-[#7321e6] via-[#d11887] to-[#e8be33] shadow-2xl">
@@ -111,7 +121,7 @@ function HeaderKid() {
                 bg-white/20 
                 backdrop-blur-md               
                 text-white cursor-pointer hover:bg-[#e0cf7bc7]"
-            onClick={() => navigate("/login")}
+            onClick={handleLogout}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -130,6 +140,7 @@ function HeaderKid() {
                 <path d="M20 21a8 8 0 1 0-16 0m16 0a8 8 0 1 0-16 0" />
               </g>
             </svg>
+            <h1>Log Out</h1>
           </div>
         </div>
         {notice && (

@@ -6,24 +6,26 @@ import { LOGIN__API, loginApiFail, loginApiSuccess } from "./loginSlice";
 
 export function* fetchLogin(action) {
   try {
-    const response = yield call(api.post("/auth/login", action.payload));
-    const { token } = response.data;
-    if (token) {
-      const decodedUser = jwtDecode(token);
+    const response = yield call(api.post, "/user/login", action.payload);
+    console.log(response.data);
+    if (response.status === 200 || response.status === 201) {
+      const token = response.data.token;
+      if (token) {
+        const decodedUser = jwtDecode(token);
 
-      yield put(
-        loginApiSuccess({
-          user: decodedUser,
-          token: token,
-        })
-      );
-      console.log("USER", decodedUser);
-      console.log("TOKEN", token);
-      toast.success("Login successful!");
-
-      if (action.onSuccess) action.onSuccess(response);
-    } else {
-      throw new Error("Email or password is not correct! Try again");
+        yield put(
+          loginApiSuccess({
+            user: decodedUser,
+            token: token,
+          })
+        );
+        toast.success("Login successful!");
+        console.log("USER", decodedUser);
+        console.log("TOKEN", token);
+      } else {
+        yield put(loginApiFail(response.status));
+        console.log(response.status);
+      }
     }
   } catch (error) {
     yield put(loginApiFail(error));

@@ -5,7 +5,7 @@ import HomeKids from "../pages/HomeKids/HomeKids";
 import CourseKid from "../pages/HomeKids/CourseKid";
 import CourseDetail from "../pages/HomeKids/CourseDetail";
 import ScheduleKid from "../pages/HomeKids/ScheduleKid";
-import Login from "../pages/Login";
+
 import Home from "../pages/Home/Home";
 import TeacherLayout from "../pages/Teacher/TeacherLayout";
 import TeacherCourses from "../pages/Teacher/TeacherCourses/TeacherCourses";
@@ -24,6 +24,7 @@ import ParentHistory from "../pages/Parent/ParentHistory/ParentHistory";
 import ParentPurchased from "../pages/Parent/ParentPurchased/ParentPurchased";
 import ParentFeedback from "../pages/Parent/ParentFeedback/ParentFeedback";
 import TeacherProfile from "../pages/Teacher/TeacherProfile/TeacherProfile";
+import Login from "../pages/Login/Login";
 
 const router = createBrowserRouter([
   {

@@ -1,11 +1,32 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, Mail, Lock, Eye } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useDispatch, useSelector } from "react-redux";
+import { loginApi } from "../../redux/auth/loginSlice";
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const { t, i18n } = useTranslation();
+  const navigate = useNavigate();
+  const [email, setEmail] = useState(null);
+  const [password, setPassword] = useState(null);
+  const { user } = useSelector((state) => state.login);
+  const dispatch = useDispatch();
+
+  const handleSubmit = (values) => {
+    values.preventDefault();
+    dispatch(loginApi({ email: email, password: password }));
+  };
+  useEffect(() => {
+    if (user?.role === "1") {
+      navigate("/kids");
+    } else if (user?.role === "2") {
+      navigate("/parent");
+    } else if (user?.role === "3") {
+      navigate("/teacher");
+    }
+  }, [user, navigate]);
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
@@ -35,7 +56,7 @@ export default function Login() {
             <p className="text-gray-500 text-sm">{t("welcomeBack")}</p>
           </div>
 
-          <form className="space-y-4">
+          <form className="space-y-4" onSubmit={handleSubmit}>
             <div>
               <label className="block text-sm font-medium text-gray-700">
                 {t("email")}
@@ -44,6 +65,8 @@ export default function Login() {
                 <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                 <input
                   type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   placeholder={t("enterEmail")}
                   className="pl-10 w-full border rounded-lg p-2 focus:ring-2 focus:ring-orange-500 outline-none"
                   required
@@ -57,6 +80,9 @@ export default function Login() {
               <div className="relative">
                 <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                 <input
+                  name="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   type={showPassword ? "text" : "password"}
                   placeholder={t("enterPassword")}
                   className="pl-10 pr-10 w-full border rounded-lg p-2 focus:ring-2 focus:ring-orange-500 outline-none"
@@ -71,7 +97,7 @@ export default function Login() {
                 </button>
               </div>
             </div>
-            <div className="flex items-center justify-between text-sm">
+            {/* <div className="flex items-center justify-between text-sm">
               <label className="flex items-center space-x-2">
                 <input type="checkbox" className="rounded border-gray-300" />
                 <span className="text-gray-500">{t("rememberMe")}</span>
@@ -82,10 +108,10 @@ export default function Login() {
               >
                 {t("forgotPassword")}
               </Link>
-            </div>
+            </div> */}
             <button
               type="submit"
-              className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-4 rounded-lg transition"
+              className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-4 rounded-lg transition cursor-pointer"
             >
               {t("login")}
             </button>
