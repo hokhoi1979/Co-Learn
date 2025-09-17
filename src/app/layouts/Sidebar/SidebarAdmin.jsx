@@ -8,53 +8,50 @@ import { toast } from "react-toastify";
 
 const menuItems = [
   {
-    key: "profile",
-    label: "Profile",
-    icon: "mdi:account-child-outline",
-    nav: "/parent",
+    key: "dashboard",
+    label: "Dashboard",
+    icon: "mdi:view-dashboard-outline",
+    nav: "/admin",
   },
   {
-    key: "schedule",
-    label: "Learning Schedule",
-    icon: "mdi:calendar-clock",
-    nav: "/parent/schedule",
+    key: "users",
+    label: "Users",
+    icon: "mdi:account-group-outline",
+    nav: "/admin/useradmin",
   },
   {
-    key: "course",
-    label: "Courses",
-    icon: "mdi:book-open-variant",
-    nav: "/parent/course",
+    key: "teachers",
+    label: "Teachers",
+    icon: "mdi:account-tie-outline",
+    nav: "/admin/teachers",
   },
   {
-    key: "purchased",
-    label: "Purchased Course",
-    icon: "mdi:cart-check",
-    nav: "/parent/purchased",
+    key: "payments",
+    label: "Payments",
+    icon: "mdi:credit-card-outline",
+    nav: "/admin/payments",
   },
   {
-    key: "history",
-    label: "Payment History",
-    icon: "mdi:history",
-    nav: "/parent/history",
-  },
-  {
-    key: "feedback",
-    label: "Feedback",
-    icon: "mdi:message-text-outline",
-    nav: "/parent/feedback",
+    key: "settings",
+    label: "Settings",
+    icon: "mdi:cog-outline",
+    nav: "/admin/settings",
   },
 ];
 
-const SideBarParent = ({ toggle, setToggle, active, setActive }) => {
+const SideBarAdmin = ({ toggle, setToggle, active, setActive }) => {
   const navigate = useNavigate();
   const [openLogout, setOpenLogout] = useState(false);
-  const handleToggle = () => setToggle((pre) => !pre);
   const dispatch = useDispatch();
+
+  const handleToggle = () => setToggle((pre) => !pre);
+
   const handleLogout = () => {
     dispatch(logout());
     toast.success("Log Out successful!");
     navigate("/login");
   };
+
   const MenuItem = ({ item }) => {
     const isActive = active === item.key;
 
@@ -68,17 +65,17 @@ const SideBarParent = ({ toggle, setToggle, active, setActive }) => {
         ${toggle ? "justify-center" : ""}
         ${
           isActive
-            ? "bg-gradient-to-r from-[#b0ebe6] to-[#E7F4F3] text-[#046961]"
-            : "hover:bg-gradient-to-r hover:from-[#b0ebe6] hover:to-[#E7F4F3] text-[#5B5454]"
+            ? "bg-gradient-to-r from-[#565757] to-[#3f3f3f] text-white font-semibold"
+            : "hover:bg-gradient-to-r hover:from-[#565757]/20 hover:to-[#3f3f3f]/20 text-gray-300"
         }`}
       >
         <Icon
           icon={item.icon}
-          width="28"
-          className={`${isActive ? "text-[#046961]" : "text-[#5B5454]"}`}
+          width="24"
+          className={`${isActive ? "text-white" : "text-gray-300"}`}
         />
         {!toggle && (
-          <Link to={item.nav} className="text-[16px] font-medium">
+          <Link to={item.nav} className="text-[15px]">
             {item.label}
           </Link>
         )}
@@ -89,13 +86,13 @@ const SideBarParent = ({ toggle, setToggle, active, setActive }) => {
   return (
     <div className="relative">
       <div
-        className={`mt-9 h-full bg-white pt-7 pb-4 flex flex-col fixed shadow-lg 
+        className={`mt-17 h-full bg-[#2d2d2d] pt-7 pb-4 flex flex-col fixed shadow-lg 
           ${toggle ? "w-[8%]" : "w-[18%]"} 
           transition-all duration-500 ease-in-out`}
       >
         <div
           onClick={handleToggle}
-          className="absolute top-15 right-5 bg-white border rounded-full shadow-md cursor-pointer p-1 hover:bg-gray-100 transition"
+          className="absolute top-10 right-5 bg-[#565757] text-white rounded-full shadow-md cursor-pointer p-2 hover:bg-[#6d6d6d] transition"
         >
           {toggle ? (
             <Icon icon="mdi:chevron-double-right" width="15" />
@@ -110,17 +107,17 @@ const SideBarParent = ({ toggle, setToggle, active, setActive }) => {
           ))}
         </div>
 
-        <div className="w-full h-[1px] bg-gray-300 mt-auto"></div>
+        <div className="w-full h-[1px] bg-gray-500 mt-auto"></div>
 
-        <div className="flex mb-5 items-center px-4 py-3 justify-between">
+        <div className="flex mb-5 items-center py-3 justify-between">
           {!toggle && (
-            <div className="flex gap-3 items-center">
-              <div className="h-12 w-12 rounded-full flex justify-center items-center bg-gradient-to-r from-[#4A90E4] to-[#2497A8]">
-                <h1 className="text-xl font-bold text-white">H</h1>
+            <div className="flex gap-3 items-center mb-10">
+              <div className="h-10 w-10 rounded-full flex justify-center items-center bg-gradient-to-r from-[#4A90E4] to-[#2497A8]">
+                <span className="text-sm font-bold text-white">A</span>
               </div>
               <div>
-                <h1 className="text-lg font-semibold">Miss Ha</h1>
-                <p className="text-sm text-gray-500">Teacher Coding</p>
+                <h1 className="text-[15px] font-medium text-white">Admin</h1>
+                <p className="text-xs text-gray-400">System Manager</p>
               </div>
             </div>
           )}
@@ -133,17 +130,16 @@ const SideBarParent = ({ toggle, setToggle, active, setActive }) => {
               }
               setOpenLogout(true);
             }}
-            className={`flex items-center p-2  rounded-xl cursor-pointer 
-              hover:bg-gradient-to-r hover:from-[#b0ebe6] hover:to-[#E7F4F3] 
+            className={`flex items-center p-2 rounded-xl cursor-pointer  mb-10
+              hover:bg-gradient-to-r hover:from-[#565757]/20 hover:to-[#3f3f3f]/20
               ${toggle && "w-full justify-center"}`}
           >
-            <Icon icon="mdi:logout" width="28" className="text-gray-500" />
+            <Icon icon="mdi:logout" width="24" className="text-gray-300" />
           </div>
         </div>
       </div>
-      <ConfirmLogout open={openLogout} cancel={() => setOpenLogout(false)} />
     </div>
   );
 };
 
-export default SideBarParent;
+export default SideBarAdmin;

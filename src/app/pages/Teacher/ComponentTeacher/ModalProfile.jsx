@@ -6,9 +6,10 @@ import {
   InputNumber,
   Modal,
   Select,
+  Upload,
 } from "antd";
 import { useForm } from "antd/es/form/Form";
-import { User } from "lucide-react";
+import { User, Upload as UploadIcon } from "lucide-react";
 import React, { useEffect } from "react";
 import { toast } from "react-toastify";
 import dayjs from "dayjs";
@@ -29,6 +30,36 @@ function ModalProfile({
       const values = {
         ...initialState,
         born: initialState.born ? dayjs(initialState.born) : null,
+        photo: initialState.photo
+          ? [
+              {
+                uid: "-1",
+                name: "photo.png",
+                status: "done",
+                url: initialState.photo,
+              },
+            ]
+          : [],
+        degree: initialState.degree
+          ? [
+              {
+                uid: "-2",
+                name: "degree.pdf",
+                status: "done",
+                url: initialState.degree,
+              },
+            ]
+          : [],
+        cv: initialState.cv
+          ? [
+              {
+                uid: "-3",
+                name: "cv.pdf",
+                status: "done",
+                url: initialState.cv,
+              },
+            ]
+          : [],
       };
       form.setFieldsValue(values);
     } else {
@@ -36,10 +67,36 @@ function ModalProfile({
     }
   }, [initialState, form]);
 
+  const normFile = (e) => {
+    if (Array.isArray(e)) return e;
+    return e && e.fileList ? e.fileList : [];
+  };
+
   const onSubmit = () => {
     form.validateFields().then((values) => {
       if (values.born) {
         values.born = dayjs(values.born).format("YYYY-MM-DD");
+      }
+
+      // Xử lý file photo
+      if (values.photo?.[0]?.originFileObj) {
+        values.photo = URL.createObjectURL(values.photo[0].originFileObj);
+      } else if (values.photo?.[0]?.url) {
+        values.photo = values.photo[0].url;
+      }
+
+      // Xử lý file degree
+      if (values.degree?.[0]?.originFileObj) {
+        values.degree = URL.createObjectURL(values.degree[0].originFileObj);
+      } else if (values.degree?.[0]?.url) {
+        values.degree = values.degree[0].url;
+      }
+
+      // Xử lý file cv
+      if (values.cv?.[0]?.originFileObj) {
+        values.cv = URL.createObjectURL(values.cv[0].originFileObj);
+      } else if (values.cv?.[0]?.url) {
+        values.cv = values.cv[0].url;
       }
 
       onSubmitData(values);
@@ -88,93 +145,39 @@ function ModalProfile({
       </div>
 
       <Form form={form} layout="vertical">
+        {/* Basic Info */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Form.Item
             label="Full Name"
             name="fullName"
-            rules={[
-              { required: true, message: "Please enter your full name" },
-              { min: 3, message: "Name must be at least 3 characters" },
-            ]}
+            rules={[{ required: true }]}
           >
-            <Input placeholder="Enter full name" className="rounded-lg" />
+            <Input placeholder="Enter full name" />
           </Form.Item>
-
           <Form.Item
             label="Date of Birth"
             name="born"
-            rules={[
-              { required: true, message: "Please select your date of birth" },
-              {
-                validator: (_, value) =>
-                  value && value.isAfter()
-                    ? Promise.reject(
-                        new Error("Date of birth cannot be in the future")
-                      )
-                    : Promise.resolve(),
-              },
-            ]}
+            rules={[{ required: true }]}
           >
-            <DatePicker style={{ width: "100%" }} className="rounded-lg" />
+            <DatePicker style={{ width: "100%" }} />
           </Form.Item>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Form.Item
-            label="Age"
-            name="age"
-            rules={[
-              { required: true, message: "Please enter your age" },
-              {
-                type: "number",
-                min: 18,
-                max: 100,
-                message: "Age must be between 18 and 100",
-              },
-            ]}
-          >
-            <InputNumber
-              placeholder="Enter your age"
-              min={18}
-              max={100}
-              style={{ width: "100%" }}
-              className="rounded-lg"
-            />
+          <Form.Item label="Age" name="age" rules={[{ required: true }]}>
+            <InputNumber min={18} max={100} style={{ width: "100%" }} />
           </Form.Item>
-
-          <Form.Item
-            label="Phone Number"
-            name="phone"
-            rules={[
-              { required: true, message: "Please enter your phone number" },
-              {
-                pattern: /^[0-9]{9,11}$/,
-                message: "Invalid phone number",
-              },
-            ]}
-          >
-            <Input placeholder="Enter phone number" className="rounded-lg" />
+          <Form.Item label="Phone" name="phone" rules={[{ required: true }]}>
+            <Input placeholder="Enter phone number" />
           </Form.Item>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Form.Item
-            label="Email"
-            name="email"
-            rules={[
-              { required: true, message: "Please enter your email" },
-              { type: "email", message: "Invalid email address" },
-            ]}
-          >
-            <Input placeholder="Enter email" className="rounded-lg" />
+          <Form.Item label="Email" name="email" rules={[{ required: true }]}>
+            <Input placeholder="Enter email" />
           </Form.Item>
-
-          <Form.Item
-            label="Gender"
-            name="gender"
-            rules={[{ required: true, message: "Please select your gender" }]}
-          >
-            <Select placeholder="Select gender" className="rounded-lg">
+          <Form.Item label="Gender" name="gender">
+            <Select placeholder="Select gender">
               <Option value="male">Male</Option>
               <Option value="female">Female</Option>
               <Option value="other">Other</Option>
@@ -182,60 +185,60 @@ function ModalProfile({
           </Form.Item>
         </div>
 
+        {/* Professional Info */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Form.Item
-            label="Experience (years)"
-            name="experience"
-            rules={[
-              { required: true, message: "Please enter years of experience" },
-              {
-                type: "number",
-                min: 0,
-                max: 50,
-                message: "Experience must be between 0 - 50 years",
-              },
-            ]}
-          >
-            <InputNumber
-              placeholder="Enter your year experience"
-              min={0}
-              max={50}
-              style={{ width: "100%" }}
-              className="rounded-lg"
-            />
+          <Form.Item label="Experience (years)" name="experience">
+            <InputNumber min={0} max={50} style={{ width: "100%" }} />
           </Form.Item>
-
-          <Form.Item
-            label="Teaching Languages"
-            name="languages"
-            rules={[
-              { required: true, message: "Please enter at least one language" },
-            ]}
-          >
-            <Select
-              mode="tags"
-              placeholder="Enter or select languages"
-              className="rounded-lg"
-            >
+          <Form.Item label="Languages" name="languages">
+            <Select mode="tags" placeholder="Enter or select languages">
               <Option value="Vietnamese">Vietnamese</Option>
               <Option value="English">English</Option>
             </Select>
           </Form.Item>
         </div>
 
+        {/* Upload Files */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <Form.Item
+            name="photo"
+            label="Photo"
+            valuePropName="fileList"
+            getValueFromEvent={normFile}
+          >
+            <Upload beforeUpload={() => false} listType="picture">
+              <Button icon={<UploadIcon size={16} />}>Upload</Button>
+            </Upload>
+          </Form.Item>
+          <Form.Item
+            name="degree"
+            label="Certificate"
+            valuePropName="fileList"
+            getValueFromEvent={normFile}
+          >
+            <Upload beforeUpload={() => false}>
+              <Button icon={<UploadIcon size={16} />}>Upload</Button>
+            </Upload>
+          </Form.Item>
+          <Form.Item
+            name="cv"
+            label="CV"
+            valuePropName="fileList"
+            getValueFromEvent={normFile}
+          >
+            <Upload beforeUpload={() => false}>
+              <Button icon={<UploadIcon size={16} />}>Upload</Button>
+            </Upload>
+          </Form.Item>
+        </div>
+
+        {/* Introduction */}
         <Form.Item
-          label="Short Introduction"
+          label="Introduction"
           name="description"
-          rules={[
-            { required: true, message: "Please enter a short introduction" },
-            { min: 10, message: "Introduction must be at least 10 characters" },
-          ]}
+          rules={[{ required: true }]}
         >
-          <Input.TextArea
-            rows={3}
-            placeholder="Write a short introduction about yourself"
-            className="rounded-lg"
-          />
+          <Input.TextArea rows={3} placeholder="Introduce yourself briefly" />
         </Form.Item>
       </Form>
 
