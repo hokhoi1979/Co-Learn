@@ -25,6 +25,9 @@ import ParentPurchased from "../pages/Parent/ParentPurchased/ParentPurchased";
 import ParentFeedback from "../pages/Parent/ParentFeedback/ParentFeedback";
 import TeacherProfile from "../pages/Teacher/TeacherProfile/TeacherProfile";
 import Login from "../pages/Login/Login";
+import AdminLayout from "../pages/Admin/AdminLayout";
+import DashboardAdmin from "../pages/Admin/Dashboard/DashboardAdmin";
+import UserAdmin from "../pages/Admin/UserAdmin/UserAdmin";
 
 const router = createBrowserRouter([
   {
@@ -65,7 +68,6 @@ const router = createBrowserRouter([
           { path: "courses", element: <TeacherCourses /> },
         ],
       },
-
       {
         path: "parent",
         element: <ParentLayout />,
@@ -77,6 +79,15 @@ const router = createBrowserRouter([
           { path: "purchased", element: <ParentPurchased /> },
           { path: "history", element: <ParentHistory /> },
           { path: "feedback", element: <ParentFeedback /> },
+        ],
+      },
+      {
+        path: "admin",
+        element: <AdminLayout />,
+        children: [
+          { path: "", element: <Navigate to="dashboard" /> },
+          { path: "dashboard", element: <DashboardAdmin /> },
+          { path: "useradmin", element: <UserAdmin /> },
         ],
       },
       { path: "payment", element: <PaymentSuccess /> },

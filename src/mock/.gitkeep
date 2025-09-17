@@ -20,13 +20,16 @@
 //profile teacher
 
 // {
-//   fullName: "string",
-//   born: "YYYY-MM-DD",
-//   age: 0,
-//   phone: "string",
-//   email: "string",
-//   gender: "male|female|other",
-//   experience: 0,
-//   languages: ["string"],
-//   description: "string",
+//   fullName: "Nguyen Van A",
+//   email: "teacherA@example.com",
+//   age: 32,
+//   born: "1993-08-15",
+//   phone: "+84 912 345 678",
+//   gender: "Male",
+//   experience: 7,
+//   languages: ["English", "Vietnamese"],
+//   degree: "/files/degree-certificate.pdf",
+//   cv: "/files/teacher-cv.pdf",
+//   photo: "blob:http://localhost:5173/9fbe8baa-17d7-44d6-b647-72f9f137aecf"
+//   description: "Passionate teacher with 7 years of experience in coding education. Loves guiding students through hands-on projects and problem solving."
 // };
