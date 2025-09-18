@@ -17,7 +17,9 @@ export function* fetchRegister(action) {
 
     toast.success("Register successful! Please login.");
   } catch (error) {
-    yield put(registerApiFail(error.message));
+    const message = error?.response?.data?.errors?.PasswordConfirm;
+    yield put(registerApiFail(message));
+    console.log(error);
   }
 }
 
