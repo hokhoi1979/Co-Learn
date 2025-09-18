@@ -18,8 +18,6 @@ export function* fetchRegister(action) {
     toast.success("Register successful! Please login.");
   } catch (error) {
     yield put(registerApiFail(error.message));
-    toast.error("Register failed!");
-    console.error("Register saga error:", error);
   }
 }
 

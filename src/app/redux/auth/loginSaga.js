@@ -28,8 +28,10 @@ export function* fetchLogin(action) {
       }
     }
   } catch (error) {
-    yield put(loginApiFail(error));
-    console.log(error);
+    const message =
+      error?.response?.data?.message || "Login failed. Please try again.";
+    yield put(loginApiFail(message));
+    console.log("Login error:", message);
   }
 }
 
