@@ -1,6 +1,9 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Icon } from "@iconify/react";
+import { useDispatch } from "react-redux";
+import { logout } from "../../redux/auth/loginSlice";
+import { toast } from "react-toastify";
 
 const menuItems = [
   {
@@ -44,8 +47,14 @@ const menuItems = [
 
 const SideBarTeacher = ({ toggle, setToggle, active, setActive }) => {
   const navigate = useNavigate();
-
+  const dispatch = useDispatch();
   const handleToggle = () => setToggle((pre) => !pre);
+
+  const handleLogout = () => {
+    dispatch(logout());
+    toast.success("Log Out successful!");
+    navigate("/login");
+  };
 
   const MenuItem = ({ item }) => {
     const isActive = active === item.key;
@@ -120,7 +129,7 @@ const SideBarTeacher = ({ toggle, setToggle, active, setActive }) => {
             onClick={() => {
               const confirmed = window.confirm("Do you want to logout?");
               if (confirmed) {
-                // handleLogout();
+                handleLogout();
               }
             }}
             className={`flex items-center p-2  rounded-xl cursor-pointer 

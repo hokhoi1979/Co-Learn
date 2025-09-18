@@ -260,7 +260,7 @@ export default function Register() {
 
               {error && (
                 <p className="flex justify-center text-[#f32626] text-sm mt-2 mb-2">
-                  Email has already or not correct!
+                  {error}
                 </p>
               )}
             </form>
