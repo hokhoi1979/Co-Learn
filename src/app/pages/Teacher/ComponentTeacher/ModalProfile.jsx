@@ -145,7 +145,6 @@ function ModalProfile({
       </div>
 
       <Form form={form} layout="vertical">
-        {/* Basic Info */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Form.Item
             label="Full Name"
@@ -185,7 +184,6 @@ function ModalProfile({
           </Form.Item>
         </div>
 
-        {/* Professional Info */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Form.Item label="Experience (years)" name="experience">
             <InputNumber min={0} max={50} style={{ width: "100%" }} />
@@ -198,7 +196,6 @@ function ModalProfile({
           </Form.Item>
         </div>
 
-        {/* Upload Files */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
           <Form.Item
             name="photo"
@@ -232,7 +229,6 @@ function ModalProfile({
           </Form.Item>
         </div>
 
-        {/* Introduction */}
         <Form.Item
           label="Introduction"
           name="description"

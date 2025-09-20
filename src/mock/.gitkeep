@@ -1,20 +1,20 @@
 // profile Parent
 
 // {
-//   age: number;
-//   children: string;
-//   email: string;
-//   parent: string;
-//   phone: string;
+// age: 21;
+// children: "111";
+// email: "nurse@gmail.com";
+// parent: "Ho Khoi";
+// phone: "0948222814";
 // }
 
 // profile Children
 
 // {
-//   age: number;
-//   children: string;
-//   email: string;
-//   parent: string;
+// age: 21;
+// children: "ha";
+// email: "nurse@gmail.com";
+// parent: "Ho Khoi";
 // }
 
 //profile teacher

@@ -4,7 +4,6 @@ import { Button } from "antd";
 import CarouselTeacher from "../ComponentTeacher/CarouselTeacher";
 import ModalProfile from "../ComponentTeacher/ModalProfile";
 import { Mail, Phone, Users, Calendar, Lock, Globe, Info } from "lucide-react";
-
 function TeacherProfile() {
   const [profile, setProfile] = useState(null);
   const [openProfile, setOpenProfile] = useState(null);
