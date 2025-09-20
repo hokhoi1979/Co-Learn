@@ -23,7 +23,7 @@ const menuItems = [
     key: "teachers",
     label: "Teachers",
     icon: "mdi:account-tie-outline",
-    nav: "/admin/teachers",
+    nav: "/admin/teacheradmin",
   },
   {
     key: "payments",
@@ -49,7 +49,7 @@ const SideBarAdmin = ({ toggle, setToggle, active, setActive }) => {
   const handleLogout = () => {
     dispatch(logout());
     toast.success("Log Out successful!");
-    navigate("/login");
+    navigate("/");
   };
 
   const MenuItem = ({ item }) => {
@@ -87,7 +87,7 @@ const SideBarAdmin = ({ toggle, setToggle, active, setActive }) => {
     <div className="relative">
       <div
         className={`mt-17 h-full bg-[#2d2d2d] pt-7 pb-4 flex flex-col fixed shadow-lg 
-          ${toggle ? "w-[8%]" : "w-[18%]"} 
+          ${toggle ? "w-[8%]" : "w-[14%]"} 
           transition-all duration-500 ease-in-out`}
       >
         <div

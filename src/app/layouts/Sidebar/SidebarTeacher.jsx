@@ -53,7 +53,7 @@ const SideBarTeacher = ({ toggle, setToggle, active, setActive }) => {
   const handleLogout = () => {
     dispatch(logout());
     toast.success("Log Out successful!");
-    navigate("/login");
+    navigate("/");
   };
 
   const MenuItem = ({ item }) => {

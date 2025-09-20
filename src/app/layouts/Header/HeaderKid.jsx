@@ -17,7 +17,7 @@ function HeaderKid() {
   const handleLogout = () => {
     dispatch(logout());
     toast.success("Log Out successful!");
-    navigate("/login");
+    navigate("/");
   };
 
   return (

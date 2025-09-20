@@ -5,7 +5,6 @@ import HomeKids from "../pages/HomeKids/HomeKids";
 import CourseKid from "../pages/HomeKids/CourseKid";
 import CourseDetail from "../pages/HomeKids/CourseDetail";
 import ScheduleKid from "../pages/HomeKids/ScheduleKid";
-
 import Home from "../pages/Home/Home";
 import TeacherLayout from "../pages/Teacher/TeacherLayout";
 import TeacherCourses from "../pages/Teacher/TeacherCourses/TeacherCourses";
@@ -28,6 +27,7 @@ import Login from "../pages/Login/Login";
 import AdminLayout from "../pages/Admin/AdminLayout";
 import DashboardAdmin from "../pages/Admin/Dashboard/DashboardAdmin";
 import UserAdmin from "../pages/Admin/UserAdmin/UserAdmin";
+import TeacherAdmin from "../pages/Admin/TeacherAdmin/TeacherAdmin";
 
 const router = createBrowserRouter([
   {
@@ -88,6 +88,7 @@ const router = createBrowserRouter([
           { path: "", element: <Navigate to="dashboard" /> },
           { path: "dashboard", element: <DashboardAdmin /> },
           { path: "useradmin", element: <UserAdmin /> },
+          { path: "teacheradmin", element: <TeacherAdmin /> },
         ],
       },
       { path: "payment", element: <PaymentSuccess /> },
