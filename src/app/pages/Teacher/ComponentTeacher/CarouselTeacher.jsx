@@ -1,12 +1,10 @@
 import Slider from "react-slick";
-
 import bg1 from "../../../assets/img/bg1.jpg";
 import bg2 from "../../../assets/img/bg2.jpg";
 import bg3 from "../../../assets/img/bg3.jpg";
 import bg4 from "../../../assets/img/bg4.jpg";
 import bg5 from "../../../assets/img/bg5.jpg";
 import bg6 from "../../../assets/img/bg6.jpg";
-
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 

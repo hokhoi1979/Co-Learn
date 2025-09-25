@@ -1,85 +1,17 @@
-import React, { useEffect } from "react";
 import Header from "../../layouts/Header/Header";
 import { Icon } from "@iconify/react";
 import { Star } from "lucide-react";
 import bg from "../../assets/img/bg1.jpg";
 import bg3 from "../../assets/img/bg3.jpg";
-import { Button, Image } from "antd";
-import { motion } from "framer-motion";
+import { Image } from "antd";
 import Footer from "../../layouts/Footer/Footer";
 import { useNavigate } from "react-router";
 import CourseTerms from "./CourseTerms";
+import { testimonials } from "../../shared";
+import { motion } from "framer-motion";
 
 function Home() {
   const navigate = useNavigate();
-
-  const testimonials = [
-    {
-      name: "Sarah Mitchell",
-      role: "Parent of Emma, Age 8",
-      comment:
-        "My daughter's confidence in math has skyrocketed since using GoldLearns. The interactive lessons make learning feel like playing games!",
-      initials: "SM",
-      rating: 5,
-    },
-    {
-      name: "David Johnson",
-      role: "Parent of Alex, Age 10",
-      comment:
-        "The progress tracking feature is incredible. I can see exactly where my son excels and where he needs more support. Highly recommended!",
-      initials: "DJ",
-      rating: 5,
-    },
-    {
-      name: "Lisa Rodriguez",
-      role: "Elementary Teacher & Parent",
-      comment:
-        "As an educator, I'm impressed by the quality of content and the thoughtful approach to child development. It's truly exceptional.",
-      initials: "LR",
-      rating: 5,
-    },
-  ];
-
-  const plans = [
-    {
-      name: "Starter",
-      price: "$9",
-      per: "per month",
-      features: [
-        "Access to basic courses",
-        "Progress tracking",
-        "Email support",
-      ],
-      button: "Start Free Trial",
-      popular: false,
-    },
-    {
-      name: "Family",
-      price: "$19",
-      per: "per month",
-      features: [
-        "All premium courses",
-        "Advanced analytics",
-        "Priority support",
-        "Up to 3 children",
-      ],
-      button: "Start Free Trial",
-      popular: true,
-    },
-    {
-      name: "Premium",
-      price: "$39",
-      per: "per month",
-      features: [
-        "Everything in Family",
-        "1-on-1 tutoring sessions",
-        "Custom learning plans",
-        "Unlimited children",
-      ],
-      button: "Start Free Trial",
-      popular: false,
-    },
-  ];
 
   return (
     <>
@@ -407,70 +339,6 @@ function Home() {
             ))}
           </div>
         </div>
-
-        {/* <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: false, amount: 0.2 }}
-          className="bg-gradient-to-r from-white via-50% to-[#e6fafe] py-12 px-6"
-        >
-          <h1 className="text-4xl text-cyan-600 font-bold text-center mb-4">
-            Choose Your Learning Adventure
-          </h1>
-          <p className="text-gray-500 text-center mb-10">
-            Flexible plans designed to fit every family's needs and budget.
-            Start your free trial today!
-          </p>
-
-          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            {plans.map((plan, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 50 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: index * 0.2 }}
-                viewport={{ once: false, amount: 0.2 }}
-                className={`p-6 rounded-xl border shadow-md bg-cyan-50 relative flex flex-col justify-between ${
-                  plan.popular
-                    ? "border-cyan-600  hover:-translate-y-2 transform transition duration-300"
-                    : "border-transparent  hover:-translate-y-2 transform transition duration-300"
-                }`}
-              >
-                {plan.popular && (
-                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-cyan-600 text-white text-sm px-3 py-1 rounded-md">
-                    Most Popular
-                  </span>
-                )}
-                <h2 className="text-xl font-bold text-center">{plan.name}</h2>
-                <p className="text-4xl font-bold text-center mt-3">
-                  {plan.price}
-                </p>
-                <p className="text-center text-gray-500">{plan.per}</p>
-
-                <ul className="mt-6 space-y-3">
-                  {plan.features.map((feature, i) => (
-                    <li key={i} className="flex items-center space-x-2">
-                      <span className="text-green-600">✔</span>
-                      <span>{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-
-                <button
-                  className={`mt-6 w-full py-3 rounded-lg font-semibold hover:bg-cyan-700 hover:text-white cursor-pointer ${
-                    plan.popular
-                      ? "bg-cyan-500 text-white"
-                      : "bg-white border border-gray-300 text-gray-700"
-                  }`}
-                  onClick={() => navigate("payment")}
-                >
-                  {plan.button}
-                </button>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div> */}
 
         <CourseTerms />
         <Footer />

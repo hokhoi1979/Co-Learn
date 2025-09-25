@@ -2,36 +2,7 @@ import { Image, Tag } from "antd";
 import React from "react";
 import img from "../../../assets/img/bg3.jpg";
 import CarouselTeacher from "../../Teacher/ComponentTeacher/CarouselTeacher";
-
-const data = [
-  {
-    title: "Critical Thinking & Puzzles",
-    description:
-      "Develop problem-solving and logical thinking with brain games.",
-    lessons: 26,
-    image: "/images/courses/critical-thinking.jpg",
-    start: "2025/09/05",
-    end: "2025/10/05",
-  },
-  {
-    title: "Critical Thinking & Puzzles",
-    description:
-      "Develop problem-solving and logical thinking with brain games.",
-    lessons: 26,
-    image: "/images/courses/critical-thinking.jpg",
-    start: "2025/09/05",
-    end: "2025/10/05",
-  },
-  {
-    title: "Critical Thinking & Puzzles",
-    description:
-      "Develop problem-solving and logical thinking with brain games.",
-    lessons: 26,
-    image: "/images/courses/critical-thinking.jpg",
-    start: "2025/09/05",
-    end: "2025/10/05",
-  },
-];
+import { dataPurchased } from "../../../shared";
 
 function ParentPurchased() {
   return (
@@ -48,7 +19,7 @@ function ParentPurchased() {
         </div>
 
         <div className="grid grid-cols-4 w-full h-auto gap-2 mb-5">
-          {data.map((item) => {
+          {dataPurchased.map((item) => {
             return (
               <div className="border-1 shadow-md rounded-2xl bg-gray-100 py-5 flex flex-col h-full">
                 <div className="relative">

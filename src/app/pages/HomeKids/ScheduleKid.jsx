@@ -1,35 +1,8 @@
-import React from "react";
 import { Icon } from "@iconify/react";
 import { Image } from "antd";
 import bg4 from "../../assets/img/bg4.jpg";
+import { daysOfWeek, schedule, scheduleWeek } from "../../shared";
 function ScheduleKid() {
-  const schedule = [
-    { name: "Scratch Animation", time: "3:00 PM" },
-    { name: "Fun Challenge", time: "7:00 PM" },
-    { name: "Show & Share", time: "9:00 PM" },
-  ];
-  const daysOfWeek = [
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
-    "Sunday",
-  ];
-
-  const scheduleWeek = {
-    Monday: [
-      { name: "Math", time: "8:00 - 9:00 AM" },
-      { name: "Coding", time: "15:00 - 16:00 PM" },
-    ],
-    Wednesday: [
-      { name: "Science", time: "10:00 - 11:30 AM" },
-      { name: "Robotics", time: "14:00 - 15:30 PM" },
-    ],
-    Friday: [{ name: "English", time: "9:00 - 10:30 AM" }],
-  };
-
   return (
     <>
       <div>

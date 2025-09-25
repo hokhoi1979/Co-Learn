@@ -28,6 +28,8 @@ import AdminLayout from "../pages/Admin/AdminLayout";
 import DashboardAdmin from "../pages/Admin/Dashboard/DashboardAdmin";
 import UserAdmin from "../pages/Admin/UserAdmin/UserAdmin";
 import TeacherAdmin from "../pages/Admin/TeacherAdmin/TeacherAdmin";
+import AboutUs from "../layouts/Header/AboutUs";
+import FeaturedCourses from "../layouts/Header/FeaturedCourses";
 
 const router = createBrowserRouter([
   {
@@ -95,6 +97,8 @@ const router = createBrowserRouter([
 
       { path: "login", element: <Login /> },
       { path: "register", element: <Register /> },
+      { path: "about-us", element: <AboutUs /> },
+      { path: "featured-courses", element: <FeaturedCourses /> },
     ],
   },
 ]);

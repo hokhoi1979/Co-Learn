@@ -24,6 +24,7 @@ import {
   Chip,
 } from "@mui/material";
 import Earning from "../ComponentTeacher/Earning";
+import { paymentsTeacher, topCourses } from "../../../shared";
 
 const incomeData = [
   { month: "Jul", income: 2800 },
@@ -34,65 +35,6 @@ const incomeData = [
   { month: "Dec", income: 3680 },
 ];
 
-const topCourses = [
-  {
-    name: "JavaScript Game Development",
-    students: 45,
-    income: 2450,
-    color: "#22c55e",
-  },
-  {
-    name: "React Advanced Patterns",
-    students: 32,
-    income: 1890,
-    color: "#3b82f6",
-  },
-  { name: "Node.js Backend", students: 28, income: 1340, color: "#a855f7" },
-  {
-    name: "TypeScript Fundamentals",
-    students: 19,
-    income: 980,
-    color: "#f97316",
-  },
-];
-
-const payments = [
-  {
-    date: "Dec 15, 2024",
-    description: "Monthly Payout",
-    amount: 2450,
-    status: "Completed",
-    method: "Bank Transfer",
-  },
-  {
-    date: "Dec 10, 2024",
-    description: "Course Sales",
-    amount: 890,
-    status: "Completed",
-    method: "PayPal",
-  },
-  {
-    date: "Dec 5, 2024",
-    description: "Bonus Payment",
-    amount: 150,
-    status: "Completed",
-    method: "Bank Transfer",
-  },
-  {
-    date: "Nov 30, 2024",
-    description: "Monthly Payout",
-    amount: 3200,
-    status: "Completed",
-    method: "Bank Transfer",
-  },
-  {
-    date: "Nov 25, 2024",
-    description: "Course Sales",
-    amount: 1240,
-    status: "Pending",
-    method: "PayPal",
-  },
-];
 function TeacherIncome() {
   return (
     <>
@@ -240,7 +182,7 @@ function TeacherIncome() {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {payments.map((row, index) => (
+                  {paymentsTeacher.map((row, index) => (
                     <TableRow key={index}>
                       <TableCell>{row.date}</TableCell>
                       <TableCell>{row.description}</TableCell>

@@ -1,18 +1,10 @@
-import React from "react";
 import {
   FaUsers,
   FaChalkboardTeacher,
   FaBook,
   FaDollarSign,
-  FaPlusCircle,
-  FaFileAlt,
-  FaServer,
-  FaDatabase,
-  FaClock,
 } from "react-icons/fa";
 import {
-  BarChart,
-  Bar,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -22,32 +14,17 @@ import {
   Line,
   Legend,
 } from "recharts";
-import { coursesData, revenueData } from "../../../shared";
-
-const teacherStudentData = [
-  { month: "Jan", teachers: 45, students: 320 },
-  { month: "Feb", teachers: 50, students: 400 },
-  { month: "Mar", teachers: 55, students: 420 },
-  { month: "Apr", teachers: 60, students: 500 },
-  { month: "May", teachers: 65, students: 550 },
-  { month: "Jun", teachers: 70, students: 600 },
-  { month: "Jul", teachers: 75, students: 580 },
-  { month: "Aug", teachers: 80, students: 560 },
-];
+import { coursesData, revenueData, teacherStudentData } from "../../../shared";
 
 function DashboardAdmin() {
   return (
     <div className="w-full min-h-screen p-6 bg-gray-100">
-      {/* Header */}
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-gray-800">Welcome Admin!</h1>
         <p className="text-gray-500">Manage and update your system!</p>
       </div>
 
-      {/* Top Stats */}
-      {/* Top Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-        {/* Total Users */}
         <div className="bg-white rounded-xl p-4 shadow flex items-center gap-4">
           <div className="bg-green-100 p-3 rounded-full">
             <FaUsers className="text-3xl text-green-600" />
@@ -59,7 +36,6 @@ function DashboardAdmin() {
           </div>
         </div>
 
-        {/* Active Teachers */}
         <div className="bg-white rounded-xl p-4 shadow flex items-center gap-4">
           <div className="bg-blue-100 p-3 rounded-full">
             <FaChalkboardTeacher className="text-3xl text-blue-600" />
@@ -71,7 +47,6 @@ function DashboardAdmin() {
           </div>
         </div>
 
-        {/* Total Courses */}
         <div className="bg-white rounded-xl p-4 shadow flex items-center gap-4">
           <div className="bg-purple-100 p-3 rounded-full">
             <FaBook className="text-3xl text-purple-600" />
@@ -145,7 +120,6 @@ function DashboardAdmin() {
               <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
               <XAxis dataKey="month" />
 
-              {/* Teachers axis */}
               <YAxis
                 yAxisId="left"
                 domain={[0, "dataMax + 20"]}
@@ -156,7 +130,6 @@ function DashboardAdmin() {
                 }}
               />
 
-              {/* Students axis */}
               <YAxis
                 yAxisId="right"
                 orientation="right"

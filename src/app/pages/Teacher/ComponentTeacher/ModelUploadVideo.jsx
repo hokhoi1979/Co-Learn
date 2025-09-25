@@ -3,15 +3,20 @@ import { Modal, Form, Input, Button, Upload } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { Icon } from "@iconify/react";
 import { toast } from "react-toastify";
+import { useDispatch } from "react-redux";
+import { createLesson } from "../../../redux/teacher/lessonTeacher/createLesson/createLessonSlice";
+import { updateLesson } from "../../../redux/teacher/lessonTeacher/updateLesson/updateLessonSlice";
+import { getLesson } from "../../../redux/teacher/lessonTeacher/getLesson/getLessonSlice";
 
 function ModelUploadVideo({
   isModalOpen,
   handleOk,
   handleCancel,
-  onSubmitData,
   initialValues,
+  courseId,
 }) {
   const [form] = Form.useForm();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (initialValues) {
@@ -22,7 +27,7 @@ function ModelUploadVideo({
   }, [initialValues, form]);
 
   const onSubmit = () => {
-    form.validateFields().then((values) => {
+    form.validateFields().then(async (values) => {
       let videoUrl = initialValues?.videoUrl || null;
 
       const file = values.video?.[0]?.originFileObj;
@@ -30,19 +35,25 @@ function ModelUploadVideo({
         videoUrl = URL.createObjectURL(file);
       }
 
-      const newVideo = {
-        ...values,
-        videoUrl,
+      const payload = {
+        courseId: courseId,
+        title: values.title,
+        content: values.content,
+        orderNumber: values.orderNumber,
+        durationMinutes: 1,
       };
 
-      onSubmitData(newVideo);
+      if (initialValues?.lessonId) {
+        dispatch(updateLesson({ id: initialValues?.lessonId, body: payload }));
+        toast.success("Update successful! ");
+      } else {
+        dispatch(createLesson({ id: courseId, body: payload }));
+      }
+
+      await dispatch(getLesson(courseId));
+
       handleOk();
       form.resetFields();
-      if (initialValues) {
-        toast.success("Update successful!");
-      } else {
-        toast.success("Create successful!");
-      }
     });
   };
 
@@ -83,21 +94,26 @@ function ModelUploadVideo({
           <Icon color="black" icon="mdi:video-outline" width="28" height="28" />
           <h2 className="font-semibold text-lg">Video Information</h2>
         </div>
-
+        <div className="grid grid-cols-2 gap-4">
+          <Form.Item
+            label="Video Title"
+            name="title"
+            rules={[{ required: true, message: "Please enter video title" }]}
+          >
+            <Input placeholder="e.g., Introduction to Python" />
+          </Form.Item>
+          <Form.Item
+            label="Order Number"
+            name="orderNumber"
+            rules={[{ required: true, message: "Please enter order number" }]}
+          >
+            <Input type="number" placeholder="e.g., 1" />
+          </Form.Item>
+        </div>
         <Form.Item
-          label="Video Title"
-          name="title"
-          rules={[{ required: true, message: "Please enter video title" }]}
-        >
-          <Input placeholder="e.g., Introduction to Python" />
-        </Form.Item>
-
-        <Form.Item
-          label="Description"
-          name="description"
-          rules={[
-            { required: true, message: "Please enter video description" },
-          ]}
+          label="Content"
+          name="content"
+          rules={[{ required: true, message: "Please enter video content" }]}
         >
           <Input.TextArea
             placeholder="What will students learn from this video?"

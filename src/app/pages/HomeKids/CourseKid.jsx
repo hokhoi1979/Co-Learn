@@ -1,29 +1,10 @@
 import React from "react";
 import { Icon } from "@iconify/react";
 import { Outlet, useNavigate } from "react-router-dom";
+import { courses } from "../../shared";
 
 function CourseKid() {
   const navigate = useNavigate();
-  const courses = [
-    {
-      title: "Scratch Adventures",
-      description: "Create amazing animations and games!",
-      progress: 10,
-      total: 12,
-    },
-    {
-      title: "Python Playground",
-      description: "Learn to code with friendly Python!",
-      progress: 8,
-      total: 12,
-    },
-    {
-      title: "Web Wizardry",
-      description: "Build your own websites like magic!",
-      progress: 4,
-      total: 12,
-    },
-  ];
 
   return (
     <div>
