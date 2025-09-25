@@ -1,6 +1,6 @@
 import Earning from "../ComponentTeacher/Earning";
 import { Button } from "antd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BookOutlined } from "@ant-design/icons";
 
 import ModalTeacher from "../ComponentTeacher/ModalTeacher";
@@ -8,56 +8,61 @@ import CarouselTeacher from "../ComponentTeacher/CarouselTeacher";
 import { Outlet, useNavigate } from "react-router";
 import DeleteVideoModal from "../ComponentTeacher/DeleteVideoModal";
 import { toast } from "react-toastify";
+import { useDispatch, useSelector } from "react-redux";
+import img from "../../../assets/img/bg1.jpg";
+import { getCourse } from "../../../redux/teacher/courseTeacher/getCourse/getCourseSlice";
+import { createCourse } from "../../../redux/teacher/courseTeacher/createCourse/createCourseSlice";
+import { deleteCourse } from "../../../redux/teacher/courseTeacher/deleteCourse/deleteCourseSlice";
+import { updateCourse } from "../../../redux/teacher/courseTeacher/updateCourse/updateCourseSlice";
 
 function TeacherContent() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editIndex, setEditIndex] = useState(null);
+  const [editCourse, setEditCourse] = useState(null);
+  const [editId, setEditId] = useState(null);
   const [deleteIndex, setDeleteIndex] = useState(null);
   const [loading, setLoading] = useState(false);
+
+  const { course } = useSelector((state) => state.getCourseData);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const [data, setData] = useState([]);
+  useEffect(() => {
+    dispatch(getCourse());
+  }, [dispatch]);
 
-  const showModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleOk = () => {
-    setIsModalOpen(false);
-  };
-
+  const showModal = () => setIsModalOpen(true);
   const handleCancel = () => {
     setIsModalOpen(false);
+    setEditCourse(null);
   };
 
   const handleSubmit = (newCourse) => {
-    if (editIndex != null) {
-      setData((prev) =>
-        prev.map((item, i) => (i === editIndex ? newCourse : item))
-      );
-      setEditIndex(null);
+    if (editCourse) {
+      dispatch(updateCourse({ id: editId, body: newCourse }));
     } else {
-      setData((prev) => [...prev, newCourse]);
+      dispatch(createCourse(newCourse));
     }
+    setIsModalOpen(false);
+    setEditCourse(null);
   };
 
-  const handleEdit = (index) => {
-    setEditIndex(index);
+  const handleEdit = (course) => {
+    setEditCourse(course);
     setIsModalOpen(true);
   };
 
-  const handleDelete = (values) => {
-    setDeleteIndex(values);
-    console.log(data[values]);
-  };
+  const handleConfirmDelete = async () => {
+    if (deleteIndex === null) return;
+    const courseId = course?.value?.items?.[deleteIndex]?.courseId;
+    if (!courseId) return;
 
-  const handleConfirmDelete = () => {
     setLoading(true);
     try {
-      const deleteVideo = data.filter((_, i) => i !== deleteIndex);
-      setData(deleteVideo);
-      setDeleteIndex(null);
+      await dispatch(deleteCourse(courseId));
       toast.success("Delete successful!");
+      setDeleteIndex(null);
+    } catch {
+      toast.error("Delete failed!");
     } finally {
       setLoading(false);
     }
@@ -78,9 +83,7 @@ function TeacherContent() {
         {!isViewingContent && (
           <div className="px-15 mb-10">
             <div className="flex justify-between mt-5">
-              <div>
-                <h1 className="text-2xl font-bold">My Course</h1>
-              </div>
+              <h1 className="text-2xl font-bold">My Course</h1>
               <Button
                 onClick={showModal}
                 type="secondary"
@@ -89,129 +92,85 @@ function TeacherContent() {
                 + Add new course
               </Button>
             </div>
-            {data.length === 0 ? (
-              <>
-                <div className="flex flex-col items-center justify-center h-70  mt-10 bg-gray-50 rounded-2xl shadow-inner p-6">
-                  <BookOutlined className="text-gray-400 text-6xl mb-4" />
-                  <h2 className="text-xl font-semibold text-gray-700 mb-2">
-                    No Course
-                  </h2>
-                  <p className="text-gray-500 mb-6 text-center">
-                    You haven’t created any course yet. <br />
-                    Start by creating your first class now.
-                  </p>
-                </div>
-              </>
+
+            {!course?.value?.items?.length ? (
+              <div className="flex flex-col items-center justify-center h-70 mt-10 bg-gray-50 rounded-2xl shadow-inner p-6">
+                <BookOutlined className="text-gray-400 text-6xl mb-4" />
+                <h2 className="text-xl font-semibold text-gray-700 mb-2">
+                  No Course
+                </h2>
+                <p className="text-gray-500 mb-6 text-center">
+                  You haven’t created any course yet. <br />
+                  Start by creating your first class now.
+                </p>
+              </div>
             ) : (
-              <>
-                <div className="grid grid-cols-3 gap-6 mt-5">
-                  {data.map((item, index) => {
-                    return (
-                      <div
-                        key={index}
-                        className="w-full h-auto bg-white rounded-2xl overflow-hidden"
-                      >
-                        <img
-                          src={item.thumbnail}
-                          className="w-full h-60 object-cover rounded-t-2xl"
-                        />
+              <div className="grid grid-cols-3 gap-6 mt-5">
+                {course.value.items.map((item, index) => (
+                  <div
+                    key={item.courseId || index}
+                    className="w-full h-auto bg-white rounded-2xl overflow-hidden"
+                  >
+                    <img
+                      src={img}
+                      className="w-full h-60 object-cover rounded-t-2xl"
+                    />
+                    <div className="p-3">
+                      <h2 className="font-bold text-lg">{item.title}</h2>
+                      <h4 className=" text-gray-500 mb-2">
+                        {item.description}
+                      </h4>
 
-                        <div className="p-3">
-                          <h2 className="font-bold text-lg">{item.title}</h2>
-                          <h4 className=" text-gray-500">{item.description}</h4>
-
-                          <div className="flex justify-between gap-2">
-                            <p className="text-gray-500 w-15">Lessons:</p>
-                            <p className=" font-bold"> {item.lessons}</p>
-                          </div>
-
-                          <div className="flex justify-between gap-2">
-                            <p className="text-gray-500 w-15">Duration:</p>
-                            <p className=" font-bold">
-                              {" "}
-                              {item.dates.start} to {item.dates.end}{" "}
-                            </p>
-                          </div>
-
-                          <div className="flex justify-between gap-2">
-                            <p className="text-gray-500 w-15">Pricing:</p>
-                            <p className="font-semibold text-green-600">
-                              {item.price}$/ lessons
-                            </p>
-                          </div>
-
-                          <div className="mt-5 gap-1.5 grid grid-cols-3">
-                            <button
-                              onClick={() => handleEdit(index)}
-                              type="secondary"
-                              className="bg-[#76eacd] cursor-pointer hover:bg-[#3edfb7] py-1 w-full h-auto text-white font-medium rounded-md flex gap-2 items-center justify-center"
-                            >
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="18"
-                                height="18"
-                                viewBox="0 0 24 24"
-                              >
-                                <path
-                                  fill="#fff"
-                                  d="m14.06 9l.94.94L5.92 19H5v-.92zm3.6-6c-.25 0-.51.1-.7.29l-1.83 1.83l3.75 3.75l1.83-1.83c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.2-.2-.45-.29-.71-.29m-3.6 3.19L3 17.25V21h3.75L17.81 9.94z"
-                                  stroke-width="0.5"
-                                  stroke="#fff"
-                                />
-                              </svg>
-                              Edit
-                            </button>
-
-                            <button
-                              type="secondary"
-                              onClick={() => handleDelete(index)}
-                              className="bg-[#ea8576] cursor-pointer hover:bg-[#e95a44] py-1 w-full h-auto text-white font-medium rounded-md flex gap-2 items-center justify-center"
-                            >
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="18"
-                                height="18"
-                                viewBox="0 0 24 24"
-                              >
-                                <path
-                                  fill="#fff"
-                                  d="M7 21q-.825 0-1.412-.587T5 19V6H4V4h5V3h6v1h5v2h-1v13q0 .825-.587 1.413T17 21zM17 6H7v13h10zM9 17h2V8H9zm4 0h2V8h-2zM7 6v13z"
-                                  stroke-width="0.5"
-                                  stroke="#fff"
-                                />
-                              </svg>
-                              Delete
-                            </button>
-
-                            <button
-                              onClick={() =>
-                                navigate("/teacher/content/viewContent")
-                              }
-                              type="secondary"
-                              className="bg-[#20ba93] cursor-pointer hover:bg-[#33a286] py-1 w-full h-auto text-white font-medium rounded-md flex gap-2 items-center justify-center"
-                            >
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="18"
-                                height="18"
-                                viewBox="0 0 24 24"
-                              >
-                                <path
-                                  fill="white"
-                                  d="M12 9a3 3 0 0 0-3 3a3 3 0 0 0 3 3a3 3 0 0 0 3-3a3 3 0 0 0-3-3m0 8a5 5 0 0 1-5-5a5 5 0 0 1 5-5a5 5 0 0 1 5 5a5 5 0 0 1-5 5m0-12.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5"
-                                  stroke-width="0.5"
-                                  stroke="#2db673"
-                                />
-                              </svg>
-                              View
-                            </button>
-                          </div>
-                        </div>
+                      <div className="flex justify-between gap-2">
+                        <p className="text-gray-500 w-20">Level:</p>
+                        <p className=" font-bold capitalize">{item.level}</p>
                       </div>
-                    );
-                  })}
-                </div>
-              </>
+
+                      <div className="flex justify-between gap-2">
+                        <p className="text-gray-500 w-20">Pricing:</p>
+                        <p className="font-semibold text-green-600">
+                          <p className="font-semibold text-green-600">
+                            {Number(item.pricePerSession)?.toLocaleString(
+                              "vi-VN"
+                            )}
+                            ₫
+                          </p>
+                        </p>
+                      </div>
+
+                      <div className="mt-5 gap-1.5 grid grid-cols-3">
+                        <button
+                          onClick={() => {
+                            handleEdit(item);
+                            setEditId(item.courseId);
+                          }}
+                          className="bg-[#76eacd] hover:bg-[#3edfb7] cursor-pointer py-1 w-full text-white font-medium rounded-md"
+                        >
+                          Edit
+                        </button>
+
+                        <button
+                          onClick={() => setDeleteIndex(index)}
+                          className="bg-[#ea8576] hover:bg-[#e95a44] cursor-pointer py-1 w-full text-white font-medium rounded-md"
+                        >
+                          Delete
+                        </button>
+
+                        <button
+                          onClick={() =>
+                            navigate("/teacher/content/viewContent", {
+                              state: { item },
+                            })
+                          }
+                          className="bg-[#20ba93] hover:bg-[#33a286] cursor-pointer py-1 w-full text-white font-medium rounded-md"
+                        >
+                          View
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             )}
           </div>
         )}
@@ -222,18 +181,19 @@ function TeacherContent() {
 
       <DeleteVideoModal
         open={deleteIndex !== null}
-        videoTitle={deleteIndex !== null ? data[deleteIndex]?.title : ""}
+        courseTitle={
+          deleteIndex !== null ? course.value.items[deleteIndex]?.title : ""
+        }
         loading={loading}
-        courseTitle={data?.[deleteIndex]?.title}
         onCancel={() => setDeleteIndex(null)}
         onConfirm={handleConfirmDelete}
       />
+
       <ModalTeacher
         isModalOpen={isModalOpen}
-        handleOk={handleOk}
         handleCancel={handleCancel}
         onSubmitData={handleSubmit}
-        initialState={editIndex != null ? data[editIndex] : null}
+        initialState={editCourse}
       />
     </>
   );

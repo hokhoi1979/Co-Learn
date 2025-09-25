@@ -1,44 +1,59 @@
-import { Button, Card, Modal } from "antd";
-import React, { useState } from "react";
-import { useNavigate } from "react-router";
+import { Button, Card } from "antd";
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router";
 import ModelUploadVideo from "../ComponentTeacher/ModelUploadVideo";
 import DeleteVideoModal from "../ComponentTeacher/DeleteVideoModal";
 import { toast } from "react-toastify";
+import { Book, Pencil, Trash } from "lucide-react";
+import ModalMaterials from "../ComponentTeacher/ModelMaterials";
+import img from "../../../assets/img/bg1.jpg";
+import { useDispatch, useSelector } from "react-redux";
+import { getLesson } from "../../../redux/teacher/lessonTeacher/getLesson/getLessonSlice";
+import { deleteLesson } from "../../../redux/teacher/lessonTeacher/deleteLesson/deleteLessonSlice";
+import { BookOutlined } from "@ant-design/icons";
 
 function ViewContent() {
   const navigate = useNavigate();
+  const { state } = useLocation();
+  const { item } = state || {};
+  const dispatch = useDispatch();
+
   const [openVideo, setOpenVideo] = useState(false);
-  const [data, setData] = useState([]);
   const [deleteIndex, setDeleteIndex] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [editIndex, setEditIndex] = useState(null);
+  const [editLesson, setEditLesson] = useState(null);
+  const [materialsOpen, setMaterialsOpen] = useState(false);
+  const [materialsIndex, setMaterialsIndex] = useState(null);
+  const [titleLesson, setTitleLesson] = useState("");
+
+  const { data = [] } = useSelector((state) => state.getLessonData);
+
   const handleOk = () => {
     setOpenVideo(false);
-    setEditIndex(null);
+    setEditLesson(null);
   };
 
-  const handleSubmit = (values) => {
-    if (editIndex !== null) {
-      setData((prev) =>
-        prev.map((item, i) => (i === editIndex ? { ...item, ...values } : item))
-      );
-    } else {
-      setData((prev) => [...prev, values]);
+  useEffect(() => {
+    if (item?.courseId) {
+      dispatch(getLesson(item.courseId));
     }
-    setEditIndex(null);
-  };
+  }, [dispatch, item?.courseId]);
 
-  const handleDeleteClick = (index) => {
-    setDeleteIndex(index);
+  const handleDeleteClick = (id, title) => {
+    setDeleteIndex(id);
+    setTitleLesson(title);
   };
 
   const handleConfirmDelete = async () => {
-    setLoading(true);
     try {
-      const deleteVideo = data.filter((_, i) => i !== deleteIndex);
-      setData(deleteVideo);
+      setLoading(true);
+      await dispatch(deleteLesson(deleteIndex));
+      await dispatch(getLesson(item.courseId));
+      toast.success("Deleted successfully");
       setDeleteIndex(null);
-      toast.success("Delete successful!");
+    } catch (error) {
+      toast.error("Delete failed");
+      console.log(error);
     } finally {
       setLoading(false);
     }
@@ -72,110 +87,98 @@ function ViewContent() {
             onClick={() => setOpenVideo(true)}
             className="!flex !gap-2 !bg-[#3fcba8] !text-white shadow-md hover:!bg-[#17ae88] "
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-            >
-              <path
-                fill="none"
-                stroke="#fff"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="m15 10l4.553-2.276A1 1 0 0 1 21 8.618v6.764a1 1 0 0 1-1.447.894L15 14zM3 8a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"
-              />
-            </svg>
-            Upload video
+            Upload lesson
           </Button>
         </div>
       </div>
+
+      {data?.value?.items?.length > 0 ? (
+        data?.value?.items?.map((lesson, index) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-5">
+            <Card
+              key={lesson.lessonId || index}
+              hoverable
+              className="shadow-md rounded-lg"
+              title={lesson.title}
+              extra={
+                <span className="text-gray-400 text-sm">
+                  Lesson {lesson.orderNumber}
+                </span>
+              }
+            >
+              <img src={img} className="w-full h-60 object-cover rounded-2xl" />
+              <p className="text-gray-600 mb-2">{lesson.content}</p>
+
+              <div className="mt-5 gap-1 grid grid-cols-3">
+                <button
+                  onClick={() => {
+                    setEditLesson(lesson);
+                    setOpenVideo(true);
+                  }}
+                  className="bg-[#76eacd] cursor-pointer hover:bg-[#3edfb7] py-1 w-full text-white font-medium rounded-md flex gap-2 items-center justify-center"
+                >
+                  <Pencil size={16} /> Edit
+                </button>
+
+                <button
+                  onClick={() =>
+                    handleDeleteClick(lesson.lessonId, lesson.title)
+                  }
+                  className="bg-[#ea8576] cursor-pointer hover:bg-[#e95a44] py-1 w-full text-white font-medium rounded-md flex gap-2 items-center justify-center"
+                >
+                  <Trash size={16} /> Delete
+                </button>
+
+                <button
+                  onClick={() => {
+                    setMaterialsIndex(lesson.lessonId);
+                    setMaterialsOpen(true);
+                  }}
+                  className="bg-[#3a8dc5] cursor-pointer hover:bg-[#1979b9] py-1 w-full text-white font-medium rounded-md flex gap-2 items-center justify-center"
+                >
+                  <Book size={16} /> Materials
+                </button>
+              </div>
+            </Card>
+          </div>
+        ))
+      ) : (
+        <div className="flex flex-col w-full items-center justify-center h-70 mt-10 mb-10 bg-gray-50 rounded-2xl shadow-inner p-6">
+          <BookOutlined className="text-gray-400 text-6xl mb-4" />
+          <h2 className="text-xl font-semibold text-gray-700 mb-2">
+            No Lessons
+          </h2>
+          <p className="text-gray-500 mb-6 text-center">
+            You haven’t created any course yet. <br />
+            Start by creating your first lesson now.
+          </p>
+        </div>
+      )}
+
+      <DeleteVideoModal
+        open={deleteIndex !== null}
+        loading={loading}
+        courseTitle={titleLesson}
+        onCancel={() => setDeleteIndex(null)}
+        onConfirm={handleConfirmDelete}
+      />
+
+      <ModalMaterials
+        open={materialsOpen}
+        onCancel={() => setMaterialsOpen(false)}
+        lessonId={materialsIndex}
+      />
 
       <ModelUploadVideo
         isModalOpen={openVideo}
         handleCancel={() => {
           setOpenVideo(false);
-          setEditIndex(null);
+          setEditLesson(null);
         }}
+        courseId={item.courseId}
         handleOk={handleOk}
-        onSubmitData={handleSubmit}
-        initialValues={editIndex !== null ? data[editIndex] : null}
+        initialValues={editLesson}
       />
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-5">
-        {data.map((item, index) => (
-          <Card
-            key={index}
-            hoverable
-            className="shadow-md rounded-lg"
-            title={item.title}
-            extra={<span className="text-gray-400 text-sm">#{index + 1}</span>}
-          >
-            <video
-              src={item.videoUrl}
-              controls
-              className="w-full rounded-md mb-3"
-            />
-            <p className="text-gray-600">{item.description}</p>
-
-            <div className="mt-5 gap-1.5 grid grid-cols-2">
-              <button
-                type="secondary"
-                onClick={() => {
-                  setEditIndex(index);
-                  setOpenVideo(true);
-                }}
-                className="bg-[#76eacd] cursor-pointer hover:bg-[#3edfb7] py-1 w-full h-auto text-white font-medium rounded-md flex gap-2 items-center justify-center"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="18"
-                  height="18"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    fill="#fff"
-                    d="m14.06 9l.94.94L5.92 19H5v-.92zm3.6-6c-.25 0-.51.1-.7.29l-1.83 1.83l3.75 3.75l1.83-1.83c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.2-.2-.45-.29-.71-.29m-3.6 3.19L3 17.25V21h3.75L17.81 9.94z"
-                    stroke-width="0.5"
-                    stroke="#fff"
-                  />
-                </svg>
-                Edit
-              </button>
-
-              <button
-                type="secondary"
-                onClick={() => handleDeleteClick(index)}
-                className="bg-[#ea8576] cursor-pointer hover:bg-[#e95a44] py-1 w-full h-auto text-white font-medium rounded-md flex gap-2 items-center justify-center"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="18"
-                  height="18"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    fill="#fff"
-                    d="M7 21q-.825 0-1.412-.587T5 19V6H4V4h5V3h6v1h5v2h-1v13q0 .825-.587 1.413T17 21zM17 6H7v13h10zM9 17h2V8H9zm4 0h2V8h-2zM7 6v13z"
-                    stroke-width="0.5"
-                    stroke="#fff"
-                  />
-                </svg>
-                Delete
-              </button>
-            </div>
-          </Card>
-        ))}
-        <DeleteVideoModal
-          open={deleteIndex !== null}
-          videoTitle={deleteIndex !== null ? data[deleteIndex]?.title : ""}
-          loading={loading}
-          courseTitle={data?.[deleteIndex]?.title}
-          onCancel={() => setDeleteIndex(null)}
-          onConfirm={handleConfirmDelete}
-        />
-      </div>
     </>
   );
 }

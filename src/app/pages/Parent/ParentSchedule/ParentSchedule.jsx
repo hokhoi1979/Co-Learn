@@ -17,7 +17,7 @@ function ParentSchedule() {
     "Sunday",
   ];
 
-  const courses = {
+  const courseSchedule = {
     Monday: [
       {
         title: "JavaScript Game Development",
@@ -150,8 +150,8 @@ function ParentSchedule() {
           </div>
 
           <div className="flex flex-col gap-4">
-            {courses[activeDay].length > 0 ? (
-              courses[activeDay].map((course, idx) => (
+            {courseSchedule[activeDay].length > 0 ? (
+              courseSchedule[activeDay].map((course, idx) => (
                 <div
                   key={idx}
                   className="flex items-center justify-between bg-[#F0F6F6] border rounded-xl shadow-sm p-4"

@@ -6,6 +6,20 @@ import watchGetAllTeacher from "./admin/user/getAllTeacher/getAllTeacherSaga";
 import watchGetProfileTeacher from "./teacher/profileTeacher/getProfileTeacher/getProfileTeacherSaga";
 import watchGetProfileStudent from "./parent/profileStudent/getProfileStudentSaga";
 import watchEditProfileTeacher from "./teacher/profileTeacher/editProfileTeacher/editProfileTeacherSaga";
+import watchCreateCourse from "./teacher/courseTeacher/createCourse/createCourseSaga";
+import watchUpdateCourse from "./teacher/courseTeacher/updateCourse/updateCourseSaga";
+import watchCreateMaterials from "./teacher/materialsTeacher/createMaterials/createMaterialsSaga";
+import watchDeleteMaterials from "./teacher/materialsTeacher/deleteMaterials/deleteMaterialsSaga";
+import watchGetMaterials from "./teacher/materialsTeacher/getMaterials/getMaterialsSaga";
+import watchUpdateMaterials from "./teacher/materialsTeacher/updateMaterials/updateMaterialsSaga";
+import watchGetCourseById from "./teacher/courseTeacher/getCourseById/getCourseByIdSaga";
+import watchDeleteCourse from "./teacher/courseTeacher/deleteCourse/deleteCourseSaga";
+import watchGetCourse from "./teacher/courseTeacher/getCourse/getCourseSaga";
+import watchCreateLesson from "./teacher/lessonTeacher/createLesson/createLessonSaga";
+import watchDeleteLesson from "./teacher/lessonTeacher/deleteLesson/deleteLessonSaga";
+import watchGetLesson from "./teacher/lessonTeacher/getLesson/getLessonSaga";
+import watchUpdateLesson from "./teacher/lessonTeacher/updateLesson/updateLessonSaga";
+import watchGetProfileTeacherId from "./teacher/profileTeacher/getProfileId/getProfileIdSaga";
 
 export default function* rootSaga() {
   yield all([
@@ -18,6 +32,26 @@ export default function* rootSaga() {
     watchGetAllTeacher(),
     watchGetProfileTeacher(),
     watchEditProfileTeacher(),
+    watchGetProfileTeacherId(),
+
+    //Teacher - Course
+    watchCreateCourse(),
+    watchGetCourse(),
+    watchUpdateCourse(),
+    watchGetCourseById(),
+    watchDeleteCourse(),
+
+    //Teacher - Materials
+    watchCreateMaterials(),
+    watchDeleteMaterials(),
+    watchGetMaterials(),
+    watchUpdateMaterials(),
+
+    //Teacher - Lesson
+    watchCreateLesson(),
+    watchDeleteLesson(),
+    watchGetLesson(),
+    watchUpdateLesson(),
 
     //Student
     watchGetProfileStudent(),

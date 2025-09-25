@@ -1,44 +1,13 @@
 import React from "react";
 import { useLocation, useNavigate } from "react-router";
 import { Icon } from "@iconify/react";
+import { lesson } from "../../shared";
 
 function CourseDetail() {
   const navigate = useNavigate();
   const location = useLocation();
   const { title, description } = location.state || {};
 
-  const lesson = [
-    {
-      title: "Getting Started with Scratch",
-      minutes: "12",
-      status: "Completed",
-    },
-    {
-      title: "Moving Sprites Around",
-      minutes: "20",
-      status: "Completed",
-    },
-    {
-      title: "Adding Sounds and Music",
-      minutes: "12",
-      status: "Completed",
-    },
-    {
-      title: "  Interactive Stories",
-      minutes: "12",
-      status: "Completed",
-    },
-    {
-      title: "Creating a Platformer Game",
-      minutes: "12",
-      status: "Current",
-    },
-    {
-      title: "Creating a Platformer Game",
-      minutes: "12",
-      status: "Not yet",
-    },
-  ];
   return (
     <>
       <div>

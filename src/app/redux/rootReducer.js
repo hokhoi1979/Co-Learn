@@ -6,6 +6,19 @@ import getAllTeacherReducer from "./admin/user/getAllTeacher/getAllTeacherSlice"
 import getProfileTeacherReducer from "./teacher/profileTeacher/getProfileTeacher/getProfileTeacherSlice";
 import editProfileTeacherReducer from "./teacher/profileTeacher/editProfileTeacher/editProfileTeacherSlice";
 import getProfileStudentReducer from "./parent/profileStudent/getProfileStudentSlice";
+import createCourseReducer from "./teacher/courseTeacher/createCourse/createCourseSlice";
+import getCourseReducer from "./teacher/courseTeacher/getCourse/getCourseSlice";
+import deleteCourseReducer from "./teacher/courseTeacher/deleteCourse/deleteCourseSlice";
+import updateCourseReducer from "./teacher/courseTeacher/updateCourse/updateCourseSlice";
+import createMaterialsReducer from "./teacher/materialsTeacher/createMaterials/createMaterialsSlice";
+import deleteMaterialsReducer from "./teacher/materialsTeacher/deleteMaterials/deleteMaterialsSlice";
+import getMaterialsReducer from "./teacher/materialsTeacher/getMaterials/getMaterialsSlice";
+import updateMaterialsReducer from "./teacher/materialsTeacher/updateMaterials/updateMaterialsSlice";
+import createLessonReducer from "./teacher/lessonTeacher/createLesson/createLessonSlice";
+import deleteLessonReducer from "./teacher/lessonTeacher/deleteLesson/deleteLessonSlice";
+import getLessonReducer from "./teacher/lessonTeacher/getLesson/getLessonSlice";
+import updateLessonReducer from "./teacher/lessonTeacher/updateLesson/updateLessonSlice";
+import getProfileTeacherIdReducer from "./teacher/profileTeacher/getProfileId/getProfileIdSlice";
 const rootReducer = combineReducers({
   login: loginReducer,
   register: registerReducer,
@@ -16,9 +29,29 @@ const rootReducer = combineReducers({
   getAllTeacher: getAllTeacherReducer,
   getProfileTeacher: getProfileTeacherReducer,
   editProfileTeacher: editProfileTeacherReducer,
+  getProfileTeacherId: getProfileTeacherIdReducer,
+
+  //Teacher - Course
+  createCourseData: createCourseReducer,
+  getCourseData: getCourseReducer,
+  deleteCourseData: deleteCourseReducer,
+  updateCourseData: updateCourseReducer,
+  getCourseByIdData: getCourseReducer,
+
+  //Teacher - Materials
+  createMaterialsData: createMaterialsReducer,
+  deleteMaterialsData: deleteMaterialsReducer,
+  getMaterialsData: getMaterialsReducer,
+  updateMaterialsData: updateMaterialsReducer,
+
+  //Teacher - Lesson
+  createLessonData: createLessonReducer,
+  deleteLessonData: deleteLessonReducer,
+  getLessonData: getLessonReducer,
+  updateLessonData: updateLessonReducer,
 
   //Student
-  getProfileStudent: getProfileStudentReducer,
+  getProfileStudentData: getProfileStudentReducer,
 });
 
 export default rootReducer;

@@ -1,41 +1,7 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { sections } from "../../shared";
 import { motion } from "framer-motion";
 
 function CourseTerms() {
-  const sections = [
-    {
-      title: "Enrollment",
-      content:
-        "By enrolling in our courses, you agree to provide accurate information and keep your account secure. You must be at least 13 years old to register.",
-    },
-    {
-      title: "Payments",
-      content:
-        "All payments must be made through our official payment methods. Prices are displayed in USD and may be subject to applicable taxes.",
-    },
-    {
-      title: "Refund Policy",
-      content:
-        "We offer a 7-day refund guarantee for all new learners. After 7 days, payments are non-refundable unless required by law.",
-    },
-    {
-      title: "Course Access & Usage",
-      content:
-        "Your course access is personal and non-transferable. You agree not to share your login details or resell our content without permission.",
-    },
-    {
-      title: "Intellectual Property",
-      content:
-        "All course materials, videos, and resources are the property of our platform. Unauthorized copying, distribution, or modification is prohibited.",
-    },
-    {
-      title: "Support & Assistance",
-      content:
-        "Our support team is available via email and live chat to assist you with any technical or course-related questions.",
-    },
-  ];
-
   return (
     <motion.div
       initial={{ opacity: 0 }}

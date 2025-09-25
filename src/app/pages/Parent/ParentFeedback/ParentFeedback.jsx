@@ -5,28 +5,7 @@ import { useForm } from "antd/es/form/Form";
 import FormItem from "antd/es/form/FormItem";
 import { toast } from "react-toastify";
 import CarouselTeacher from "../../Teacher/ComponentTeacher/CarouselTeacher";
-
-const data = [
-  {
-    title: "Critical Thinking & Puzzles",
-    description:
-      "Develop problem-solving and logical thinking with brain games.",
-    image: "/images/courses/critical-thinking.jpg",
-    status: true,
-  },
-  {
-    title: "Mathematics Fun",
-    description: "Engage kids with math challenges and fun quizzes.",
-    image: "/images/courses/math-fun.jpg",
-    status: false,
-  },
-  {
-    title: "Creative Arts",
-    description: "Boost creativity with drawing and storytelling activities.",
-    image: "/images/courses/creative-arts.jpg",
-    status: true,
-  },
-];
+import { dataFeedback } from "../../../shared";
 
 function ParentFeedback() {
   const [open, setOpen] = useState(false);
@@ -57,7 +36,7 @@ function ParentFeedback() {
         </h1>
 
         <div className="grid grid-cols-4 gap-2 mt-5">
-          {data.map((item, index) => (
+          {dataFeedback.map((item, index) => (
             <div
               key={index}
               className="border-1 shadow-md rounded-2xl bg-gray-100 py-5 flex flex-col h-full"

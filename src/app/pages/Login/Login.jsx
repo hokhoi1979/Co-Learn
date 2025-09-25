@@ -11,11 +11,11 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
-  const [email, setEmail] = useState(null);
-  const [password, setPassword] = useState(null);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const { user, error } = useSelector((state) => state.login);
   const dispatch = useDispatch();
-
+  console.log("USER", user);
   const handleSubmit = (values) => {
     values.preventDefault();
     dispatch(loginApi({ email: email, password: password }));

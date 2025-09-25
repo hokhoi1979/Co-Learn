@@ -1,19 +1,8 @@
-import React, { useEffect, useState } from "react";
-import {
-  Modal,
-  Form,
-  Input,
-  Button,
-  Upload,
-  Select,
-  TimePicker,
-  DatePicker,
-} from "antd";
+import React, { useEffect } from "react";
+import { Modal, Form, Input, Button, Upload, Select } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { Icon } from "@iconify/react";
 import { toast } from "react-toastify";
-import dayjs from "dayjs";
-const { RangePicker } = DatePicker;
 
 function ModalTeacher({
   isModalOpen,
@@ -28,10 +17,8 @@ function ModalTeacher({
     if (initialState) {
       form.setFieldsValue({
         ...initialState,
-        dates:
-          initialState.dates?.start && initialState.dates?.end
-            ? [dayjs(initialState.dates.start), dayjs(initialState.dates.end)]
-            : null,
+        pricePerSession: initialState.pricePerSession,
+        durationMinutes: initialState.durationMinutes,
         thumbnail: initialState.thumbnail
           ? [
               {
@@ -56,26 +43,19 @@ function ModalTeacher({
         : initialState?.thumbnail || null;
 
       const newCourse = {
-        ...values,
-        thumbnail: thumbnailUrl,
-        dates:
-          values.dates && values.dates.length === 2
-            ? {
-                start: values.dates[0].format("YYYY-MM-DD"),
-                end: values.dates[1].format("YYYY-MM-DD"),
-              }
-            : null,
+        teacherId: 1,
+        categoryId: 1,
+        title: values.title,
+        shortDescription: "",
+        description: values.description,
+        level: values.level,
+        pricePerSession: Number(values.pricePerSession),
+        durationMinutes: Number(values.durationMinutes),
+        // thumbnail: thumbnailUrl,
       };
 
-      console.log("DATA", newCourse);
-
       onSubmitData(newCourse);
-      handleOk();
-      if (initialState) {
-        toast.success("Edit successful!");
-      } else {
-        toast.success("Create successful!");
-      }
+
       form.resetFields();
     });
   };
@@ -102,7 +82,9 @@ function ModalTeacher({
       closable={false}
     >
       <div className="bg-gradient-to-r from-[#2972cc] to-[#35bdd2] p-5 rounded-t-lg -m-6 mb-6">
-        <h1 className="text-2xl font-bold text-white">Create New Course</h1>
+        <h1 className="text-2xl font-bold text-white">
+          {initialState ? "Edit Course" : "Create New Course"}
+        </h1>
         <p className="text-white/80">
           Build an engaging learning experience for your students
         </p>
@@ -129,13 +111,15 @@ function ModalTeacher({
           </Form.Item>
 
           <Form.Item
-            label="Start & End Date"
-            name="dates"
-            rules={[
-              { required: true, message: "Please select start & end date" },
-            ]}
+            label="Level"
+            name="level"
+            rules={[{ required: true, message: "Please select course level" }]}
           >
-            <RangePicker format="YYYY-MM-DD" style={{ width: "100%" }} />
+            <Select placeholder="Select difficulty level">
+              <Select.Option value="easy">Easy</Select.Option>
+              <Select.Option value="medium">Medium</Select.Option>
+              <Select.Option value="hard">Hard</Select.Option>
+            </Select>
           </Form.Item>
         </div>
 
@@ -154,21 +138,23 @@ function ModalTeacher({
 
         <div className="grid grid-cols-2 gap-4">
           <Form.Item
-            label="Lessons"
-            name="lessons"
+            label="Price per Session ($)"
+            name="pricePerSession"
             rules={[
-              { required: true, message: "Please enter number of lessons" },
+              { required: true, message: "Please enter price per session" },
             ]}
           >
-            <Input placeholder="e.g., 12" type="number" />
+            <Input placeholder="e.g., 25" type="number" />
           </Form.Item>
 
           <Form.Item
-            label="Price ($)"
-            name="price"
-            rules={[{ required: true, message: "Please enter course price" }]}
+            label="Duration (minutes)"
+            name="durationMinutes"
+            rules={[
+              { required: true, message: "Please enter duration in minutes" },
+            ]}
           >
-            <Input placeholder="e.g., 25" type="number" />
+            <Input placeholder="e.g., 60" type="number" />
           </Form.Item>
         </div>
 

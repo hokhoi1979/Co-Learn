@@ -1,8 +1,7 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import Summary from "../ComponentParent/Summary";
-import { Button, Calendar, Card, Checkbox, Form, Input } from "antd";
-import FormItem from "antd/es/form/FormItem";
-import { User, Mail, Phone, Lock, Users } from "lucide-react";
+import { Button } from "antd";
+import { Mail, Phone, Lock, Users } from "lucide-react";
 import ModalProfileParent from "../ComponentParent/ModalProfileParent";
 import ModalProfileChildren from "../ComponentParent/ModalProfileChildren";
 import CarouselTeacher from "../../Teacher/ComponentTeacher/CarouselTeacher";

@@ -1,111 +1,8 @@
-import React from "react";
-import Summary from "../ComponentParent/Summary";
 import { Image } from "antd";
 import img from "../../../assets/img/bg3.jpg";
 import { useNavigate } from "react-router";
 import CarouselTeacher from "../../Teacher/ComponentTeacher/CarouselTeacher";
-const data = [
-  {
-    title: "Creative Writing for Kids",
-    description:
-      "Help your child develop storytelling skills and imagination through fun activities.",
-    lessons: 24,
-    price: 49.99,
-    image: "/images/courses/creative-writing.jpg",
-    start: "2025/09/05",
-    end: "2025/10/05",
-  },
-  {
-    title: "Math Adventures: Numbers & Logic",
-    description:
-      "Make math fun with interactive games, puzzles, and problem-solving.",
-    lessons: 32,
-    price: 59.99,
-    image: "/images/courses/math-adventures.jpg",
-    start: "2025/09/05",
-    end: "2025/10/05",
-  },
-  {
-    title: "Science Explorers Lab",
-    description:
-      "Hands-on science experiments and discoveries that spark curiosity.",
-    lessons: 40,
-    price: 69.99,
-    image: "/images/courses/science-explorers.jpg",
-    start: "2025/09/05",
-    end: "2025/10/05",
-  },
-  {
-    title: "Coding for Beginners",
-    description:
-      "Learn the basics of coding with block-based programming and fun projects.",
-    lessons: 28,
-    price: 54.99,
-    image: "/images/courses/coding-beginners.jpg",
-    start: "2025/09/05",
-    end: "2025/10/05",
-  },
-  {
-    title: "Art & Creativity Studio",
-    description:
-      "Unleash creativity with painting, drawing, and digital art lessons.",
-    lessons: 30,
-    price: 44.99,
-    image: "/images/courses/art-creativity.jpg",
-    start: "2025/09/05",
-    end: "2025/10/05",
-  },
-  {
-    title: "Music & Rhythm Basics",
-    description:
-      "Explore instruments, rhythm, and melody in a fun way for kids.",
-    lessons: 20,
-    price: 39.99,
-    image: "/images/courses/music-rhythm.jpg",
-    start: "2025/09/05",
-    end: "2025/10/05",
-  },
-  {
-    title: "English Speaking for Kids",
-    description:
-      "Boost confidence in speaking English through interactive lessons.",
-    lessons: 36,
-    price: 64.99,
-    image: "/images/courses/english-speaking.jpg",
-    start: "2025/09/05",
-    end: "2025/10/05",
-  },
-  {
-    title: "Robotics with LEGO",
-    description: "Build and program simple robots with LEGO kits and coding.",
-    lessons: 25,
-    price: 79.99,
-    image: "/images/courses/robotics-lego.jpg",
-    start: "2025/09/05",
-    end: "2025/10/05",
-  },
-  {
-    title: "History Adventures",
-    description:
-      "Travel back in time and learn history through stories and games.",
-    lessons: 22,
-    price: 42.99,
-    image: "/images/courses/history-adventures.jpg",
-    start: "2025/09/05",
-    end: "2025/10/05",
-  },
-  {
-    title: "Critical Thinking & Puzzles",
-    description:
-      "Develop problem-solving and logical thinking with brain games.",
-    lessons: 26,
-    price: 45.99,
-    image: "/images/courses/critical-thinking.jpg",
-    start: "2025/09/05",
-    end: "2025/10/05",
-  },
-];
-
+import { dataCourse } from "../../../shared";
 function ParentCourse() {
   const navigation = useNavigate();
   return (
@@ -121,7 +18,7 @@ function ParentCourse() {
           Discover Amazing Courses for Your Child
         </h1>
         <div className="grid grid-cols-4 h-auto mt-5 gap-4 mb-5">
-          {data.map((item) => {
+          {dataCourse.map((item) => {
             return (
               <div className=" border-1 shadow-md rounded-2xl bg-gray-100 py-5 flex flex-col h-full">
                 <Image

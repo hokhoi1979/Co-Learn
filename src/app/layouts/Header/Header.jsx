@@ -1,6 +1,7 @@
 import { Button } from "antd";
 import { Icon } from "@iconify/react";
 import { Link, useNavigate } from "react-router-dom";
+import { BookOpenCheck, Contact, House } from "lucide-react";
 function Header() {
   const navigate = useNavigate();
   return (
@@ -22,33 +23,35 @@ function Header() {
             Co&Learn
           </p>
         </div>
-
         <ul className="flex gap-8 text-gray-600 font-medium text-[20px]">
           <li>
             <Link
-              to="/course"
+              to="/"
               className="flex items-center gap-1.5 hover:underline transition cursor-pointer"
             >
-              <Icon icon="mdi:book-open-page-variant" width="22" height="22" />
+              <House />
+
+              <span>Home</span>
+            </Link>
+          </li>
+
+          <li>
+            <Link
+              to="/featured-courses"
+              className="flex items-center gap-1.5 hover:underline transition cursor-pointer"
+            >
+              <BookOpenCheck />
               <span>Course</span>
             </Link>
           </li>
+
           <li>
             <Link
-              to="/pricing"
+              to="/about-us"
               className="flex items-center gap-1.5 hover:underline transition cursor-pointer"
             >
-              <Icon icon="mdi:currency-usd" width="22" height="22" />
-              <span>Pricing</span>
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/contact"
-              className="flex items-center gap-1.5 hover:underline transition cursor-pointer"
-            >
-              <Icon icon="mdi:account-box" width="22" height="22" />
-              <span>Contact</span>
+              <Contact />
+              <span>About Us</span>
             </Link>
           </li>
         </ul>
