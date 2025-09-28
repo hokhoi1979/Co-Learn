@@ -66,8 +66,9 @@ function ModalMaterials({ open, onCancel, lessonId }) {
     dispatch(getMaterials(lessonId));
   };
 
-  const handleDelete = (id) => {
-    dispatch(deleteMaterials({ id, lessonId }));
+  const handleDelete = async (id) => {
+    await dispatch(deleteMaterials({ id, lessonId }));
+    dispatch(getMaterials(lessonId));
   };
 
   const getViewUrl = (item) => {

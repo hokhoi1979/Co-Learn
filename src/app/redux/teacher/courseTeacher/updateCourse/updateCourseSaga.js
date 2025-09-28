@@ -15,6 +15,7 @@ export function* updateCourseSaga(action) {
     if (response.status === 200 || response.status === 201) {
       yield put(updateCourseSuccess(response.data));
       toast.success("Update successful!");
+      console.log("UPDATE", response.data);
 
       const fetch = yield call(api.get, `/Course`);
       if (fetch.status === 200 || fetch.status === 201) {

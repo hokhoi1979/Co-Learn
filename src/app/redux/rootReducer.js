@@ -19,6 +19,9 @@ import deleteLessonReducer from "./teacher/lessonTeacher/deleteLesson/deleteLess
 import getLessonReducer from "./teacher/lessonTeacher/getLesson/getLessonSlice";
 import updateLessonReducer from "./teacher/lessonTeacher/updateLesson/updateLessonSlice";
 import getProfileTeacherIdReducer from "./teacher/profileTeacher/getProfileId/getProfileIdSlice";
+import getProfileStudentByIdReducer from "./student/profileStudentById/getProfileByIdSlice";
+import getEnrollmentReducer from "./student/enrollments/getEnrollmentSlice";
+import getCourseStudentReducer from "./student/courseStudent/courseStudentSlice";
 const rootReducer = combineReducers({
   login: loginReducer,
   register: registerReducer,
@@ -52,6 +55,9 @@ const rootReducer = combineReducers({
 
   //Student
   getProfileStudentData: getProfileStudentReducer,
+  getProfileStudentByIdData: getProfileStudentByIdReducer,
+  getEnrollmentData: getEnrollmentReducer,
+  getCourseStudentData: getCourseStudentReducer,
 });
 
 export default rootReducer;

@@ -7,6 +7,7 @@ export function* getCourseSaga() {
     const response = yield call(api.get, `/Course`);
     if (response.status === 200 || response.status === 201) {
       yield put(getCourseSuccess(response.data));
+      console.log("DATA", response.data);
     } else {
       yield put(getCourseFail(response.status));
     }

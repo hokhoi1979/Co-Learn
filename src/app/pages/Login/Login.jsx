@@ -15,7 +15,6 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const { user, error } = useSelector((state) => state.login);
   const dispatch = useDispatch();
-  console.log("USER", user);
   const handleSubmit = (values) => {
     values.preventDefault();
     dispatch(loginApi({ email: email, password: password }));
@@ -112,7 +111,7 @@ export default function Login() {
             </p>
           )}
 
-          <p className="text-center text-sm text-gray-500 ">
+          <p className="text-center text-sm text-gray-500 mt-5">
             {t("noAccount")}{" "}
             <Link
               to="/register"

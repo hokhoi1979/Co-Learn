@@ -2,11 +2,10 @@ import React, { useEffect } from "react";
 import { Modal, Form, Input, Button, Upload, Select } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { Icon } from "@iconify/react";
-import { toast } from "react-toastify";
+import { uploadFile } from "../../../utils/uploadFile";
 
 function ModalTeacher({
   isModalOpen,
-  handleOk,
   handleCancel,
   onSubmitData,
   initialState,
@@ -19,13 +18,13 @@ function ModalTeacher({
         ...initialState,
         pricePerSession: initialState.pricePerSession,
         durationMinutes: initialState.durationMinutes,
-        thumbnail: initialState.thumbnail
+        thumbnail: initialState.imageUrl
           ? [
               {
                 uid: "-1",
                 name: "thumbnail.png",
                 status: "done",
-                url: initialState.thumbnail,
+                url: initialState.imageUrl,
               },
             ]
           : [],
@@ -35,12 +34,16 @@ function ModalTeacher({
     }
   }, [initialState, form]);
 
-  const onSubmit = () => {
-    form.validateFields().then((values) => {
+  const onSubmit = async () => {
+    try {
+      const values = await form.validateFields();
+
+      let thumbnailUrl = initialState?.thumbnail || null;
       const file = values.thumbnail?.[0]?.originFileObj;
-      const thumbnailUrl = file
-        ? URL.createObjectURL(file)
-        : initialState?.thumbnail || null;
+      if (file) {
+        const uploaded = await uploadFile(file);
+        thumbnailUrl = uploaded.url;
+      }
 
       const newCourse = {
         teacherId: 1,
@@ -51,13 +54,15 @@ function ModalTeacher({
         level: values.level,
         pricePerSession: Number(values.pricePerSession),
         durationMinutes: Number(values.durationMinutes),
-        // thumbnail: thumbnailUrl,
+        imageUrl: thumbnailUrl,
       };
 
+      console.log(newCourse);
       onSubmitData(newCourse);
-
       form.resetFields();
-    });
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (

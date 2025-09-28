@@ -7,10 +7,10 @@ import { LOGIN__API, loginApiFail, loginApiSuccess } from "./loginSlice";
 export function* fetchLogin(action) {
   try {
     const response = yield call(api.post, "/user/login", action.payload);
-    // console.log("USER", response.data);
     if (response.status === 200 || response.status === 201) {
       const value = response.data.value;
       const token = value.token;
+      localStorage.setItem("auth", JSON.stringify(value));
       if (token) {
         const decodedUser = jwtDecode(token);
 
