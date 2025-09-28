@@ -7,7 +7,6 @@ import { toast } from "react-toastify";
 
 function HeaderKid() {
   const [notice, setNotice] = useState(false);
-  const { user } = useSelector((state) => state.login);
   const dispatch = useDispatch();
   const ggMeet = [
     { title: "Course 1", link: "https://meet.google.com/kbz-pneq-odu" },
@@ -68,7 +67,7 @@ function HeaderKid() {
         </div>
 
         <div className="flex gap-3 p-10">
-          <div
+          {/* <div
             className="flex items-center gap-2 w-fit px-4 h-10 
                 rounded-full 
                 bg-white/20 
@@ -88,9 +87,9 @@ function HeaderKid() {
               />
             </svg>
             <p>Chat</p>
-          </div>
+          </div> */}
 
-          <div
+          {/* <div
             className="flex items-center gap-2 w-fit px-4 h-10 
                 rounded-full 
                 bg-white/20 
@@ -113,7 +112,7 @@ function HeaderKid() {
               </g>
             </svg>
             <p>Notice</p>
-          </div>
+          </div> */}
 
           <div
             className="flex items-center gap-2 w-fit px-4 h-10 

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react"; // thêm useState
 import { Modal, Form, Input, Button, Upload } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { Icon } from "@iconify/react";
@@ -7,6 +7,7 @@ import { useDispatch } from "react-redux";
 import { createLesson } from "../../../redux/teacher/lessonTeacher/createLesson/createLessonSlice";
 import { updateLesson } from "../../../redux/teacher/lessonTeacher/updateLesson/updateLessonSlice";
 import { getLesson } from "../../../redux/teacher/lessonTeacher/getLesson/getLessonSlice";
+import { uploadFile } from "../../../utils/uploadFile";
 
 function ModelUploadVideo({
   isModalOpen,
@@ -17,6 +18,7 @@ function ModelUploadVideo({
 }) {
   const [form] = Form.useForm();
   const dispatch = useDispatch();
+  const [loading, setLoading] = useState(false); // thêm state loading
 
   useEffect(() => {
     if (initialValues) {
@@ -26,13 +28,16 @@ function ModelUploadVideo({
     }
   }, [initialValues, form]);
 
-  const onSubmit = () => {
-    form.validateFields().then(async (values) => {
-      let videoUrl = initialValues?.videoUrl || null;
+  const onSubmit = async () => {
+    try {
+      setLoading(true);
+      const values = await form.validateFields();
 
+      let videoUrl = initialValues?.videoUrl || null;
       const file = values.video?.[0]?.originFileObj;
       if (file) {
-        videoUrl = URL.createObjectURL(file);
+        const upload = await uploadFile(file);
+        videoUrl = upload.url;
       }
 
       const payload = {
@@ -41,20 +46,27 @@ function ModelUploadVideo({
         content: values.content,
         orderNumber: values.orderNumber,
         durationMinutes: 1,
+        videoUrl: videoUrl,
       };
 
       if (initialValues?.lessonId) {
-        dispatch(updateLesson({ id: initialValues?.lessonId, body: payload }));
+        await dispatch(
+          updateLesson({ id: initialValues?.lessonId, body: payload })
+        );
         toast.success("Update successful! ");
       } else {
-        dispatch(createLesson({ id: courseId, body: payload }));
+        await dispatch(createLesson({ id: courseId, body: payload }));
       }
 
       await dispatch(getLesson(courseId));
-
       handleOk();
       form.resetFields();
-    });
+    } catch (err) {
+      console.error(err);
+      toast.error("Something went wrong!");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -63,7 +75,7 @@ function ModelUploadVideo({
       onCancel={handleCancel}
       width={700}
       footer={[
-        <Button key="cancel" onClick={handleCancel}>
+        <Button key="cancel" onClick={handleCancel} disabled={loading}>
           Cancel
         </Button>,
         <Button
@@ -71,6 +83,7 @@ function ModelUploadVideo({
           type="primary"
           onClick={onSubmit}
           className="!bg-[#3fcba8] hover:!bg-[#17ae88]"
+          loading={loading}
         >
           {initialValues ? "Save Changes" : "Upload Video"}
         </Button>,

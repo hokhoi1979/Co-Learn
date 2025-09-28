@@ -62,7 +62,9 @@ const router = createBrowserRouter([
           {
             path: "content",
             element: <TeacherContent />,
-            children: [{ path: "viewContent", element: <ViewContent /> }],
+            children: [
+              { path: "viewContent/:courseId", element: <ViewContent /> },
+            ],
           },
           { path: "feedback", element: <TeacherFeedBack /> },
           { path: "income", element: <TeacherIncome /> },

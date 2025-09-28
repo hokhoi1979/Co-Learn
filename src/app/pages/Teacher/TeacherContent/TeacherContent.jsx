@@ -2,14 +2,12 @@ import Earning from "../ComponentTeacher/Earning";
 import { Button } from "antd";
 import { useEffect, useState } from "react";
 import { BookOutlined } from "@ant-design/icons";
-
 import ModalTeacher from "../ComponentTeacher/ModalTeacher";
 import CarouselTeacher from "../ComponentTeacher/CarouselTeacher";
-import { Outlet, useNavigate } from "react-router";
+import { Outlet, useNavigate, useLocation } from "react-router";
 import DeleteVideoModal from "../ComponentTeacher/DeleteVideoModal";
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
-import img from "../../../assets/img/bg1.jpg";
 import { getCourse } from "../../../redux/teacher/courseTeacher/getCourse/getCourseSlice";
 import { createCourse } from "../../../redux/teacher/courseTeacher/createCourse/createCourseSlice";
 import { deleteCourse } from "../../../redux/teacher/courseTeacher/deleteCourse/deleteCourseSlice";
@@ -21,14 +19,22 @@ function TeacherContent() {
   const [editId, setEditId] = useState(null);
   const [deleteIndex, setDeleteIndex] = useState(null);
   const [loading, setLoading] = useState(false);
-
   const { course } = useSelector((state) => state.getCourseData);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     dispatch(getCourse());
   }, [dispatch]);
+
+  useEffect(() => {
+    if (location.state?.reload) {
+      dispatch(getCourse());
+      // clear state để lần sau back vẫn reload
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+  }, [location.state, dispatch, navigate, location.pathname]);
 
   const showModal = () => setIsModalOpen(true);
   const handleCancel = () => {
@@ -49,6 +55,7 @@ function TeacherContent() {
   const handleEdit = (course) => {
     setEditCourse(course);
     setIsModalOpen(true);
+    setEditId(course.courseId);
   };
 
   const handleConfirmDelete = async () => {
@@ -112,7 +119,7 @@ function TeacherContent() {
                     className="w-full h-auto bg-white rounded-2xl overflow-hidden"
                   >
                     <img
-                      src={img}
+                      src={item.imageUrl}
                       className="w-full h-60 object-cover rounded-t-2xl"
                     />
                     <div className="p-3">
@@ -129,21 +136,16 @@ function TeacherContent() {
                       <div className="flex justify-between gap-2">
                         <p className="text-gray-500 w-20">Pricing:</p>
                         <p className="font-semibold text-green-600">
-                          <p className="font-semibold text-green-600">
-                            {Number(item.pricePerSession)?.toLocaleString(
-                              "vi-VN"
-                            )}
-                            ₫
-                          </p>
+                          {Number(item.pricePerSession)?.toLocaleString(
+                            "vi-VN"
+                          )}
+                          ₫
                         </p>
                       </div>
 
                       <div className="mt-5 gap-1.5 grid grid-cols-3">
                         <button
-                          onClick={() => {
-                            handleEdit(item);
-                            setEditId(item.courseId);
-                          }}
+                          onClick={() => handleEdit(item)}
                           className="bg-[#76eacd] hover:bg-[#3edfb7] cursor-pointer py-1 w-full text-white font-medium rounded-md"
                         >
                           Edit
@@ -158,9 +160,9 @@ function TeacherContent() {
 
                         <button
                           onClick={() =>
-                            navigate("/teacher/content/viewContent", {
-                              state: { item },
-                            })
+                            navigate(
+                              `/teacher/content/viewContent/${item.courseId}`
+                            )
                           }
                           className="bg-[#20ba93] hover:bg-[#33a286] cursor-pointer py-1 w-full text-white font-medium rounded-md"
                         >
@@ -175,7 +177,8 @@ function TeacherContent() {
           </div>
         )}
 
-        <Outlet />
+        <Outlet key={location.pathname} />
+
         <CarouselTeacher />
       </div>
 

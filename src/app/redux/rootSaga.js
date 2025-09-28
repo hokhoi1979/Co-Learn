@@ -20,7 +20,9 @@ import watchDeleteLesson from "./teacher/lessonTeacher/deleteLesson/deleteLesson
 import watchGetLesson from "./teacher/lessonTeacher/getLesson/getLessonSaga";
 import watchUpdateLesson from "./teacher/lessonTeacher/updateLesson/updateLessonSaga";
 import watchGetProfileTeacherId from "./teacher/profileTeacher/getProfileId/getProfileIdSaga";
-
+import watchGetProfileStudentById from "./student/profileStudentById/getProfileByIdSaga";
+import watchGetEnrollment from "./student/enrollments/getEnrollmentSaga";
+import watchGetCourseStudent from "./student/courseStudent/courseStudentSaga";
 export default function* rootSaga() {
   yield all([
     watchFetchLogin(),
@@ -55,5 +57,8 @@ export default function* rootSaga() {
 
     //Student
     watchGetProfileStudent(),
+    watchGetProfileStudentById(),
+    watchGetEnrollment(),
+    watchGetCourseStudent(),
   ]);
 }

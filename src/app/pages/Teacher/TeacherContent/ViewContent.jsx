@@ -1,21 +1,22 @@
 import { Button, Card } from "antd";
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import ModelUploadVideo from "../ComponentTeacher/ModelUploadVideo";
 import DeleteVideoModal from "../ComponentTeacher/DeleteVideoModal";
 import { toast } from "react-toastify";
 import { Book, Pencil, Trash } from "lucide-react";
 import ModalMaterials from "../ComponentTeacher/ModelMaterials";
-import img from "../../../assets/img/bg1.jpg";
 import { useDispatch, useSelector } from "react-redux";
-import { getLesson } from "../../../redux/teacher/lessonTeacher/getLesson/getLessonSlice";
+import {
+  getLesson,
+  getLessonSuccess,
+} from "../../../redux/teacher/lessonTeacher/getLesson/getLessonSlice";
 import { deleteLesson } from "../../../redux/teacher/lessonTeacher/deleteLesson/deleteLessonSlice";
 import { BookOutlined } from "@ant-design/icons";
 
 function ViewContent() {
   const navigate = useNavigate();
-  const { state } = useLocation();
-  const { item } = state || {};
+  const { courseId } = useParams();
   const dispatch = useDispatch();
 
   const [openVideo, setOpenVideo] = useState(false);
@@ -26,7 +27,7 @@ function ViewContent() {
   const [materialsIndex, setMaterialsIndex] = useState(null);
   const [titleLesson, setTitleLesson] = useState("");
 
-  const { data = [] } = useSelector((state) => state.getLessonData);
+  const { data } = useSelector((state) => state.getLessonData);
 
   const handleOk = () => {
     setOpenVideo(false);
@@ -34,10 +35,15 @@ function ViewContent() {
   };
 
   useEffect(() => {
-    if (item?.courseId) {
-      dispatch(getLesson(item.courseId));
+    if (courseId) {
+      dispatch(getLesson(courseId));
     }
-  }, [dispatch, item?.courseId]);
+
+    // cleanup khi unmount để clear state
+    return () => {
+      dispatch(getLessonSuccess(null));
+    };
+  }, [dispatch, courseId]);
 
   const handleDeleteClick = (id, title) => {
     setDeleteIndex(id);
@@ -48,7 +54,7 @@ function ViewContent() {
     try {
       setLoading(true);
       await dispatch(deleteLesson(deleteIndex));
-      await dispatch(getLesson(item.courseId));
+      await dispatch(getLesson(courseId));
       toast.success("Deleted successfully");
       setDeleteIndex(null);
     } catch (error) {
@@ -65,21 +71,10 @@ function ViewContent() {
         <div className="flex justify-between">
           <div
             className="flex gap-2 items-center hover:underline cursor-pointer"
-            onClick={() => navigate("/teacher/content")}
+            onClick={() =>
+              navigate("/teacher/content", { state: { reload: true } })
+            }
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-            >
-              <path
-                fill="#454444"
-                d="M21 11H6.414l5.293-5.293l-1.414-1.414L2.586 12l7.707 7.707l1.414-1.414L6.414 13H21z"
-                strokeWidth="0.5"
-                stroke="#525252"
-              />
-            </svg>
             <h1>Back to My Course</h1>
           </div>
 
@@ -92,9 +87,13 @@ function ViewContent() {
         </div>
       </div>
 
-      {data?.value?.items?.length > 0 ? (
-        data?.value?.items?.map((lesson, index) => (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-5">
+      <h1 className="flex justify-center text-4xl mb-5">
+        {data?.value?.courseTitle}
+      </h1>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 p-5">
+        {data?.value?.items?.length > 0 ? (
+          data.value.items.map((lesson, index) => (
             <Card
               key={lesson.lessonId || index}
               hoverable
@@ -106,7 +105,12 @@ function ViewContent() {
                 </span>
               }
             >
-              <img src={img} className="w-full h-60 object-cover rounded-2xl" />
+              <iframe
+                src={lesson.videoUrl}
+                className="w-full h-60 object-cover rounded-2xl"
+                frameBorder="0"
+                allowFullScreen
+              ></iframe>
               <p className="text-gray-600 mb-2">{lesson.content}</p>
 
               <div className="mt-5 gap-1 grid grid-cols-3">
@@ -140,20 +144,20 @@ function ViewContent() {
                 </button>
               </div>
             </Card>
+          ))
+        ) : (
+          <div className="flex flex-col w-full items-center justify-center h-70 mt-10 mb-10 bg-gray-50 rounded-2xl shadow-inner p-6">
+            <BookOutlined className="text-gray-400 text-6xl mb-4" />
+            <h2 className="text-xl font-semibold text-gray-700 mb-2">
+              No Lessons
+            </h2>
+            <p className="text-gray-500 mb-6 text-center">
+              You haven’t created any lesson yet. <br />
+              Start by creating your first lesson now.
+            </p>
           </div>
-        ))
-      ) : (
-        <div className="flex flex-col w-full items-center justify-center h-70 mt-10 mb-10 bg-gray-50 rounded-2xl shadow-inner p-6">
-          <BookOutlined className="text-gray-400 text-6xl mb-4" />
-          <h2 className="text-xl font-semibold text-gray-700 mb-2">
-            No Lessons
-          </h2>
-          <p className="text-gray-500 mb-6 text-center">
-            You haven’t created any course yet. <br />
-            Start by creating your first lesson now.
-          </p>
-        </div>
-      )}
+        )}
+      </div>
 
       <DeleteVideoModal
         open={deleteIndex !== null}
@@ -175,7 +179,7 @@ function ViewContent() {
           setOpenVideo(false);
           setEditLesson(null);
         }}
-        courseId={item.courseId}
+        courseId={courseId}
         handleOk={handleOk}
         initialValues={editLesson}
       />
