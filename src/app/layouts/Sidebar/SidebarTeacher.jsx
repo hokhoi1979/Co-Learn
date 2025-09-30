@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Icon } from "@iconify/react";
 import { useDispatch } from "react-redux";
@@ -49,6 +49,14 @@ const SideBarTeacher = ({ toggle, setToggle, active, setActive }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const handleToggle = () => setToggle((pre) => !pre);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const infor = localStorage.getItem("auth");
+    const parse = JSON.parse(infor);
+    console.log(parse);
+    setUser(parse);
+  }, []);
 
   const handleLogout = () => {
     dispatch(logout());
@@ -115,11 +123,11 @@ const SideBarTeacher = ({ toggle, setToggle, active, setActive }) => {
         <div className="flex mb-5 items-center px-4 py-3 justify-between">
           {!toggle && (
             <div className="flex gap-3 items-center">
-              <div className="h-12 w-12 rounded-full flex justify-center items-center bg-gradient-to-r from-[#4A90E4] to-[#2497A8]">
+              <div className="h-12 w-12 rounded-full flex justify-center items-center bg-[#3fcba8]">
                 <h1 className="text-xl font-bold text-white">H</h1>
               </div>
               <div>
-                <h1 className="text-lg font-semibold">Miss Ha</h1>
+                <h1 className="text-lg font-semibold">Miss {user?.fullName}</h1>
                 <p className="text-sm text-gray-500">Teacher Coding</p>
               </div>
             </div>
@@ -133,7 +141,7 @@ const SideBarTeacher = ({ toggle, setToggle, active, setActive }) => {
               }
             }}
             className={`flex items-center p-2  rounded-xl cursor-pointer 
-              hover:bg-gradient-to-r hover:from-[#b0ebe6] hover:to-[#E7F4F3] 
+               hover:bg-[#3fcba8] 
               ${toggle && "w-full justify-center"}`}
           >
             <Icon icon="mdi:logout" width="28" className="text-gray-500" />

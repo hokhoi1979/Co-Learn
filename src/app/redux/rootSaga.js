@@ -23,10 +23,13 @@ import watchGetProfileTeacherId from "./teacher/profileTeacher/getProfileId/getP
 import watchGetProfileStudentById from "./student/profileStudentById/getProfileByIdSaga";
 import watchGetEnrollment from "./student/enrollments/getEnrollmentSaga";
 import watchGetCourseStudent from "./student/courseStudent/courseStudentSaga";
+import watchGetUserId from "./user/getUserID/getUserIDSaga";
 export default function* rootSaga() {
   yield all([
     watchFetchLogin(),
     watchFetchRegister(),
+    watchGetUserId(),
+
     //Parent
     watchGetAllParent(),
 

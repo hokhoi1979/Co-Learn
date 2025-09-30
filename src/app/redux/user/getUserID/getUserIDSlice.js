@@ -2,33 +2,33 @@ export const GET__USERID = "GET__USERID";
 export const GET__USERID__SUCCESS = "GET__USERID__SUCCESS";
 export const GET__USERID__FAIL = "GET__USERID__FAIL";
 
-export const getAllParent = (data) => ({
+export const getUserId = (data) => ({
   type: GET__USERID,
   payload: data,
 });
 
-export const getAllParentSuccess = (data) => ({
+export const getUserIdSuccess = (data) => ({
   type: GET__USERID__SUCCESS,
   payload: data,
 });
 
-export const getAllParentFail = (error) => ({
+export const getUserIdFail = (error) => ({
   type: GET__USERID__FAIL,
   payload: error,
 });
 
 const initialState = {
-  getUserId: null,
+  userId: null,
   loading: false,
   error: null,
 };
 
-const getAllParentReducer = (state = initialState, action) => {
+const getUserIdReducer = (state = initialState, action) => {
   switch (action.type) {
     case GET__USERID:
       return { ...state, loading: true, error: null };
     case GET__USERID__SUCCESS:
-      return { ...state, loading: false, getUserId: action.payload };
+      return { ...state, loading: false, userId: action.payload };
     case GET__USERID__FAIL:
       return { ...state, loading: false, error: action.payload };
     default:
@@ -36,4 +36,4 @@ const getAllParentReducer = (state = initialState, action) => {
   }
 };
 
-export default getAllParentReducer;
+export default getUserIdReducer;

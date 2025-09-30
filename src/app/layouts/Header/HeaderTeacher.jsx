@@ -1,14 +1,26 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Icon } from "@iconify/react";
+import { stringify } from "postcss";
+import { useDispatch, useSelector } from "react-redux";
+import { getUserId } from "../../redux/user/getUserID/getUserIDSlice";
 
 function HeaderTeacher() {
+  const [user, setUser] = useState(null);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    const infor = localStorage.getItem("auth");
+    const parse = JSON.parse(infor);
+    console.log(parse);
+    setUser(parse);
+  }, []);
+
   return (
     <>
       <div className="w-full h-22 flex justify-between bg-white px-10 py-5">
         <div className="flex items-center gap-2.5">
           <div
             className="w-12 h-12 flex items-center justify-center rounded-xl
-                               bg-gradient-to-r from-[#4A90E4]  to-[#2497A8] shadow-md"
+                               bg-[#3fcba8] shadow-md"
           >
             <Icon
               color="white"
@@ -18,7 +30,7 @@ function HeaderTeacher() {
             />
           </div>
           <div>
-            <p className="text-2xl font-bold bg-gradient-to-r from-[#4A90E4]  to-[#2497A8] bg-clip-text text-transparent">
+            <p className="text-2xl font-bold bg-[#3fcba8] bg-clip-text text-transparent">
               Co&Learn
             </p>
             <p className="text-gray-500">Teacher Dashboard</p>
@@ -26,15 +38,10 @@ function HeaderTeacher() {
         </div>
 
         <div className="flex gap-5.5">
-          <h1 className="px-4 flex items-center bg-gradient-to-r from-[#4A90E4]  to-[#2497A8] text-white text-xl rounded-3xl">
-            New Class
-          </h1>
-
-          <div>
-            <h1 className="text-xl text-right">Miss Ha</h1>
-            <p className="text-gray-500">hanm@fpt.edu.vn</p>
+          <div className="flex items-center">
+            {/* <h1 className="text-xl  text-right">{user?.fullName}</h1> */}
           </div>
-          <div className="h-12 w-12 rounded-4xl flex justify-center items-center bg-gradient-to-r from-[#4A90E4]  to-[#2497A8]">
+          <div className="h-12 w-12 rounded-4xl flex justify-center items-center bg-[#3fcba8] ">
             <h1 className="text-3xl text-white">H</h1>
           </div>
         </div>

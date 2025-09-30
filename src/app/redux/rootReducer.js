@@ -22,9 +22,13 @@ import getProfileTeacherIdReducer from "./teacher/profileTeacher/getProfileId/ge
 import getProfileStudentByIdReducer from "./student/profileStudentById/getProfileByIdSlice";
 import getEnrollmentReducer from "./student/enrollments/getEnrollmentSlice";
 import getCourseStudentReducer from "./student/courseStudent/courseStudentSlice";
+import getCourseByIdReducer from "./teacher/courseTeacher/getCourseById/getCourseByIdSlice";
+import getUserIdReducer from "./user/getUserID/getUserIDSlice";
 const rootReducer = combineReducers({
   login: loginReducer,
   register: registerReducer,
+  userIdData: getUserIdReducer,
+
   //Parent
   getAllParent: getAllParentReducer,
 
@@ -39,7 +43,7 @@ const rootReducer = combineReducers({
   getCourseData: getCourseReducer,
   deleteCourseData: deleteCourseReducer,
   updateCourseData: updateCourseReducer,
-  getCourseByIdData: getCourseReducer,
+  getCourseByIdData: getCourseByIdReducer,
 
   //Teacher - Materials
   createMaterialsData: createMaterialsReducer,

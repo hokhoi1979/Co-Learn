@@ -7,6 +7,7 @@ import {
   createMaterialsFail,
   createMaterialsSuccess,
 } from "./createMaterialsSlice";
+import { getMaterialsSuccess } from "../getMaterials/getMaterialsSlice";
 
 export function* createMaterialsSaga(action) {
   try {
@@ -19,6 +20,9 @@ export function* createMaterialsSaga(action) {
     if (response.status === 200 || response.status === 201) {
       yield put(createMaterialsSuccess(response.data));
       toast.success("Create materials successful!");
+
+      const fetch = yield call(api.get, `/lessons/${lessonId}/materials`);
+      yield put(getMaterialsSuccess(fetch.data));
     } else {
       yield put(createMaterialsFail(response.status));
     }

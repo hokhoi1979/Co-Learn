@@ -1,13 +1,43 @@
-import React from "react";
-import { useLocation, useNavigate } from "react-router";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router";
 import { Icon } from "@iconify/react";
-import { lesson } from "../../shared";
-
+import { useDispatch, useSelector } from "react-redux";
+import { Modal } from "antd";
+import { getMaterials } from "../../redux/teacher/materialsTeacher/getMaterials/getMaterialsSlice";
+import { Book, FileText, FileVideo, FileImage } from "lucide-react";
+import { getLesson } from "../../redux/teacher/lessonTeacher/getLesson/getLessonSlice";
 function CourseDetail() {
   const navigate = useNavigate();
-  const location = useLocation();
-  const { title, description } = location.state || {};
+  const { id } = useParams();
+  const dispatch = useDispatch();
+  const { data = [] } = useSelector((state) => state.getLessonData);
+  const { dataMaterials = [] } = useSelector((state) => state.getMaterialsData);
+  const [open, setOpen] = useState(false);
+  useEffect(() => {
+    dispatch(getLesson(id));
+  }, [dispatch, id]);
 
+  useEffect(() => {
+    console.log("DAA", data);
+  }, [data]);
+
+  const handleMaterials = (lessonId) => {
+    setOpen(true);
+    dispatch(getMaterials(lessonId));
+  };
+
+  const renderIcon = (type) => {
+    switch (type) {
+      case "PDF":
+        return <FileText size={20} className="text-red-500" />;
+      case "VIDEO":
+        return <FileVideo size={20} className="text-blue-500" />;
+      case "IMAGE":
+        return <FileImage size={20} className="text-green-500" />;
+      default:
+        return <Book size={20} className="text-gray-500" />;
+    }
+  };
   return (
     <>
       <div>
@@ -20,7 +50,7 @@ function CourseDetail() {
             width="24"
             height="24"
             viewBox="0 0 24 24"
-            className="stroke-[#d2198c] group-hover:stroke-[#b60773] transition-colors duration-200"
+            className="stroke-[#35a9af] group-hover:stroke-[#0a8b92] transition-colors duration-200"
           >
             <path
               fill="none"
@@ -31,12 +61,12 @@ function CourseDetail() {
               d="m10 16l-4-4m0 0l4-4m-4 4h12"
             />
           </svg>
-          <h1 className="text-[#d2198c] text-[18px] group-hover:text-[#b60773] transition-colors duration-200">
+          <h1 className="text-[#35a9af] text-[18px] group-hover:text-[#0a8b92] transition-colors duration-200">
             Back to Course
           </h1>
         </div>
 
-        <div className="w-full h-auto bg-gradient-to-r from-[#a367f9] to-[#711fe3] rounded-2xl mt-5 p-5">
+        <div className="w-full h-auto bg-gradient-to-r from-[#69d2ec] to-[#87ddf2] rounded-2xl mt-5 p-5">
           <div className="flex gap-3">
             <Icon
               color="white"
@@ -45,8 +75,8 @@ function CourseDetail() {
               height="40"
             />
             <div className="">
-              <h1 className="text-xl text-white">{title}</h1>
-              <p className="text-gray-200 text-[14px]">{description}</p>
+              <h1 className="text-xl text-white">{}</h1>
+              <p className="text-gray-200 text-[14px]">{}</p>
             </div>
           </div>
 
@@ -55,11 +85,10 @@ function CourseDetail() {
                 backdrop-blur-md rounded-2xl mt-4 p-5"
           >
             <div className="flex justify-between">
-              <h1 className="text-white text-xl">Current Lesson</h1>
-              <p className="text-[14px] text-gray-200">Duration: 45 minutes</p>
+              <h1 className="text-white text-xl">Current Course</h1>
             </div>
 
-            <h1 className="text-white text-3xl">Creating a Platformer Game</h1>
+            <h1 className="text-white text-3xl">{data?.value?.categoryName}</h1>
             <button className="flex justify-center mt-3 items-center px-2 gap-2 text-[#313131] py-1 bg-white rounded-xl cursor-pointer hover:bg-[#f6f5f5]">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -81,110 +110,88 @@ function CourseDetail() {
           </div>
         </div>
 
-        <div className="bg-[#f9f9f9] w-full h-auto mt-5 rounded-2xl border-1 border-gray-100 shadow-xl p-5">
-          <h1 className="text-2xl">All Lessons</h1>
+        <div className="bg-[#e6fafe] w-full h-auto mt-5 rounded-2xl border border-gray-100 shadow-xl p-5">
+          <h1 className="text-2xl font-semibold">All Lessons</h1>
 
-          {lesson.map((item, index) => {
-            return (
-              <div
-                className={`w-full h-auto border-1 rounded-2xl mt-5 ${
-                  item.status === "Completed" &&
-                  "border-[#31ff8e] bg-[#eefbf2] hover:bg-[#d7fbe2]"
-                }
-                ${
-                  item.status === "Current" &&
-                  "border-[#f55acc] bg-[#fbeef7] hover:bg-[#fdd7f2]"
-                }
-                ${
-                  item.status === "Not yet" &&
-                  "border-[#c9c9c9] bg-white hover:bg-[#f0f0f0]"
-                }
-                `}
-                style={{ cursor: "pointer" }}
-              >
-                <div className="flex justify-between p-5">
-                  <div className="flex  items-center gap-2.5 ">
-                    {item.status === "Completed" && (
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="32"
-                        height="32"
-                        viewBox="0 0 24 24"
-                      >
-                        <g
-                          fill="#188317"
-                          fill-rule="evenodd"
-                          clip-rule="evenodd"
-                          stroke-width="0.5"
-                          stroke="#53e351"
-                        >
-                          <path d="M12 3a9 9 0 1 0 0 18a9 9 0 0 0 0-18M1 12C1 5.925 5.925 1 12 1s11 4.925 11 11s-4.925 11-11 11S1 18.075 1 12" />
-                          <path d="m17.608 9l-7.726 7.726L6 12.093l1.511-1.31l2.476 3.01l6.207-6.207z" />
-                        </g>
-                      </svg>
-                    )}
-
-                    {item.status === "Current" && (
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="28"
-                        height="28"
-                        viewBox="0 0 30 30"
-                      >
-                        <path
-                          fill="#e10f90"
-                          d="M27.318 13.153c2.241 1.236 2.24 4.458-.001 5.693L7.818 29.588C5.652 30.782 3 29.215 3 26.742V5.25c0-2.474 2.653-4.04 4.82-2.846zm-.966 3.941a1.25 1.25 0 0 0 0-2.19L6.854 4.156A1.25 1.25 0 0 0 5 5.25v21.492a1.25 1.25 0 0 0 1.853 1.095z"
-                          stroke-width="1"
-                          stroke="#e10f90"
-                        />
-                      </svg>
-                    )}
-
-                    {item.status === "Not yet" && (
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="30"
-                        height="30"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          fill="#000"
-                          d="M12.003 21q-1.866 0-3.51-.708q-1.643-.709-2.859-1.924t-1.925-2.856T3 12.003t.709-3.51Q4.417 6.85 5.63 5.634t2.857-1.925T11.997 3t3.51.709q1.643.708 2.859 1.922t1.925 2.857t.709 3.509t-.708 3.51t-1.924 2.859t-2.856 1.925t-3.509.709M12 20q3.35 0 5.675-2.325T20 12t-2.325-5.675T12 4T6.325 6.325T4 12t2.325 5.675T12 20m0-8"
-                          stroke-width="0.5"
-                          stroke="#000"
-                        />
-                      </svg>
-                    )}
-
-                    <div>
-                      <h1
-                        className={` text-xl 
-                        ${item.status === "Completed" && "text-[#087234]"}
-                ${item.status === "Current" && "text-[#e10f90]"}
-                ${item.status === "Not yet" && "border-[#c9c9c9] text-gray-500"}
-                        `}
-                      >
-                        Lesson {index + 1}: {item.title}
-                      </h1>
-                      <p className="text-gray-400">{item.minutes} min</p>
-                    </div>
-                  </div>
-
-                  <h1
-                    className={`text-white px-2 h-6 rounded-2xl items-center ${
-                      item.status === "Completed" && "bg-[#00c85a]"
-                    }
-                    ${item.status === "Current" && "bg-[#e10f90]"}
-                    ${item.status === "Not yet" && "bg-[#5c5c5c]"}
-                    `}
-                  >
-                    {item.status}
+          {data?.value?.items.map((item, index) => (
+            <div
+              key={item.lessonId}
+              className="w-full flex justify-between items-center p-5 h-auto border rounded-2xl mt-5 bg-white shadow-sm"
+            >
+              <div className="flex gap-4 items-start">
+                {item.videoUrl && (
+                  <iframe
+                    src={item.videoUrl}
+                    allowFullScreen
+                    className="rounded-2xl w-52 h-32"
+                  ></iframe>
+                )}
+                <div className="px-2">
+                  <h1 className="text-xl font-bold">
+                    {index + 1}. {item.title}
                   </h1>
+                  <p className="text-gray-500">Description: {item.content}</p>
+                  <p className="text-gray-400">
+                    Time: {item.durationMinutes} minutes
+                  </p>
                 </div>
               </div>
-            );
-          })}
+
+              <button
+                onClick={() => handleMaterials(item?.lessonId)}
+                className="flex items-center gap-2 px-3 py-2 cursor-pointer bg-[#0ba2c8] text-white shadow-md hover:bg-[#16738a] rounded-md"
+              >
+                <Book size={18} />
+                View Materials
+              </button>
+            </div>
+          ))}
         </div>
+        <br />
+        <Modal
+          open={open}
+          onCancel={() => setOpen(false)}
+          footer={null}
+          width={600}
+        >
+          <div className="bg-gradient-to-r from-[#0ba2c8] to-[#0ba2c8] p-5 rounded-t-lg -m-6 mb-6">
+            <h1 className="text-2xl font-bold text-white">View Materials</h1>
+            <p className="text-white/80">Materials for students</p>
+          </div>
+
+          {dataMaterials?.value?.items?.length > 0 ? (
+            <div className="grid grid-cols-1 gap-4">
+              {dataMaterials.value.items.map((m) => (
+                <div
+                  key={m.materialId}
+                  className="flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition"
+                >
+                  <div className="flex items-center gap-3">
+                    {renderIcon(m.materialType)}
+                    <div>
+                      <h1 className="font-semibold text-gray-800">
+                        {m.title || "Untitled"}
+                      </h1>
+                      <p className="text-sm text-gray-500">
+                        Type: {m.materialType}
+                      </p>
+                    </div>
+                  </div>
+                  <a
+                    href={m.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-3 py-1 text-sm text-[#3fcba8] transition"
+                  >
+                    View
+                  </a>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-gray-500 text-center">No materials found.</p>
+          )}
+        </Modal>
       </div>
     </>
   );

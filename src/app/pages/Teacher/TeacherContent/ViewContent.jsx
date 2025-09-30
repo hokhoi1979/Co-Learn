@@ -39,7 +39,6 @@ function ViewContent() {
       dispatch(getLesson(courseId));
     }
 
-    // cleanup khi unmount để clear state
     return () => {
       dispatch(getLessonSuccess(null));
     };
