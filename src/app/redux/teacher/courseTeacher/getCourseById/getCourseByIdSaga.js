@@ -12,7 +12,8 @@ export function* getCourseByIdSaga(action) {
     const id = action.payload;
     const response = yield call(api.get, `/Course/${id}`);
     if (response.status === 200 || response.status === 201) {
-      yield put(getCourseByIdSuccess({ message: "Delete successful!" }));
+      yield put(getCourseByIdSuccess(response.data));
+      console.log("RESPONES", response.data);
     } else {
       yield put(getCourseByIdFail(response.status));
     }

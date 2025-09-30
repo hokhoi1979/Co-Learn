@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Modal, Form, Input, Button, Upload, Select } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { Icon } from "@iconify/react";
@@ -11,7 +11,7 @@ function ModalTeacher({
   initialState,
 }) {
   const [form] = Form.useForm();
-
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
     if (initialState) {
       form.setFieldsValue({
@@ -37,7 +37,7 @@ function ModalTeacher({
   const onSubmit = async () => {
     try {
       const values = await form.validateFields();
-
+      setLoading(true);
       let thumbnailUrl = initialState?.thumbnail || null;
       const file = values.thumbnail?.[0]?.originFileObj;
       if (file) {
@@ -57,11 +57,12 @@ function ModalTeacher({
         imageUrl: thumbnailUrl,
       };
 
-      console.log(newCourse);
-      onSubmitData(newCourse);
+      await onSubmitData(newCourse);
       form.resetFields();
     } catch (error) {
       console.error(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -78,7 +79,8 @@ function ModalTeacher({
           key="create"
           type="primary"
           onClick={onSubmit}
-          className="!bg-[#00b0ff] hover:!bg-[#0090d9]"
+          loading={loading}
+          className="!bg-[#3fcba8] hover:!bg-[#3fcba8]"
         >
           {initialState ? "Edit Course" : "Create Course"}
         </Button>,
@@ -86,7 +88,7 @@ function ModalTeacher({
       className="custom-modal"
       closable={false}
     >
-      <div className="bg-gradient-to-r from-[#2972cc] to-[#35bdd2] p-5 rounded-t-lg -m-6 mb-6">
+      <div className="bg-gradient-to-r from-[#3fcba8] to-[#3fcba8] p-5 rounded-t-lg -m-6 mb-6">
         <h1 className="text-2xl font-bold text-white">
           {initialState ? "Edit Course" : "Create New Course"}
         </h1>

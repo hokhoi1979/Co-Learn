@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import HeaderKid from "../../layouts/Header/HeaderKid";
 import { Icon } from "@iconify/react";
-import CourseKid from "./CourseKid";
 import { Link, Outlet } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getProfileStudentById } from "../../redux/student/profileStudentById/getProfileByIdSlice";
@@ -45,10 +44,13 @@ function HomeKids() {
     if (enrollment?.course?.courseId) dispatch(getCourseStudent(id));
   }, [dispatch, enrollment]);
 
+  console.log("AAA", courseStudent);
+
   const cards = [
     {
       title: "My Course",
       value: courseStudent?.items?.length || 0,
+
       description: "Super fun Adventures",
       gradient: "from-[#8875f2] to-[#f64fb3]",
       icon: "mdi:book-open-page-variant",
@@ -138,12 +140,12 @@ function HomeKids() {
 
         <div
           className="w-full h-auto  
-                       bg-gradient-to-r from-white via-50% to-[#fee6fb] shadow-md px-20 pt-[120px]"
+                       bg-gradient-to-r from-white via-50% to-[#e6fbfe] shadow-md px-20 pt-[120px]"
         >
-          <h1 className="flex justify-center pt-5 text-5xl  bg-gradient-to-r from-[#7321e6] via-[#ff0199] to-[#eec029] bg-clip-text text-transparent">
+          <h1 className="flex justify-center pt-5 text-5xl  bg-[#0ba2c8] bg-clip-text text-transparent">
             Hey Children!
           </h1>
-          <p className="text-[20px] text-purple-600 flex justify-center font-bold">
+          <p className="text-[20px] text-gray-600 flex justify-center font-bold">
             Ready for another AWESOME coding adventure?
           </p>
 
@@ -155,7 +157,7 @@ function HomeKids() {
             {cards.map((card, index) => (
               <div
                 key={index}
-                className={`bg-black p-4 rounded-xl bg-gradient-to-r ${card.gradient} shadow-lg`}
+                className={` p-4 rounded-xl bg-gradient-to-b from-[#49d0d7] to-[#72ced3] shadow-lg`}
               >
                 <div className="flex justify-center mb-2">
                   {card.title === "Total Price" ? (
@@ -187,7 +189,7 @@ function HomeKids() {
               to="courses"
               className={`flex items-center gap-2 px-4 py-2 rounded-full cursor-pointer ${
                 option === "courses"
-                  ? "bg-gradient-to-r from-pink-400 to-purple-400 text-white font-medium"
+                  ? "bg-[#53c2de] text-white font-medium"
                   : "text-gray-700 hover:bg-gray-100"
               }`}
               onClick={() => setOption("courses")}
@@ -199,7 +201,7 @@ function HomeKids() {
               to="space"
               className={`flex items-center gap-2 px-4 py-2 rounded-full cursor-pointer ${
                 option === "space"
-                  ? "bg-gradient-to-r from-pink-400 to-purple-400 text-white font-medium"
+                  ? "bg-gradient-to-b from-[#49d0d7] to-[#72ced3] text-white font-medium"
                   : "text-gray-700 hover:bg-gray-100"
               }`}
               onClick={() => setOption("space")}
@@ -211,7 +213,7 @@ function HomeKids() {
               to="schedule"
               className={`flex items-center gap-2 px-4 py-2 rounded-full cursor-pointer ${
                 option === "schedule"
-                  ? "bg-gradient-to-r from-pink-400 to-purple-400 text-white font-medium"
+                  ? "bg-gradient-to-b from-[#49d0d7] to-[#72ced3] text-white font-medium"
                   : "text-gray-700 hover:bg-gray-100"
               }`}
               onClick={() => setOption("schedule")}

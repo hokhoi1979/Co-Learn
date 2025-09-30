@@ -31,7 +31,6 @@ function TeacherContent() {
   useEffect(() => {
     if (location.state?.reload) {
       dispatch(getCourse());
-      // clear state để lần sau back vẫn reload
       navigate(location.pathname, { replace: true, state: {} });
     }
   }, [location.state, dispatch, navigate, location.pathname]);

@@ -44,7 +44,7 @@ const router = createBrowserRouter([
         children: [
           { index: true, element: <CourseKid /> },
           { path: "courses", element: <CourseKid /> },
-          { path: "courses/detail", element: <CourseDetail /> },
+          { path: "courses/:id", element: <CourseDetail /> },
           { path: "space", element: <div>My Space</div> },
           { path: "schedule", element: <ScheduleKid /> },
         ],

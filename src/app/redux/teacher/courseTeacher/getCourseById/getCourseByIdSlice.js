@@ -18,7 +18,7 @@ export const getCourseByIdFail = (error) => ({
 });
 
 const initialState = {
-  getCourseById: null,
+  courseById: null,
   loading: false,
   error: null,
 };
@@ -28,7 +28,7 @@ const getCourseByIdReducer = (state = initialState, action) => {
     case GET__COURSE__ID:
       return { ...state, loading: true, error: null };
     case GET__COURSE__ID__SUCCESS:
-      return { ...state, loading: false, getCourseById: action.payload };
+      return { ...state, loading: false, courseById: action.payload };
     case GET__COURSE__ID__FAIL:
       return { ...state, loading: false, error: action.payload };
     default:

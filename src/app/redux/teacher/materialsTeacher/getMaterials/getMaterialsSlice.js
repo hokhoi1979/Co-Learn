@@ -18,7 +18,7 @@ export const getMaterialsFail = (error) => ({
 });
 
 const initialState = {
-  data: null,
+  dataMaterials: null,
   loading: false,
   error: null,
 };
@@ -28,7 +28,7 @@ const getMaterialsReducer = (state = initialState, action) => {
     case GET__MATERIALS:
       return { ...state, loading: true, error: null };
     case GET__MATERIALS__SUCCESS:
-      return { ...state, loading: false, data: action.payload };
+      return { ...state, loading: false, dataMaterials: action.payload };
     case GET__MATERIALS__FAIL:
       return { ...state, loading: false, error: action.payload };
     default:

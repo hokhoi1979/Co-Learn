@@ -17,10 +17,11 @@ function ModalMaterials({ open, onCancel, lessonId }) {
   const [form] = Form.useForm();
   const [fileList, setFileList] = useState([]);
   const dispatch = useDispatch();
-  const { data } = useSelector((state) => state.getMaterialsData);
-  const materials = data?.value?.items ?? [];
+  const { dataMaterials } = useSelector((state) => state.getMaterialsData);
+  const materials = dataMaterials?.value?.items ?? [];
   const [editingMaterial, setEditingMaterial] = useState(null);
-
+  const [submitLoading, setSubmitLoading] = useState(false);
+  const [deleteLoadingId, setDeleteLoadingId] = useState(null);
   useEffect(() => {
     if (lessonId) {
       dispatch(getMaterials(lessonId));
@@ -28,49 +29,58 @@ function ModalMaterials({ open, onCancel, lessonId }) {
   }, [dispatch, lessonId]);
 
   const handleFinish = async (values) => {
-    let fileUrl = editingMaterial?.url || null;
-    let format = editingMaterial?.format || null;
+    setSubmitLoading(true);
 
-    if (fileList.length > 0) {
-      const { url, format: fileFormat } = await uploadFile(
-        fileList[0].originFileObj
-      );
-      fileUrl = url;
-      format = fileFormat;
+    try {
+      let fileUrl = editingMaterial?.url || null;
+      let format = editingMaterial?.format || null;
+      if (fileList.length > 0) {
+        const { url, format: fileFormat } = await uploadFile(
+          fileList[0].originFileObj
+        );
+        fileUrl = url;
+        format = fileFormat;
+      }
+
+      const payload = {
+        title: values.title,
+        materialType: values.materialType,
+        url: fileUrl,
+        format: format,
+      };
+
+      if (editingMaterial) {
+        await dispatch(
+          updateMaterials({
+            id: editingMaterial.materialId,
+            body: {
+              lessonId,
+              ...payload,
+            },
+          })
+        );
+        setEditingMaterial(null);
+      } else {
+        await dispatch(createMaterials({ lessonId, ...payload }));
+      }
+
+      form.resetFields();
+      setFileList([]);
+      dispatch(getMaterials(lessonId));
+    } finally {
+      setSubmitLoading(false);
     }
-
-    const payload = {
-      title: values.title,
-      materialType: values.materialType,
-      url: fileUrl,
-      format: format,
-    };
-
-    if (editingMaterial) {
-      await dispatch(
-        updateMaterials({
-          id: editingMaterial.materialId,
-          body: {
-            lessonId,
-            ...payload,
-          },
-        })
-      );
-      setEditingMaterial(null);
-    } else {
-      await dispatch(createMaterials({ lessonId, ...payload }));
-    }
-
-    form.resetFields();
-    setFileList([]);
-    dispatch(getMaterials(lessonId));
   };
 
   const handleDelete = async (id) => {
-    await dispatch(deleteMaterials({ id, lessonId }));
-    dispatch(getMaterials(lessonId));
+    setDeleteLoadingId(id);
+    try {
+      await dispatch(deleteMaterials({ id, lessonId }));
+      dispatch(getMaterials(lessonId));
+    } finally {
+      setDeleteLoadingId(null);
+    }
   };
-
   const getViewUrl = (item) => {
     if (!item?.url) return null;
 
@@ -96,7 +106,7 @@ function ModalMaterials({ open, onCancel, lessonId }) {
       footer={null}
       width={650}
     >
-      <div className="bg-gradient-to-r from-[#2972cc] to-[#35bdd2] p-5 rounded-t-lg -m-6 mb-6">
+      <div className="bg-gradient-to-r from-[#3fcba8] to-[#3fcba8] p-5 rounded-t-lg -m-6 mb-6">
         <h1 className="text-2xl font-bold text-white">Materials</h1>
         <p className="text-white/80">
           Build an engaging learning experience for your students
@@ -138,7 +148,12 @@ function ModalMaterials({ open, onCancel, lessonId }) {
         </Form.Item>
 
         <Form.Item>
-          <Button type="primary" htmlType="submit">
+          <Button
+            loading={submitLoading}
+            type="secondary"
+            className="!bg-[#62cdb2] !text-white hover:!bg-[#21bc95]"
+            htmlType="submit"
+          >
             {editingMaterial ? "Update Material" : "Add Material"}
           </Button>
           {editingMaterial && (
