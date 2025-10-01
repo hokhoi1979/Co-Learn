@@ -119,8 +119,8 @@ const SideBarParent = ({ toggle, setToggle, active, setActive }) => {
                 <h1 className="text-xl font-bold text-white">H</h1>
               </div>
               <div>
-                <h1 className="text-lg font-semibold">Miss Ha</h1>
-                <p className="text-sm text-gray-500">Teacher Coding</p>
+                <h1 className="text-lg font-semibold">Parent</h1>
+                <p className="text-sm text-gray-500">Hello Parent </p>
               </div>
             </div>
           )}
