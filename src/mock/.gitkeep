@@ -6,19 +6,19 @@
 // email: "nurse@gmail.com";
 // parent: "Ho Khoi";
 // phone: "0948222814";
+// photo: "blob:http://localhost:5173/9fbe8baa-17d7-44d6-b647-72f9f137aecf"
 // }
 
 // profile Children
-
 // {
 // age: 21;
 // children: "ha";
 // email: "nurse@gmail.com";
 // parent: "Ho Khoi";
+// photo: "blob:http://localhost:5173/9fbe8baa-17d7-44d6-b647-72f9f137aecf"
 // }
 
 //profile teacher
-
 // {
 //   fullName: "Nguyen Van A",
 //   email: "teacherA@example.com",
@@ -33,3 +33,12 @@
 //   photo: "blob:http://localhost:5173/9fbe8baa-17d7-44d6-b647-72f9f137aecf"
 //   description: "Passionate teacher with 7 years of experience in coding education. Loves guiding students through hands-on projects and problem solving."
 // };
+
+// booking parent
+//   "teacherId": 0,
+//   "studentId": 0,
+//   "notes": "string",
+//   "date":"",
+//   "start-Time":"",
+//   "duration":"" choose 1-2 tiếng
+// gộp date-startTime
