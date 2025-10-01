@@ -115,7 +115,7 @@ const SideBarParent = ({ toggle, setToggle, active, setActive }) => {
         <div className="flex mb-5 items-center px-4 py-3 justify-between">
           {!toggle && (
             <div className="flex gap-3 items-center">
-              <div className="h-12 w-12 rounded-full flex justify-center items-center bg-gradient-to-r from-[#4A90E4] to-[#2497A8]">
+              <div className="h-12 w-12 rounded-full flex justify-center items-center bg-[#3fcba8]">
                 <h1 className="text-xl font-bold text-white">H</h1>
               </div>
               <div>
@@ -141,7 +141,7 @@ const SideBarParent = ({ toggle, setToggle, active, setActive }) => {
           </div>
         </div>
       </div>
-      <ConfirmLogout open={openLogout} cancel={() => setOpenLogout(false)} />
+      {/* <ConfirmLogout open={openLogout} cancel={() => setOpenLogout(false)} /> */}
     </div>
   );
 };
