@@ -31,6 +31,9 @@ import watchGetBookingId from "./parent/booking/getBookingId/getBookingIdSaga";
 import watchGetBookingStudent from "./parent/booking/getBookingStudent/getBookingStudent";
 import watchDeleteBooking from "./parent/booking/deleteBooking/deleteBookingSaga";
 import watchEditBooking from "./parent/booking/editBooking/editBookingSaga";
+import watchGetBookingTeacher from "./teacher/booking/getBookingTeacher/getBookingTeacherSaga";
+import watchConfirmBookingTeacher from "./teacher/statusBooking/confirmBooking/confirmBookingSaga";
+import watchDeclineBookingTeacher from "./teacher/statusBooking/declineBooking/declineBookingSaga";
 export default function* rootSaga() {
   yield all([
     watchFetchLogin(),
@@ -54,6 +57,13 @@ export default function* rootSaga() {
     watchEditProfileTeacher(),
     watchGetProfileTeacherId(),
     watchCreateProfileTeacher(),
+
+    //Teacher - Booking
+    watchGetBookingTeacher(),
+
+    //Teacher - Confirm
+    watchConfirmBookingTeacher(),
+    watchDeclineBookingTeacher(),
 
     //Teacher - Course
     watchCreateCourse(),

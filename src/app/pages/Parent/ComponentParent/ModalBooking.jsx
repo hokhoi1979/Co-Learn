@@ -21,12 +21,18 @@ function ModalBooking({ open, cancel, initialValues, idTeacher, idStudent }) {
   const dispatch = useDispatch();
   useEffect(() => {
     if (initialValues) {
+      const start = dayjs(
+        initialValues.requestedStartTime || initialValues.startTime
+      );
+      const end = dayjs(initialValues.requestedEndTime);
+
+      const durationMinutes =
+        initialValues.durationMinutes || end.diff(start, "minute");
+
       form.setFieldsValue({
-        date: initialValues.date ? dayjs(initialValues.date) : dayjs(),
-        startTime: initialValues.startTime
-          ? dayjs(initialValues.startTime, "HH:mm:ss")
-          : dayjs(),
-        durationMinutes: initialValues.durationMinutes ?? 30,
+        date: initialValues.date ? dayjs(initialValues.date) : start,
+        startTime: start,
+        durationMinutes,
         notes: initialValues.notes || "",
       });
     } else {
@@ -34,7 +40,7 @@ function ModalBooking({ open, cancel, initialValues, idTeacher, idStudent }) {
     }
   }, [initialValues, form]);
 
-  const handleFinish = (values) => {
+  const handleFinish = async (values) => {
     const formatted = {
       teacherId: idTeacher?.teacherId,
       studentId: idStudent?.children?.[0]?.studentId,
