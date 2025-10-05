@@ -15,8 +15,13 @@ import { deleteBooking } from "../../../redux/parent/booking/deleteBooking/delet
 import dayjs from "dayjs";
 import isoWeek from "dayjs/plugin/isoWeek";
 import { toast } from "react-toastify";
-
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+dayjs.extend(timezone);
+dayjs.tz.setDefault("Asia/Ho_Chi_Minh");
 dayjs.extend(isoWeek);
+dayjs.extend(utc);
+
 function ParentSchedule() {
   const [user, setUser] = useState(null);
   const [teacher, setTeacher] = useState(null);
@@ -59,6 +64,8 @@ function ParentSchedule() {
     }
   }, [dispatch, profileParentId]);
 
+  const startOfWeek = dayjs().add(weekOffset, "week").startOf("isoWeek");
+  const endOfWeek = dayjs().add(weekOffset, "week").endOf("isoWeek");
   const currentWeek = dayjs().add(weekOffset, "week").isoWeek();
   const currentYear = dayjs().add(weekOffset, "week").year();
 
@@ -73,8 +80,8 @@ function ParentSchedule() {
   };
 
   getBooking_Student?.items?.forEach((booking) => {
-    const start = dayjs(booking.requestedStartTime);
-    const end = dayjs(booking.requestedEndTime);
+    const start = dayjs.utc(booking?.requestedStartTime);
+    const end = dayjs.utc(booking?.requestedEndTime);
 
     if (start.isoWeek() === currentWeek && start.year() === currentYear) {
       const dayName = start.format("dddd");
@@ -83,7 +90,7 @@ function ParentSchedule() {
 
         courseSchedule[dayName].push({
           title: `Lesson with ${booking.teacherName}`,
-          time: start.format("HH:mm"),
+          time: `${start.format("HH:mm")} - ${end.format("HH:mm")}`,
           learn: "Online",
           child: booking.studentName,
           parent: profileParentId?.parentName || "Parent",
@@ -105,9 +112,17 @@ function ParentSchedule() {
 
   const days = Object.keys(courseSchedule);
 
-  const handleEdit = (course, index, day) => {
-    setEditData({ ...course, index, day });
+  const handleEdit = async (course) => {
+    const studentId = profileParentId?.children?.[0]?.studentId;
+    if (!studentId) return;
 
+    await dispatch(getBookingStudent(studentId));
+
+    const updated = getBooking_Student?.items?.find(
+      (b) => b.bookingId === course.bookingId
+    );
+
+    setEditData(updated || course);
     setOpenBooking(true);
   };
 
@@ -133,6 +148,8 @@ function ParentSchedule() {
     }, 50);
     toast.success("Delete successful!");
   };
+
+  console.log("AAA", getBooking_Student);
 
   return (
     <div className="w-full min-h-screen p-6 bg-gradient-to-b from-[#F0F6F6] to-[#DBFBFD]">
@@ -163,12 +180,8 @@ function ParentSchedule() {
         <div className="flex justify-evenly items-center mb-4">
           <div className="w-[20%]"></div>
           <h2 className="w-[40%] flex justify-center font-semibold text-lg">
-            Week of{" "}
-            {dayjs().add(weekOffset, "week").startOf("week").format("MMM DD")} -{" "}
-            {dayjs()
-              .add(weekOffset, "week")
-              .endOf("week")
-              .format("MMM DD, YYYY")}
+            Week of {startOfWeek.format("MMM DD")} -{" "}
+            {endOfWeek.format("MMM DD, YYYY")}
           </h2>
           <div className="flex w-[20%] gap-2.5 ">
             <Button
@@ -193,7 +206,7 @@ function ParentSchedule() {
             <button
               key={day}
               onClick={() => setActiveDay(day)}
-              className={`px-4 py-2 rounded-md transition ${
+              className={`px-4 py-2 rounded-md transition cursor-pointer ${
                 activeDay === day
                   ? "bg-[#12ad8c] text-white shadow-md"
                   : "bg-gray-100 text-gray-700 hover:bg-gray-200"
@@ -225,6 +238,7 @@ function ParentSchedule() {
                     <div className="flex gap-4 text-gray-600 text-sm mt-1">
                       <span className="flex items-center gap-1">
                         <Timer size={18} /> {course.time}
+                        {course.endTime}
                       </span>
                       <span className="flex items-center gap-1 text-red-500">
                         <MdOutlineRoom /> {course.learn}
@@ -248,28 +262,49 @@ function ParentSchedule() {
                 </div>
 
                 <div className="flex flex-col items-end">
-                  <Tag color="orange" className="text-sm px-4 py-1 mb-2">
+                  <Tag
+                    color={
+                      course.status === "Confirmed"
+                        ? "green"
+                        : course.status === "Pending"
+                        ? "blue"
+                        : "red"
+                    }
+                    className="text-sm px-4 py-1 mb-2"
+                  >
                     {course.status}
                   </Tag>
-                  <div className="flex gap-2 mt-3">
-                    <Button
-                      size="small"
-                      className="!bg-[#3f7ada] hover:!bg-[#2264cf] !text-white !w-[70px] !rounded-[8px] !h-8"
-                      onClick={() => handleEdit(course, idx, activeDay)}
-                    >
-                      Edit
-                    </Button>
-                    <Button
-                      size="small"
-                      className="!bg-[#ee5757] hover:!bg-red-700 !text-white !w-[70px] !rounded-[8px] !h-8"
-                      danger
-                      onClick={() => {
-                        handleDelete(course?.bookingId, activeDay);
-                      }}
-                    >
-                      Delete
-                    </Button>
-                  </div>
+                  {course.status === "Pending" ? (
+                    <div className="flex gap-2 mt-3">
+                      <Button
+                        size="small"
+                        className="!bg-[#3f7ada] hover:!bg-[#2264cf] !text-white !w-[70px] !rounded-[8px] !h-8"
+                        onClick={() => handleEdit(course, idx, activeDay)}
+                      >
+                        Edit
+                      </Button>
+                      <Button
+                        size="small"
+                        className="!bg-[#ee5757] hover:!bg-red-700 !text-white !w-[70px] !rounded-[8px] !h-8"
+                        danger
+                        onClick={() => {
+                          handleDelete(course?.bookingId, activeDay);
+                        }}
+                      >
+                        Delete
+                      </Button>
+                    </div>
+                  ) : (
+                    <div></div>
+                  )}
+
+                  {course.status === "Confirmed" && (
+                    <>
+                      <button className="mt-4 px-4 py-1 bg-[#12ad8c] text-white rounded-md cursor-pointer hover:bg-[#24c5a2]">
+                        Payment
+                      </button>
+                    </>
+                  )}
                 </div>
               </div>
             ))

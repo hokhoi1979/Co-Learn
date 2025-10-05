@@ -24,7 +24,6 @@ function CourseKid() {
 
       {courseStudent?.items?.map((item) => {
         const course = item.course;
-        const totalLessons = course?.lessons?.length || 0;
 
         return (
           <div

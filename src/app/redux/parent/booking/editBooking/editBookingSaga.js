@@ -15,14 +15,14 @@ export function* editBookingSaga(action) {
     if (response.status === 200 || response.status === 201) {
       yield put(editBookingSuccess(response.data));
 
-      const fetch = yield call(api.post, `/bookings/${id}`);
+      const fetch = yield call(api.get, `/bookings/${id}`);
       yield put(getBookingIdSuccess(fetch.data));
     } else {
       yield put(editBookingFail(response.status));
     }
   } catch (error) {
-    yield put(editBookingFail(error));
-    console.log(error);
+    yield put(editBookingFail(error.response?.data?.message || error.message));
+    console.error("Edit booking failed:", error.response?.data || error);
   }
 }
 

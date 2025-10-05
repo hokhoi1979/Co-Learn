@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import HeaderKid from "../../layouts/Header/HeaderKid";
 import { Icon } from "@iconify/react";
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getProfileStudentById } from "../../redux/student/profileStudentById/getProfileByIdSlice";
 import { getEnrollment } from "../../redux/student/enrollments/getEnrollmentSlice";
@@ -9,6 +9,7 @@ import { getCourseStudent } from "../../redux/student/courseStudent/courseStuden
 function HomeKids() {
   const [option, setOption] = useState("courses");
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const { profileStudentById = [] } = useSelector(
     (state) => state.getProfileStudentByIdData
@@ -33,6 +34,8 @@ function HomeKids() {
       dispatch(getProfileStudentById(user?.userId));
     }
   }, [dispatch, user]);
+
+  console.log("USER", profileStudentById);
 
   useEffect(() => {
     if (profileStudentById?.studentId)
@@ -140,7 +143,7 @@ function HomeKids() {
 
         <div
           className="w-full h-auto  
-                       bg-gradient-to-r from-white via-50% to-[#e6fbfe] shadow-md px-20 pt-[120px]"
+                       bg-gradient-to-r from-[#e6fbfe] via-50% to-[#e6fbfe] shadow-md px-20 pt-[120px]"
         >
           <h1 className="flex justify-center pt-5 text-5xl  bg-[#0ba2c8] bg-clip-text text-transparent">
             Hey Children!
@@ -210,13 +213,16 @@ function HomeKids() {
             </Link>
 
             <Link
-              to="schedule"
+              to={`schedule`}
+              state={{ studentId: profileStudentById?.studentId }}
               className={`flex items-center gap-2 px-4 py-2 rounded-full cursor-pointer ${
                 option === "schedule"
                   ? "bg-gradient-to-b from-[#49d0d7] to-[#72ced3] text-white font-medium"
                   : "text-gray-700 hover:bg-gray-100"
               }`}
-              onClick={() => setOption("schedule")}
+              onClick={() => {
+                setOption("schedule");
+              }}
             >
               Schedule
             </Link>
