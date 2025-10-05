@@ -5,14 +5,15 @@ import {
   editProfileTeacherFail,
   editProfileTeacherSuccess,
 } from "./editProfileTeacherSlice";
+import { toast } from "react-toastify";
 
 export function* editProfileTeacherSaga(action) {
   try {
-    const { id, ...data } = action.payload;
-    const response = yield call(api.put, `/profile/teacher/${id}`, data);
+    const { id, body } = action.payload;
+    const response = yield call(api.put, `/profile/teacher/${id}`, body);
     if (response.status === 200 || response.status === 201) {
       yield put(editProfileTeacherSuccess(response.data));
-      console.log("DATA", response.data);
+      toast.success("Update successful!");
     } else {
       yield put(editProfileTeacherFail(response.status));
     }

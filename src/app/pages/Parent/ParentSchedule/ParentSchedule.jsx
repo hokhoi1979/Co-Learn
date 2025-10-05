@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import Summary from "../ComponentParent/Summary";
+import { useEffect, useState } from "react";
 import { Button, Tag } from "antd";
 import { Timer, User } from "lucide-react";
 import { Icon } from "@iconify/react";
@@ -7,13 +6,63 @@ import { MdOutlineRoom } from "react-icons/md";
 import CarouselTeacher from "../../Teacher/ComponentTeacher/CarouselTeacher";
 import ModalBooking from "../ComponentParent/ModalBooking";
 import DeleteVideoModal from "../../Teacher/ComponentTeacher/DeleteVideoModal";
+import { useDispatch, useSelector } from "react-redux";
+import { getProfileTeacher } from "../../../redux/teacher/profileTeacher/getProfileTeacher/getProfileTeacherSlice";
+import CarouselBooking from "../ComponentParent/CarouselBooking";
+import { getProfileParentId } from "../../../redux/parent/profileParentId/getProfileParentIdSlice";
+import { getBookingStudent } from "../../../redux/parent/booking/getBookingStudent/getBookingStudentSlice";
+import { deleteBooking } from "../../../redux/parent/booking/deleteBooking/deleteBookingSlice";
+import dayjs from "dayjs";
+import isoWeek from "dayjs/plugin/isoWeek";
+import { toast } from "react-toastify";
 
+dayjs.extend(isoWeek);
 function ParentSchedule() {
+  const [user, setUser] = useState(null);
+  const [teacher, setTeacher] = useState(null);
   const [openBooking, setOpenBooking] = useState(false);
   const [editData, setEditData] = useState(null);
+  const [activeDay, setActiveDay] = useState("Monday");
+  const [deleteData, setDeleteData] = useState(null);
+  const [loadingDelete, setLoadingDelete] = useState(false);
+  const [weekOffset, setWeekOffset] = useState(0);
+  const dispatch = useDispatch();
+  const { profileTeacher = [] } = useSelector(
+    (state) => state.getProfileTeacher
+  );
+  const { profileParentId = [] } = useSelector(
+    (state) => state.getProfileParentId
+  );
+  const { getBooking_Student = {} } = useSelector(
+    (state) => state.getBookingStudent
+  );
 
-  // 👉 Quản lý schedule động
-  const [courseSchedule, setCourseSchedule] = useState({
+  useEffect(() => {
+    const auth = localStorage.getItem("auth");
+    const parse = JSON.parse(auth);
+    if (parse) setUser(parse);
+  }, []);
+
+  useEffect(() => {
+    dispatch(getProfileTeacher());
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (!user?.userId) return;
+    dispatch(getProfileParentId(user.userId));
+  }, [dispatch, user?.userId]);
+
+  useEffect(() => {
+    const studentId = profileParentId?.children?.[0]?.studentId;
+    if (studentId) {
+      dispatch(getBookingStudent(studentId));
+    }
+  }, [dispatch, profileParentId]);
+
+  const currentWeek = dayjs().add(weekOffset, "week").isoWeek();
+  const currentYear = dayjs().add(weekOffset, "week").year();
+
+  const courseSchedule = {
     Monday: [],
     Tuesday: [],
     Wednesday: [],
@@ -21,80 +70,68 @@ function ParentSchedule() {
     Friday: [],
     Saturday: [],
     Sunday: [],
+  };
+
+  getBooking_Student?.items?.forEach((booking) => {
+    const start = dayjs(booking.requestedStartTime);
+    const end = dayjs(booking.requestedEndTime);
+
+    if (start.isoWeek() === currentWeek && start.year() === currentYear) {
+      const dayName = start.format("dddd");
+      if (courseSchedule[dayName]) {
+        const durationMinutes = end.diff(start, "minute");
+
+        courseSchedule[dayName].push({
+          title: `Lesson with ${booking.teacherName}`,
+          time: start.format("HH:mm"),
+          learn: "Online",
+          child: booking.studentName,
+          parent: profileParentId?.parentName || "Parent",
+          status: booking.bookingStatusName,
+          notes: booking.notes,
+          teacherEmail: booking.teacherEmail,
+          bookingId: booking.bookingId,
+          date: start.format("YYYY-MM-DD"),
+          startTime: start.format("HH:mm:ss"),
+          durationMinutes,
+        });
+      }
+    }
+  });
+
+  Object.keys(courseSchedule).forEach((day) => {
+    courseSchedule[day].sort((a, b) => a.time.localeCompare(b.time));
   });
 
   const days = Object.keys(courseSchedule);
-  const [activeDay, setActiveDay] = useState("Monday");
-
-  // 👉 State cho delete
-  const [deleteData, setDeleteData] = useState(null); // {index, day, title}
-  const [loadingDelete, setLoadingDelete] = useState(false);
-
-  const handleSubmit = (values) => {
-    const newCourse = {
-      title: values.subject,
-      time: values.time,
-      day: values.day,
-      learn: "Online",
-      level: "Beginner",
-      students: 1,
-      status: editData ? values.status || "Pending" : "Pending",
-      child: values.childName,
-      parent: values.parentName,
-      phone: values.phone,
-      email: values.email,
-    };
-
-    if (editData) {
-      setCourseSchedule((prev) => {
-        const updated = { ...prev };
-        if (values.day !== editData.day) {
-          updated[editData.day] = updated[editData.day].filter(
-            (_, idx) => idx !== editData.index
-          );
-          updated[values.day] = [...updated[values.day], newCourse];
-        } else {
-          updated[values.day] = updated[values.day].map((course, idx) =>
-            idx === editData.index ? newCourse : course
-          );
-        }
-        return updated;
-      });
-      setEditData(null);
-    } else {
-      setCourseSchedule((prev) => ({
-        ...prev,
-        [values.day]: [...prev[values.day], newCourse],
-      }));
-    }
-
-    setOpenBooking(false);
-  };
 
   const handleEdit = (course, index, day) => {
     setEditData({ ...course, index, day });
+
     setOpenBooking(true);
   };
 
-  // 👉 Mở modal delete
-  const handleDelete = (index, day, title) => {
-    setDeleteData({ index, day, title });
+  const handleDelete = async (id) => {
+    setDeleteData({ id });
+    try {
+      await dispatch(deleteBooking(id)).unwrap();
+      setDeleteData(null);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
-  // 👉 Xác nhận delete
   const confirmDelete = () => {
-    if (!deleteData) return;
     setLoadingDelete(true);
+    const studentId = profileParentId?.children?.[0]?.studentId;
+    if (studentId) {
+      dispatch(getBookingStudent(studentId));
+    }
     setTimeout(() => {
-      setCourseSchedule((prev) => ({
-        ...prev,
-        [deleteData.day]: prev[deleteData.day].filter(
-          (_, idx) => idx !== deleteData.index
-        ),
-      }));
       setLoadingDelete(false);
       setDeleteData(null);
-    }, 600); // fake loading
+    }, 50);
+    toast.success("Delete successful!");
   };
 
   return (
@@ -105,24 +142,51 @@ function ParentSchedule() {
           Manage and update your children’s learning process
         </p>
       </div>
-      <Summary />
 
-      <div className="flex justify-end py-5 px-15">
-        <Button
-          onClick={() => {
+      <h1 className="flex justify-center text-3xl ">Our Expert Teachers</h1>
+      <p className="flex justify-center text-gray-500">
+        Connect with qualified professionals and advance your learning journey
+      </p>
+
+      <div className="py-5">
+        <CarouselBooking
+          profileTeacher={profileTeacher}
+          onBooking={(teacher) => {
             setEditData(null);
             setOpenBooking(true);
+            setTeacher(teacher);
           }}
-          className="!bg-[#3fcba8] !text-white shadow-md hover:!bg-[#17ae88]"
-        >
-          + Booking Now
-        </Button>
+        />
       </div>
 
       <div className="bg-white rounded-2xl shadow-md p-5 w-[90%] mx-auto mb-10 mt-5">
-        <div className="flex justify-between items-center mb-5">
-          <h1 className="text-2xl font-bold">Children Schedule</h1>
+        <div className="flex justify-evenly items-center mb-4">
+          <div className="w-[20%]"></div>
+          <h2 className="w-[40%] flex justify-center font-semibold text-lg">
+            Week of{" "}
+            {dayjs().add(weekOffset, "week").startOf("week").format("MMM DD")} -{" "}
+            {dayjs()
+              .add(weekOffset, "week")
+              .endOf("week")
+              .format("MMM DD, YYYY")}
+          </h2>
+          <div className="flex w-[20%] gap-2.5 ">
+            <Button
+              className="!w-[120px]"
+              onClick={() => setWeekOffset((prev) => prev - 1)}
+            >
+              ← Previous Week
+            </Button>
+            <Button
+              className="!w-[120px]"
+              onClick={() => setWeekOffset((prev) => prev + 1)}
+            >
+              Next Week →
+            </Button>
+          </div>
         </div>
+
+        <h1 className="text-2xl font-bold mb-5">Children Schedule</h1>
 
         <div className="flex gap-2 mb-6 flex-wrap">
           {days.map((day) => (
@@ -131,7 +195,7 @@ function ParentSchedule() {
               onClick={() => setActiveDay(day)}
               className={`px-4 py-2 rounded-md transition ${
                 activeDay === day
-                  ? "bg-gradient-to-r from-[#4A90E4] to-[#2497A8] text-white shadow-md"
+                  ? "bg-[#12ad8c] text-white shadow-md"
                   : "bg-gray-100 text-gray-700 hover:bg-gray-200"
               }`}
             >
@@ -141,14 +205,14 @@ function ParentSchedule() {
         </div>
 
         <div className="flex flex-col gap-4">
-          {courseSchedule[activeDay].length > 0 ? (
+          {courseSchedule[activeDay]?.length > 0 ? (
             courseSchedule[activeDay].map((course, idx) => (
               <div
                 key={idx}
                 className="flex items-center justify-between bg-[#F9FCFC] border rounded-xl shadow-sm p-4 hover:bg-[#f1f9f9] transition"
               >
                 <div className="flex gap-4 items-center">
-                  <div className="w-12 h-12 flex items-center justify-center rounded-xl bg-gradient-to-r from-[#4A90E4] to-[#2497A8] shadow-md">
+                  <div className="w-12 h-12 flex items-center justify-center rounded-xl bg-[#12ad8c] shadow-md">
                     <Icon
                       color="white"
                       icon="mdi:book-open-page-variant"
@@ -170,6 +234,16 @@ function ParentSchedule() {
                       <User size={18} /> Child: {course.child} (Parent:{" "}
                       {course.parent})
                     </div>
+                    {course.notes && (
+                      <p className="text-gray-500 text-sm mt-1">
+                        Notes: {course.notes}
+                      </p>
+                    )}
+                    {course.teacherEmail && (
+                      <p className="text-gray-500 text-sm">
+                        Teacher: {course.teacherEmail}
+                      </p>
+                    )}
                   </div>
                 </div>
 
@@ -177,19 +251,21 @@ function ParentSchedule() {
                   <Tag color="orange" className="text-sm px-4 py-1 mb-2">
                     {course.status}
                   </Tag>
-                  <div className="flex gap-2  mt-3">
+                  <div className="flex gap-2 mt-3">
                     <Button
                       size="small"
-                      className="!bg-[#6f9fed] hover:!bg-[#4781de] !text-white !w-[70px]"
+                      className="!bg-[#3f7ada] hover:!bg-[#2264cf] !text-white !w-[70px] !rounded-[8px] !h-8"
                       onClick={() => handleEdit(course, idx, activeDay)}
                     >
                       Edit
                     </Button>
                     <Button
                       size="small"
-                      className="!bg-[#ea8576] hover:!bg-[#e95a44] !text-white !w-[70px]"
+                      className="!bg-[#ee5757] hover:!bg-red-700 !text-white !w-[70px] !rounded-[8px] !h-8"
                       danger
-                      onClick={() => handleDelete(idx, activeDay, course.title)}
+                      onClick={() => {
+                        handleDelete(course?.bookingId, activeDay);
+                      }}
                     >
                       Delete
                     </Button>
@@ -213,7 +289,8 @@ function ParentSchedule() {
           setOpenBooking(false);
           setEditData(null);
         }}
-        onSubmit={handleSubmit}
+        idTeacher={teacher}
+        idStudent={profileParentId}
         initialValues={editData}
       />
 

@@ -1,24 +1,53 @@
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
+import dayjs from "dayjs";
 import Earning from "../ComponentTeacher/Earning";
 import { Button } from "antd";
 import CarouselTeacher from "../ComponentTeacher/CarouselTeacher";
 import ModalProfile from "../ComponentTeacher/ModalProfile";
-import { Mail, Phone, Users, Calendar, Lock, Globe, Info } from "lucide-react";
+import {
+  Mail,
+  Phone,
+  Users,
+  Calendar,
+  Info,
+  ExternalLink,
+  Award,
+} from "lucide-react";
+import { useDispatch, useSelector } from "react-redux";
+import { getProfileTeacherId } from "../../../redux/teacher/profileTeacher/getProfileId/getProfileIdSlice";
+
 function TeacherProfile() {
-  const [profile, setProfile] = useState(null);
-  const [openProfile, setOpenProfile] = useState(null);
+  const dispatch = useDispatch();
+  const [openProfile, setOpenProfile] = useState(false);
+  const [user, setUser] = useState(null);
 
-  const handleSubmitTeacher = (values) => {
-    setProfile(values);
-  };
+  const { profileTeacherId } = useSelector(
+    (state) => state.getProfileTeacherId
+  );
 
-  const handleTeacherOk = () => {
-    setOpenProfile(false);
-  };
+  useEffect(() => {
+    const auth = localStorage.getItem("auth");
+    if (auth) {
+      setUser(JSON.parse(auth));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (user?.userId) {
+      dispatch(getProfileTeacherId(user.userId));
+    }
+  }, [dispatch, user]);
+
+  console.log("TEACHER", profileTeacherId);
+
+  const handleTeacherOk = () => setOpenProfile(false);
+  const profile = profileTeacherId || null;
 
   return (
     <div className="w-full min-h-screen p-5 bg-gradient-to-b from-[#F0F6F6] to-[#DBFBFD]">
-      <h1 className="text-2xl font-bold">Welcome back! Miss Ha </h1>
+      <h1 className="text-2xl font-bold">
+        Welcome back! {profile?.fullName || "Teacher"}
+      </h1>
       <p className="text-gray-500 mb-6">
         Manage your classes and track your teaching progress
       </p>
@@ -28,25 +57,12 @@ function TeacherProfile() {
       <div className="py-10">
         {!profile ? (
           <div className="flex flex-col items-center justify-center h-96 bg-white rounded-2xl shadow-md p-8">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="60"
-              height="60"
-              viewBox="0 0 16 16"
-            >
-              <path
-                fill="#9ca3af"
-                d="M13.5 0h-12C.675 0 0 .675 0 1.5v13c0 .825.675 1.5 1.5 1.5h12c.825 0 1.5-.675 1.5-1.5v-13c0-.825-.675-1.5-1.5-1.5M13 14H2V2h11zM4 9h7v1H4zm0 2h7v1H4zm1-6.5a1.5 1.5 0 1 1 3.001.001A1.5 1.5 0 0 1 5 4.5M7.5 6h-2C4.675 6 4 6.45 4 7v1h5V7c0-.55-.675-1-1.5-1"
-              />
-            </svg>
-
             <h2 className="text-xl font-semibold text-gray-700 mt-4">
               No Teacher Information
             </h2>
             <p className="text-gray-500 mb-6 text-center">
               You haven’t updated your teaching profile yet.
             </p>
-
             <Button
               onClick={() => setOpenProfile(true)}
               type="primary"
@@ -56,104 +72,144 @@ function TeacherProfile() {
             </Button>
           </div>
         ) : (
-          <div className="flex flex-col items-center text-center w-[70%] justify-center m-auto">
-            {profile.photo && (
+          <div className="w-[90%] md:w-[80%] lg:w-[75%] mx-auto">
+            <div className="bg-gradient-to-r from-[#f2f9f8] to-[#f2f9f9] rounded-2xl shadow p-8 flex flex-col md:flex-row items-center md:items-start gap-6 relative">
               <img
                 src={profile.photo}
                 alt="Teacher Avatar"
-                className="w-28 h-28 rounded-full object-cover border-4 border-white shadow-md -mb-12 z-10"
+                className="w-28 h-28 rounded-xl object-cover shadow-md"
               />
-            )}
+              <div className="flex-1 text-center md:text-left">
+                <h3 className="text-3xl font-bold text-gray-800 mb-2">
+                  {profile.fullName}
+                </h3>
 
-            <div className="bg-white rounded-2xl shadow-lg p-8 w-full  md:w-3/4 lg:w-2/3 mt-20">
-              <h3 className="text-3xl font-bold text-gray-800 text-center">
-                {profile.fullName}
-              </h3>
-              <p className="text-gray-500 mb-8 text-center">Teacher Profile</p>
-
-              <div className="flex py-2 px-10 justify-between text-gray-700 text-center">
-                <div className="">
-                  <div className="flex items-center gap-3 py-2">
-                    <Mail className="text-[#3fcba8]" size={20} />
-                    <span>{profile.email}</span>
-                  </div>
-                  <div className="flex items-center gap-3 py-2">
-                    <Lock className="text-[#3fcba8]" size={20} />
-                    <span>Age: {profile.age}</span>
-                  </div>
-                  <div className="flex items-center gap-3 py-2">
-                    <Calendar className="text-[#3fcba8]" size={20} />
-                    <span>Birthday: {profile.born}</span>
-                  </div>
-                  <div className="flex items-center gap-3 py-2">
-                    <Phone className="text-[#3fcba8]" size={20} />
-                    <span>{profile.phone}</span>
-                  </div>
+                <span className="bg-[#DFF7F2] text-[#158F77] px-3 py-1 rounded-lg ">
+                  Professional Educator
+                </span>
+                <div className="flex flex-wrap gap-3 mt-3 items-center text-sm text-gray-600">
+                  <span className="flex items-center gap-2">
+                    Gender:
+                    {profile.gender}
+                  </span>
                 </div>
-                <div>
-                  <div className="flex items-center gap-3 py-2">
-                    <Users className="text-[#3fcba8]" size={20} />
-                    <span>Experience: {profile.experience} years</span>
+              </div>
+
+              <Button
+                onClick={() => setOpenProfile(true)}
+                className="!bg-[#3fcba8] !text-white shadow-md hover:!bg-[#17ae88] "
+              >
+                Edit Profile
+              </Button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+              <div className="bg-white rounded-2xl shadow p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <Phone className="text-[#0ea88f]" size={20} />
+                  <h4 className="text-lg font-semibold">Contact Information</h4>
+                </div>
+
+                <div className="text-gray-600 space-y-4">
+                  <div>
+                    <div className="text-xs text-gray-400 uppercase mb-1">
+                      Phone
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Phone className="text-[#3fcba8]" size={16} />
+                      <span className="text-sm">{profile.phone || "-"}</span>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-3 py-2">
-                    <Users className="text-[#3fcba8]" size={20} />
-                    <span>Gender: {profile.gender}</span>
+
+                  <div>
+                    <div className="text-xs text-gray-400 uppercase mb-1">
+                      Email
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Mail className="text-[#3fcba8]" size={16} />
+                      <span className="text-sm">{profile.email || "-"}</span>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-3 py-2 md:col-span-2">
-                    <Globe className="text-[#3fcba8]" size={20} />
-                    <span>Languages: {profile.languages?.join(", ")}</span>
+
+                  <div>
+                    <div className="text-xs text-gray-400 uppercase mb-1">
+                      Birthday
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Calendar className="text-[#3fcba8]" size={16} />
+                      <span className="text-sm">
+                        {profile.born
+                          ? dayjs(profile.born).format("MMMM D, YYYY")
+                          : "N/A"}
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
 
-              <div className="mt-8 border-t pt-6 space-y-6 text-gray-700">
-                <div className="flex py-2 px-10 justify-between gap-4">
-                  {profile.degree && (
-                    <div className="flex items-center gap-3">
-                      <Info className="text-[#3fcba8]" size={20} />
-                      <a
-                        href={profile.degree}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-600 underline"
-                      >
-                        View Certificate
-                      </a>
-                    </div>
-                  )}
-                  {profile.cv && (
-                    <div className="flex items-center gap-3">
-                      <Info className="text-[#3fcba8]" size={20} />
-                      <a
-                        href={profile.cv}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-600 underline"
-                      >
-                        View CV
-                      </a>
-                    </div>
-                  )}
+              <div className="bg-white rounded-2xl shadow p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <Info className="text-[#0ea88f]" size={20} />
+                  <h4 className="text-lg font-semibold">About Me</h4>
                 </div>
 
-                <div className="flex  px-10 justify-between items-start gap-3">
-                  <div className="flex gap-2">
-                    <Info className="text-[#3fcba8] mt-1" size={20} />
-                    <span className="leading-relaxed">
-                      Description:{profile.description}
-                    </span>
-                  </div>
-                  <div></div>
-                </div>
+                <p className="text-gray-600 leading-relaxed">
+                  {profile.description ||
+                    "No description provided. Update your profile to let students know more about you."}
+                </p>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-2xl shadow p-6 mt-8">
+              <div className="flex items-center gap-3 mb-4">
+                <Award color="#0ea88f" />
+                <h4 className="text-lg font-semibold">
+                  Credentials & Documents
+                </h4>
               </div>
 
-              <div className="flex justify-center mt-10">
-                <Button
-                  onClick={() => setOpenProfile(true)}
-                  className="!bg-[#3fcba8] !text-white shadow-md hover:!bg-[#17ae88] px-8 py-2 rounded-lg font-medium"
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <a
+                  href={profile.degree || "#"}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-between bg-[#F3FBF9] border border-transparent rounded-lg p-4 hover:shadow-sm"
                 >
-                  Edit Profile
-                </Button>
+                  <div className="flex items-center gap-4">
+                    <div className="bg-white/60 rounded-md p-3 shadow-sm">
+                      <Info className="text-[#0ea88f]" size={20} />
+                    </div>
+                    <div>
+                      <div className="font-medium">Degree Certificate</div>
+                      <div className="text-sm text-gray-500">
+                        View credentials
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <ExternalLink className="text-gray-500" size={18} />
+                  </div>
+                </a>
+
+                <a
+                  href={profile.cv || "#"}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-between bg-[#F3FBF9] border border-transparent rounded-lg p-4 hover:shadow-sm"
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="bg-white/60 rounded-md p-3 shadow-sm">
+                      <Info className="text-[#0ea88f]" size={20} />
+                    </div>
+                    <div>
+                      <div className="font-medium">Curriculum Vitae</div>
+                      <div className="text-sm text-gray-500">View full CV</div>
+                    </div>
+                  </div>
+                  <div>
+                    <ExternalLink className="text-gray-500" size={18} />
+                  </div>
+                </a>
               </div>
             </div>
           </div>
@@ -165,7 +221,6 @@ function TeacherProfile() {
       <ModalProfile
         isModalOpen={openProfile}
         handleCancel={() => setOpenProfile(false)}
-        onSubmitData={handleSubmitTeacher}
         handleOk={handleTeacherOk}
         initialState={profile}
       />

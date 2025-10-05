@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"; // thêm useState
+import { useEffect, useState } from "react";
 import { Modal, Form, Input, Button, Upload } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { Icon } from "@iconify/react";
@@ -18,7 +18,7 @@ function ModelUploadVideo({
 }) {
   const [form] = Form.useForm();
   const dispatch = useDispatch();
-  const [loading, setLoading] = useState(false); // thêm state loading
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (initialValues) {

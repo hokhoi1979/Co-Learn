@@ -10,9 +10,14 @@ import {
 } from "antd";
 import { useForm } from "antd/es/form/Form";
 import { User, Upload as UploadIcon } from "lucide-react";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import dayjs from "dayjs";
+import { uploadFile } from "../../../utils/uploadFile";
+import { useDispatch } from "react-redux";
+import { createProfileTeacher } from "../../../redux/teacher/profileTeacher/creatProfileTeacher/createProfileTeacherSlice";
+import { editProfileTeacher } from "../../../redux/teacher/profileTeacher/editProfileTeacher/editProfileTeacherSlice";
+import { getProfileTeacherId } from "../../../redux/teacher/profileTeacher/getProfileId/getProfileIdSlice";
 
 const { Option } = Select;
 
@@ -24,42 +29,38 @@ function ModalProfile({
   onSubmitData,
 }) {
   const [form] = useForm();
+  const [user, setUser] = useState(null);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const auth = localStorage.getItem("auth");
+    if (auth) {
+      let data;
+      data = JSON.parse(auth);
+      setUser(data);
+    }
+  }, []);
 
   useEffect(() => {
     if (initialState) {
+      const getFileItem = (url, uid) =>
+        url
+          ? [
+              {
+                uid,
+                name: url.split("/").pop(),
+                status: "done",
+                url,
+              },
+            ]
+          : [];
+
       const values = {
         ...initialState,
         born: initialState.born ? dayjs(initialState.born) : null,
-        photo: initialState.photo
-          ? [
-              {
-                uid: "-1",
-                name: "photo.png",
-                status: "done",
-                url: initialState.photo,
-              },
-            ]
-          : [],
-        degree: initialState.degree
-          ? [
-              {
-                uid: "-2",
-                name: "degree.pdf",
-                status: "done",
-                url: initialState.degree,
-              },
-            ]
-          : [],
-        cv: initialState.cv
-          ? [
-              {
-                uid: "-3",
-                name: "cv.pdf",
-                status: "done",
-                url: initialState.cv,
-              },
-            ]
-          : [],
+        photo: getFileItem(initialState.photo, "-1"),
+        degree: getFileItem(initialState.degree, "-2"),
+        cv: getFileItem(initialState.cv, "-3"),
       };
       form.setFieldsValue(values);
     } else {
@@ -75,35 +76,38 @@ function ModalProfile({
   const onSubmit = () => {
     form.validateFields().then((values) => {
       if (values.born) {
-        values.born = dayjs(values.born).format("YYYY-MM-DD");
+        values.born = dayjs(values.born).toISOString();
       }
 
-      // Xử lý file photo
-      if (values.photo?.[0]?.originFileObj) {
-        values.photo = URL.createObjectURL(values.photo[0].originFileObj);
-      } else if (values.photo?.[0]?.url) {
-        values.photo = values.photo[0].url;
-      }
+      values.photo =
+        values.photo?.[0]?.response?.url || values.photo?.[0]?.url || null;
+      values.degree =
+        values.degree?.[0]?.response?.url || values.degree?.[0]?.url || null;
+      values.cv = values.cv?.[0]?.response?.url || values.cv?.[0]?.url || null;
 
-      // Xử lý file degree
-      if (values.degree?.[0]?.originFileObj) {
-        values.degree = URL.createObjectURL(values.degree[0].originFileObj);
-      } else if (values.degree?.[0]?.url) {
-        values.degree = values.degree[0].url;
-      }
+      const payload = {
+        userId: user?.userId ?? 0,
+        fullName: values.fullName,
+        born: values.born,
+        phone: values.phone,
+        gender: values.gender,
+        degree: values.degree,
+        cv: values.cv,
+        photo: values.photo,
+        description: values.description,
+      };
 
-      // Xử lý file cv
-      if (values.cv?.[0]?.originFileObj) {
-        values.cv = URL.createObjectURL(values.cv[0].originFileObj);
-      } else if (values.cv?.[0]?.url) {
-        values.cv = values.cv[0].url;
-      }
+      if (initialState) {
+        dispatch(
+          editProfileTeacher({ id: initialState?.teacherId, body: payload })
+        );
 
-      onSubmitData(values);
+        dispatch(getProfileTeacherId(user?.userId));
+      } else {
+        dispatch(createProfileTeacher(payload));
+      }
       handleOk();
-      console.log("Teacher DATA:", values);
       form.resetFields();
-      toast.success("Update successful!");
     });
   };
 
@@ -124,7 +128,7 @@ function ModalProfile({
           key="save"
           onClick={onSubmit}
           type="primary"
-          className="!bg-[#00b0ff] hover:!bg-[#0090d9] rounded-lg h-10 px-6 font-semibold"
+          className="!bg-[#3fcba8] hover:!bg-[#24be97] rounded-lg h-10 px-6 font-semibold"
         >
           Save
         </Button>,
@@ -132,7 +136,7 @@ function ModalProfile({
       className="custom-modal"
       closable={false}
     >
-      <div className="bg-gradient-to-r from-[#2972cc] to-[#35bdd2] p-6 rounded-t-lg -m-6 mb-8 flex items-center gap-4">
+      <div className="bg-gradient-to-r from-[#3fcba8] to-[#3fcba8] p-6 rounded-t-lg -m-6 mb-8 flex items-center gap-4">
         <div className="bg-white/20 p-3 rounded-full">
           <User className="w-7 h-7 text-white" />
         </div>
@@ -163,17 +167,8 @@ function ModalProfile({
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Form.Item label="Age" name="age" rules={[{ required: true }]}>
-            <InputNumber min={18} max={100} style={{ width: "100%" }} />
-          </Form.Item>
           <Form.Item label="Phone" name="phone" rules={[{ required: true }]}>
             <Input placeholder="Enter phone number" />
-          </Form.Item>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Form.Item label="Email" name="email" rules={[{ required: true }]}>
-            <Input placeholder="Enter email" />
           </Form.Item>
           <Form.Item label="Gender" name="gender">
             <Select placeholder="Select gender">
@@ -184,17 +179,7 @@ function ModalProfile({
           </Form.Item>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Form.Item label="Experience (years)" name="experience">
-            <InputNumber min={0} max={50} style={{ width: "100%" }} />
-          </Form.Item>
-          <Form.Item label="Languages" name="languages">
-            <Select mode="tags" placeholder="Enter or select languages">
-              <Option value="Vietnamese">Vietnamese</Option>
-              <Option value="English">English</Option>
-            </Select>
-          </Form.Item>
-        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
           <Form.Item
@@ -203,17 +188,36 @@ function ModalProfile({
             valuePropName="fileList"
             getValueFromEvent={normFile}
           >
-            <Upload beforeUpload={() => false} listType="picture">
+            <Upload
+              customRequest={async ({ file, onSuccess, onError }) => {
+                try {
+                  const res = await uploadFile(file);
+                  onSuccess(res, file);
+                } catch (err) {
+                  onError(err);
+                }
+              }}
+              listType="picture"
+            >
               <Button icon={<UploadIcon size={16} />}>Upload</Button>
             </Upload>
           </Form.Item>
           <Form.Item
             name="degree"
-            label="Certificate"
+            label="Degree"
             valuePropName="fileList"
             getValueFromEvent={normFile}
           >
-            <Upload beforeUpload={() => false}>
+            <Upload
+              customRequest={async ({ file, onSuccess, onError }) => {
+                try {
+                  const res = await uploadFile(file);
+                  onSuccess(res, file);
+                } catch (err) {
+                  onError(err);
+                }
+              }}
+            >
               <Button icon={<UploadIcon size={16} />}>Upload</Button>
             </Upload>
           </Form.Item>
@@ -223,14 +227,23 @@ function ModalProfile({
             valuePropName="fileList"
             getValueFromEvent={normFile}
           >
-            <Upload beforeUpload={() => false}>
+            <Upload
+              customRequest={async ({ file, onSuccess, onError }) => {
+                try {
+                  const res = await uploadFile(file);
+                  onSuccess(res, file);
+                } catch (err) {
+                  onError(err);
+                }
+              }}
+            >
               <Button icon={<UploadIcon size={16} />}>Upload</Button>
             </Upload>
           </Form.Item>
         </div>
 
         <Form.Item
-          label="Introduction"
+          label="Description"
           name="description"
           rules={[{ required: true }]}
         >

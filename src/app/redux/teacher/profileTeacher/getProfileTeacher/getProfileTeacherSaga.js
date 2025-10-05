@@ -10,7 +10,6 @@ export function* getProfileTeacherSaga() {
     const response = yield call(api.get, "/profile/teacher");
     if (response.status === 200 || response.status === 201) {
       yield put(getProfileTeacherSuccess(response.data));
-      console.log("DATA", response.data);
     } else {
       yield put(getProfileTeacherFail(response.status));
     }

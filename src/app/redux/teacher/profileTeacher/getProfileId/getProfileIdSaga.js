@@ -12,7 +12,6 @@ export function* getProfileTeacherIdSaga(action) {
     const response = yield call(api.get, `/profile/teacher/${id}`);
     if (response.status === 200 || response.status === 201) {
       yield put(getProfileTeacherIdSuccess(response.data));
-      console.log("DATA", response.data);
     } else {
       yield put(getProfileTeacherIdFail(response.status));
     }
