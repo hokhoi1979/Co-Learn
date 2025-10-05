@@ -1,23 +1,33 @@
-import { Form, Input, Modal, Select, Button, DatePicker } from "antd";
+import {
+  Form,
+  Input,
+  Modal,
+  Select,
+  Button,
+  DatePicker,
+  TimePicker,
+} from "antd";
 import { useForm } from "antd/es/form/Form";
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import dayjs from "dayjs";
+import { useDispatch } from "react-redux";
+import { createBookingId } from "../../../redux/parent/booking/createBookingId/createBookingIdSlice";
+import { getBookingStudent } from "../../../redux/parent/booking/getBookingStudent/getBookingStudentSlice";
+import { editBooking } from "../../../redux/parent/booking/editBooking/editBookingSlice";
+import { toast } from "react-toastify";
 
-function ModalBooking({ open, cancel, onSubmit, initialValues }) {
+function ModalBooking({ open, cancel, initialValues, idTeacher, idStudent }) {
   const [form] = useForm();
-
+  const dispatch = useDispatch();
   useEffect(() => {
     if (initialValues) {
       form.setFieldsValue({
-        childName: initialValues.child,
-        parentName: initialValues.parent,
-        phone: initialValues.phone, // ✅ map lại phone
-        email: initialValues.email, // ✅ map lại email
-        subject: initialValues.title,
-        datetime:
-          initialValues.day && initialValues.time
-            ? dayjs(`${initialValues.day} ${initialValues.time}`, "dddd HH:mm")
-            : null,
+        date: initialValues.date ? dayjs(initialValues.date) : dayjs(),
+        startTime: initialValues.startTime
+          ? dayjs(initialValues.startTime, "HH:mm:ss")
+          : dayjs(),
+        durationMinutes: initialValues.durationMinutes ?? 30,
+        notes: initialValues.notes || "",
       });
     } else {
       form.resetFields();
@@ -26,11 +36,21 @@ function ModalBooking({ open, cancel, onSubmit, initialValues }) {
 
   const handleFinish = (values) => {
     const formatted = {
-      ...values,
-      day: values.datetime.format("dddd"),
-      time: values.datetime.format("HH:mm"),
+      teacherId: idTeacher?.teacherId,
+      studentId: idStudent?.children?.[0]?.studentId,
+      date: values.date.format("YYYY-MM-DD"),
+      startTime: values.startTime.format("HH:mm:ss"),
+      durationMinutes: values.durationMinutes,
+      notes: values.notes,
     };
-    if (onSubmit) onSubmit(formatted);
+    if (initialValues) {
+      dispatch(editBooking({ id: initialValues?.bookingId, body: formatted }));
+      toast.success("Edit booking successful!");
+    } else {
+      dispatch(createBookingId(formatted));
+    }
+    dispatch(getBookingStudent(idStudent?.children?.[0]?.studentId));
+
     form.resetFields();
     cancel();
   };
@@ -44,8 +64,7 @@ function ModalBooking({ open, cancel, onSubmit, initialValues }) {
       destroyOnClose
       className="rounded-xl overflow-hidden"
     >
-      {/* Header */}
-      <div className="bg-gradient-to-r from-[#2972cc] to-[#35bdd2] p-5 -m-6 mb-6">
+      <div className="bg-gradient-to-r from-[#12ad8c] to-[#12ad8c] p-5 -m-6 mb-6">
         <h1 className="text-2xl font-bold text-white">
           {initialValues
             ? "Update Booking"
@@ -56,78 +75,49 @@ function ModalBooking({ open, cancel, onSubmit, initialValues }) {
         </p>
       </div>
 
-      {/* Form */}
       <Form layout="vertical" form={form} onFinish={handleFinish}>
-        {/* Name Fields */}
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-3 gap-3">
           <Form.Item
-            label="Child's Name"
-            name="childName"
-            rules={[{ required: true, message: "Please enter child's name" }]}
+            label="Date"
+            name="date"
+            rules={[{ required: true, message: "Please select a date" }]}
           >
-            <Input placeholder="Enter child's name" />
+            <DatePicker className="w-full" />
           </Form.Item>
 
           <Form.Item
-            label="Parent's Name"
-            name="parentName"
-            rules={[{ required: true, message: "Please enter parent's name" }]}
+            label="Start Time"
+            name="startTime"
+            rules={[{ required: true, message: "Please select start time" }]}
           >
-            <Input placeholder="Enter parent's name" />
-          </Form.Item>
-        </div>
-
-        {/* Contact */}
-        <div className="grid grid-cols-2 gap-3">
-          <Form.Item
-            label="Phone Number"
-            name="phone"
-            rules={[{ required: true, message: "Please enter your phone" }]}
-          >
-            <Input placeholder="Enter phone number" />
+            <TimePicker format="HH:mm" className="w-full" />
           </Form.Item>
 
           <Form.Item
-            label="Email Address"
-            name="email"
-            rules={[{ required: true, message: "Please enter your email" }]}
+            label="Duration"
+            name="durationMinutes"
+            rules={[{ required: true, message: "Please select duration" }]}
           >
-            <Input type="email" placeholder="Enter email address" />
-          </Form.Item>
-        </div>
-
-        {/* Subject & Date */}
-        <div className="grid grid-cols-2 gap-3">
-          <Form.Item
-            label="Choose Subject"
-            name="subject"
-            rules={[{ required: true, message: "Please choose subject" }]}
-          >
-            <Select placeholder="Select a subject">
-              <Select.Option value="python">Python for Kids</Select.Option>
-              <Select.Option value="javascript">
-                JavaScript Game Development
-              </Select.Option>
-              <Select.Option value="react">React Fundamentals</Select.Option>
+            <Select placeholder="Select duration">
+              <Select.Option value={60}>1 hour</Select.Option>
+              <Select.Option value={120}>2 hours</Select.Option>
             </Select>
           </Form.Item>
-
-          <Form.Item
-            label="Choose Date & Time"
-            name="datetime"
-            rules={[{ required: true, message: "Please select date & time" }]}
-          >
-            <DatePicker
-              showTime={{ format: "HH:mm" }}
-              format="dddd HH:mm"
-              className="w-full"
-            />
-          </Form.Item>
         </div>
 
+        <Form.Item label="Notes" name="notes">
+          <Input.TextArea placeholder="Enter additional notes" rows={3} />
+        </Form.Item>
+
         <div className="flex justify-end gap-2 mt-6">
-          <Button onClick={cancel}>Cancel</Button>
-          <Button type="primary" htmlType="submit">
+          <Button className="!bg-[#ffffff] !text-black" onClick={cancel}>
+            Cancel
+          </Button>
+          <Button
+            type="secondary"
+            className="!bg-[#12ad8c] hover:!bg-[#09735c] !text-white"
+            htmlType="submit"
+          >
             {initialValues ? "Update" : "Book Now"}
           </Button>
         </div>

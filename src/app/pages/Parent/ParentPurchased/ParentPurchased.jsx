@@ -1,5 +1,4 @@
 import { Image, Tag } from "antd";
-import React from "react";
 import img from "../../../assets/img/bg3.jpg";
 import CarouselTeacher from "../../Teacher/ComponentTeacher/CarouselTeacher";
 import { dataPurchased } from "../../../shared";

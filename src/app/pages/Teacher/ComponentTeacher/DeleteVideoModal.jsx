@@ -1,4 +1,3 @@
-import React from "react";
 import { Modal } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
 
@@ -41,14 +40,14 @@ export default function DeleteVideoModal({
               />
             </g>
           </svg>
-          <h2 className="text-xl font-bold">Delete this course</h2>
+          <h2 className="text-xl font-bold">Warning</h2>
         </div>
         <p className="flex justify-center text-gray-500 mb-4">
           Actions that cannot be undone
         </p>
 
         <p className="text-base">
-          <span>Do you want to delete this course </span>
+          <span>Do you want to delete </span>
           <span className="font-semibold text-red-600">{courseTitle}</span> ?
         </p>
 
