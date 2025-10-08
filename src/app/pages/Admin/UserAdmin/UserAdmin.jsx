@@ -162,7 +162,6 @@ function UserAdmin() {
         </div>
       </div>
 
-      {/* ==== TABLE ==== */}
       <div className="bg-white rounded-xl shadow p-6">
         <div className="flex justify-between items-center mb-4">
           <div className="flex gap-4">
@@ -203,9 +202,12 @@ function UserAdmin() {
                 <th className="py-3 px-4">#</th>
                 <th className="py-3 px-4">Name</th>
                 <th className="py-3 px-4">Email</th>
-                <th className="py-3 px-4">Phone</th>
                 {activeTab === "teachers" && (
-                  <th className="py-3 px-4">Gender</th>
+                  <>
+                    <th className="py-3 px-4">Phone</th>
+
+                    <th className="py-3 px-4">Gender</th>
+                  </>
                 )}
                 {activeTab === "parents" && (
                   <>
@@ -223,10 +225,13 @@ function UserAdmin() {
                   <td className="px-4 py-2">{i + 1}</td>
                   <td className="px-4 py-2">{u.name}</td>
                   <td className="px-4 py-2">{u.email}</td>
-                  <td className="px-4 py-2">{u.phone}</td>
 
                   {activeTab === "teachers" && (
-                    <td className="px-4 py-2">{u.gender}</td>
+                    <>
+                      {" "}
+                      <td className="px-4 py-2">{u.phone}</td>
+                      <td className="px-4 py-2">{u.gender}</td>
+                    </>
                   )}
 
                   {activeTab === "parents" && (
