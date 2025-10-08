@@ -17,10 +17,21 @@ export function* confirmBookingTeacherSaga(action) {
       toast.success("Confirm booking successful!");
     } else {
       yield put(confirmBookingTeacherFail(response.status));
+      toast.error("Confirm fail!");
     }
   } catch (error) {
-    yield put(confirmBookingTeacherFail(error));
-    console.log(error);
+    console.log("🔥 ERROR RESPONSE:", error.response);
+
+    const message =
+      typeof error?.response?.data === "string"
+        ? error.response.data
+        : error?.response?.data?.message ||
+          error?.response?.data?.error ||
+          error.message ||
+          "Đã xảy ra lỗi, vui lòng thử lại.";
+
+    yield put(confirmBookingTeacherFail(message));
+    toast.error(` ${message}`);
   }
 }
 

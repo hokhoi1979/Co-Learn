@@ -32,9 +32,11 @@ function ParentSchedule() {
   const [loadingDelete, setLoadingDelete] = useState(false);
   const [weekOffset, setWeekOffset] = useState(0);
   const dispatch = useDispatch();
+
   const { profileTeacher = [] } = useSelector(
     (state) => state.getProfileTeacher
   );
+
   const { profileParentId = [] } = useSelector(
     (state) => state.getProfileParentId
   );

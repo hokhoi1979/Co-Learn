@@ -6,19 +6,26 @@ import {
   createBookingIdSuccess,
 } from "./createBookingIdSlice";
 import { toast } from "react-toastify";
+import { getBookingStudentSuccess } from "../getBookingStudent/getBookingStudentSlice";
 
 export function* createBookingIdSaga(action) {
   try {
-    const response = yield call(api.post, "/bookings", action.payload);
+    const { id, body } = action.payload;
+    const response = yield call(api.post, "/bookings", body);
     if (response.status === 200 || response.status === 201) {
       yield put(createBookingIdSuccess(response.data));
       console.log("Booking", response.data);
       toast.success("Booking successful!");
+
+      const fetch = yield call(api.get, `/bookings/student/${id}`);
+      yield put(getBookingStudentSuccess(fetch.data));
     } else {
       yield put(createBookingIdFail(response.status));
+      toast.error("Booking error!");
     }
   } catch (error) {
     yield put(createBookingIdFail(error));
+    toast.fail("Booking fail!");
     console.log(error);
   }
 }

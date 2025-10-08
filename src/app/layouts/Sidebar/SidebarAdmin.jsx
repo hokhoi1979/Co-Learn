@@ -29,7 +29,7 @@ const menuItems = [
     key: "payments",
     label: "Payments",
     icon: "mdi:credit-card-outline",
-    nav: "/admin/payments",
+    nav: "/admin/payment",
   },
   {
     key: "settings",
@@ -107,12 +107,12 @@ const SideBarAdmin = ({ toggle, setToggle, active, setActive }) => {
           ))}
         </div>
 
-        <div className="w-full h-[1px] bg-gray-500 mt-auto"></div>
+        <div className="w-full h-[1px] bg-gray-100 mt-auto"></div>
 
         <div className="flex mb-5 items-center py-3 justify-between">
           {!toggle && (
             <div className="flex gap-3 items-center mb-10">
-              <div className="h-10 w-10 rounded-full flex justify-center items-center bg-gradient-to-r from-[#4A90E4] to-[#2497A8]">
+              <div className="h-10 w-10 rounded-full flex justify-center items-center bg-gradient-to-r from-[#898989] to-[#898989]">
                 <span className="text-sm font-bold text-white">A</span>
               </div>
               <div>

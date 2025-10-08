@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Outlet } from "react-router-dom";
 import HeaderTeacher from "../../layouts/Header/HeaderTeacher";
 import SideBarAdmin from "../../layouts/Sidebar/SidebarAdmin";
+import HeaderAdmin from "../../layouts/Header/HeaderAdmin";
 
 const AdminLayout = () => {
   const [toggle, setToggle] = useState(false);
@@ -19,7 +20,7 @@ const AdminLayout = () => {
         className="fixed top-0 left-0 w-full z-50
              backdrop-blur-md bg-white/70 shadow-sm"
       >
-        <HeaderTeacher />
+        <HeaderAdmin />
       </div>
       <div
         className={`flex-1 overflow-auto transition-all duration-500 pt-20

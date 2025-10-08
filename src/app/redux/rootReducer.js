@@ -34,6 +34,7 @@ import editBookingReducer from "./parent/booking/editBooking/editBookingSlice";
 import getBookingTeacherReducer from "./teacher/booking/getBookingTeacher/getBookingTeacherSlice";
 import confirmBookingTeacherReducer from "./teacher/statusBooking/confirmBooking/confirmBookingSlice";
 import declineBookingTeacherReducer from "./teacher/statusBooking/declineBooking/declineBookingSlice";
+import getCourseTeacherReducer from "./teacher/courseTeacher/getCourseTeacher/getCourseTeacherSlice";
 const rootReducer = combineReducers({
   login: loginReducer,
   register: registerReducer,
@@ -70,6 +71,7 @@ const rootReducer = combineReducers({
   deleteCourseData: deleteCourseReducer,
   updateCourseData: updateCourseReducer,
   getCourseByIdData: getCourseByIdReducer,
+  getCourseTeacherData: getCourseTeacherReducer,
 
   //Teacher - Materials
   createMaterialsData: createMaterialsReducer,

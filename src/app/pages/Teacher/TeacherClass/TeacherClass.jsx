@@ -1,15 +1,26 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Image } from "antd";
 import Earning from "../ComponentTeacher/Earning";
 import ModalClass from "../ComponentTeacher/ModalClass";
 import { BookOutlined } from "@ant-design/icons";
 import CarouselTeacher from "../ComponentTeacher/CarouselTeacher";
 import ModalViewClass from "../ComponentTeacher/ModalView";
+import { useDispatch } from "react-redux";
 function TeacherClass() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [viewModalOpen, setViewModalOpen] = useState(false);
   const [selectedClass, setSelectedClass] = useState(null);
   const [editIndex, setEditIndex] = useState(null);
+  const [user, setUser] = useState([]);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    const auth = localStorage.getItem("auth");
+    const parse = JSON.parse(auth);
+    if (parse) {
+      setUser(parse);
+    }
+  }, []);
+  console.log("TEACHER", user);
 
   const handleView = (classItem) => {
     console.log("DATA", classItem);
