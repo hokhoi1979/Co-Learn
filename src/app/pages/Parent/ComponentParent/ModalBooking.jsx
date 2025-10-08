@@ -12,13 +12,12 @@ import { useEffect } from "react";
 import dayjs from "dayjs";
 import { useDispatch } from "react-redux";
 import { createBookingId } from "../../../redux/parent/booking/createBookingId/createBookingIdSlice";
-import { getBookingStudent } from "../../../redux/parent/booking/getBookingStudent/getBookingStudentSlice";
 import { editBooking } from "../../../redux/parent/booking/editBooking/editBookingSlice";
-import { toast } from "react-toastify";
 
 function ModalBooking({ open, cancel, initialValues, idTeacher, idStudent }) {
   const [form] = useForm();
   const dispatch = useDispatch();
+  console.log("BOOOO", idStudent);
   useEffect(() => {
     if (initialValues) {
       const start = dayjs(
@@ -51,11 +50,15 @@ function ModalBooking({ open, cancel, initialValues, idTeacher, idStudent }) {
     };
     if (initialValues) {
       dispatch(editBooking({ id: initialValues?.bookingId, body: formatted }));
-      toast.success("Edit booking successful!");
     } else {
-      dispatch(createBookingId(formatted));
+      dispatch(
+        createBookingId({
+          id: idStudent?.children?.[0]?.studentId,
+          body: formatted,
+        })
+      );
     }
-    dispatch(getBookingStudent(idStudent?.children?.[0]?.studentId));
+    // dispatch(getBookingStudent(idStudent?.children?.[0]?.studentId));
 
     form.resetFields();
     cancel();

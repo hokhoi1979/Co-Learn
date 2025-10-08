@@ -5,21 +5,19 @@ import {
   deleteCourseFail,
   deleteCourseSuccess,
 } from "./deleteCourseSlice";
-import { getCourseFail, getCourseSuccess } from "../getCourse/getCourseSlice";
 import { toast } from "react-toastify";
+import { getCourseTeacherSuccess } from "../getCourseTeacher/getCourseTeacherSlice";
 
 export function* deleteCourseSaga(action) {
   try {
-    const id = action.payload;
+    const { id, idTeacher } = action.payload;
     const response = yield call(api.delete, `/Course/${id}`);
     if (response.status === 200 || response.status === 201) {
       yield put(deleteCourseSuccess({ message: "Delete successful!" }));
-      const fetch = yield call(api.get, `/Course`);
-      if (fetch.status === 200 || fetch.status === 201) {
-        yield put(getCourseSuccess(fetch.data));
-      } else {
-        yield put(getCourseFail(fetch.status));
-      }
+      toast.success("Delete course successful!");
+
+      const fetch = yield call(api.get, `/Course/${idTeacher}/get-all`);
+      yield put(getCourseTeacherSuccess(fetch.data));
     } else {
       yield put(deleteCourseFail(response.status));
       toast.fail("Delete course fail!");

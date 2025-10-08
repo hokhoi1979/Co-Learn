@@ -9,6 +9,7 @@ function ModalTeacher({
   handleCancel,
   onSubmitData,
   initialState,
+  idTeacher,
 }) {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
@@ -38,7 +39,7 @@ function ModalTeacher({
     try {
       const values = await form.validateFields();
       setLoading(true);
-      let thumbnailUrl = initialState?.thumbnail || null;
+      let thumbnailUrl = initialState?.imageUrl;
       const file = values.thumbnail?.[0]?.originFileObj;
       if (file) {
         const uploaded = await uploadFile(file);
@@ -46,7 +47,7 @@ function ModalTeacher({
       }
 
       const newCourse = {
-        teacherId: 1,
+        teacherId: idTeacher,
         categoryId: 1,
         title: values.title,
         shortDescription: "",

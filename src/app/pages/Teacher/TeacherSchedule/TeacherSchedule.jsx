@@ -35,6 +35,8 @@ function TeacherSchedule() {
   );
   const dispatch = useDispatch();
 
+  console.log("BÔKIG", getBooking_Teacher);
+
   useEffect(() => {
     const auth = localStorage.getItem("auth");
     const parse = JSON.parse(auth);
@@ -69,8 +71,8 @@ function TeacherSchedule() {
   };
 
   getBooking_Teacher?.items?.forEach((booking) => {
-    const start = dayjs.utc(booking?.requestedStartTime).tz("Asia/Ho_Chi_Minh");
-    const end = dayjs.utc(booking?.requestedEndTime).tz("Asia/Ho_Chi_Minh");
+    const start = dayjs.utc(booking?.requestedStartTime);
+    const end = dayjs.utc(booking?.requestedEndTime);
 
     if (start.isoWeek() === currentWeek && start.year() === currentYear) {
       const dayName = start.format("dddd");

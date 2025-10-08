@@ -6,23 +6,19 @@ import {
   updateCourseSuccess,
 } from "./updateCourseSlice";
 import { toast } from "react-toastify";
-import { getCourseFail, getCourseSuccess } from "../getCourse/getCourseSlice";
+import { getCourseTeacherSuccess } from "../getCourseTeacher/getCourseTeacherSlice";
 
 export function* updateCourseSaga(action) {
   try {
-    const { id, body } = action.payload;
+    const { idTeacher, id, body } = action.payload;
     const response = yield call(api.put, `/Course/${id}`, body);
     if (response.status === 200 || response.status === 201) {
       yield put(updateCourseSuccess(response.data));
       toast.success("Update successful!");
       console.log("UPDATE", response.data);
 
-      const fetch = yield call(api.get, `/Course`);
-      if (fetch.status === 200 || fetch.status === 201) {
-        yield put(getCourseSuccess(fetch.data));
-      } else {
-        yield put(getCourseFail(fetch.status));
-      }
+      const fetch = yield call(api.get, `/Course/${idTeacher}/get-all`);
+      yield put(getCourseTeacherSuccess(fetch.data));
     } else {
       yield put(updateCourseFail(response.status));
     }

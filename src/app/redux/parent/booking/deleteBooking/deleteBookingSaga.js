@@ -19,7 +19,12 @@ export function* deleteBookingSaga(action) {
       yield put(deleteBookingFail(response.status));
     }
   } catch (error) {
-    yield put(deleteBookingFail(error));
+    const message =
+      error.response?.data?.message ||
+      error.message ||
+      "Delete booking failed!";
+    yield put(deleteBookingFail(message));
+    toast.error(message);
     console.log(error);
   }
 }

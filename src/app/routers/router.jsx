@@ -30,6 +30,8 @@ import UserAdmin from "../pages/Admin/UserAdmin/UserAdmin";
 import TeacherAdmin from "../pages/Admin/TeacherAdmin/TeacherAdmin";
 import AboutUs from "../layouts/Header/AboutUs";
 import FeaturedCourses from "../layouts/Header/FeaturedCourses";
+import PrivateRoute from "./privateRoute";
+import PaymentAdmin from "../pages/Admin/Payments/Payments";
 
 const router = createBrowserRouter([
   {
@@ -40,7 +42,11 @@ const router = createBrowserRouter([
 
       {
         path: "kids",
-        element: <HomeKids />,
+        element: (
+          <PrivateRoute role={1}>
+            <HomeKids />
+          </PrivateRoute>
+        ),
         children: [
           { index: true, element: <CourseKid /> },
           { path: "courses", element: <CourseKid /> },
@@ -52,7 +58,11 @@ const router = createBrowserRouter([
 
       {
         path: "teacher",
-        element: <TeacherLayout />,
+        element: (
+          <PrivateRoute role={3}>
+            <TeacherLayout />
+          </PrivateRoute>
+        ),
         children: [
           { path: "", element: <Navigate to="profile" /> },
           { path: "profile", element: <TeacherProfile /> },
@@ -74,7 +84,11 @@ const router = createBrowserRouter([
       },
       {
         path: "parent",
-        element: <ParentLayout />,
+        element: (
+          <PrivateRoute role={2}>
+            <ParentLayout />
+          </PrivateRoute>
+        ),
         children: [
           { path: "", element: <Navigate to="profile" /> },
           { path: "profile", element: <ParentProfile /> },
@@ -93,6 +107,7 @@ const router = createBrowserRouter([
           { path: "dashboard", element: <DashboardAdmin /> },
           { path: "useradmin", element: <UserAdmin /> },
           { path: "teacheradmin", element: <TeacherAdmin /> },
+          { path: "payment", element: <PaymentAdmin /> },
         ],
       },
       { path: "payment", element: <PaymentSuccess /> },

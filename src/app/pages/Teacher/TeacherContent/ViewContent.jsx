@@ -4,7 +4,7 @@ import { useNavigate, useParams } from "react-router";
 import ModelUploadVideo from "../ComponentTeacher/ModelUploadVideo";
 import DeleteVideoModal from "../ComponentTeacher/DeleteVideoModal";
 import { toast } from "react-toastify";
-import { Book, Pencil, Trash } from "lucide-react";
+import { ArrowLeftFromLine, Book, Pencil, Trash } from "lucide-react";
 import ModalMaterials from "../ComponentTeacher/ModelMaterials";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -74,6 +74,7 @@ function ViewContent() {
               navigate("/teacher/content", { state: { reload: true } })
             }
           >
+            <ArrowLeftFromLine size={18} />
             <h1>Back to My Course</h1>
           </div>
 
