@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { registerApi, registerReset } from "../../redux/auth/registerSlice";
 import bg from "../../assets/img/bg1.jpg";
 import { Image } from "antd";
+import VerifyEmailModal from "./VerifyEmail";
 export default function Register() {
   const { t, i18n } = useTranslation();
   const [showPassword, setShowPassword] = useState(false);
@@ -20,7 +21,7 @@ export default function Register() {
   const [dateOfBirth, setDateOfBirth] = useState(null);
   const [gender, setGender] = useState("Male");
   const [primaryRoleId, setPrimaryRoleId] = useState("1");
-
+  const [open, setOpen] = useState(false);
   const accountRegister = useSelector(
     (state) => state.register.accountRegister
   );
@@ -46,11 +47,19 @@ export default function Register() {
   };
 
   useEffect(() => {
-    if (accountRegister) {
-      navigate("/login");
-      dispatch(registerReset());
+    if (accountRegister?.value) {
+      setOpen(true);
     }
-  }, [accountRegister, navigate, dispatch]);
+  }, [accountRegister]);
+
+  console.log("RE", accountRegister);
+
+  // useEffect(() => {
+  //   if (accountRegister) {
+  //     navigate("/login");
+  //     dispatch(registerReset());
+  //   }
+  // }, [accountRegister, navigate, dispatch]);
 
   return (
     <div className="min-h-screen relative flex items-center justify-center p-4 overflow-y-auto">
@@ -309,6 +318,15 @@ export default function Register() {
           </div>
         </div>
       </div>
+      <VerifyEmailModal
+        open={open}
+        onClose={() => {
+          setOpen(false);
+          navigate("/login");
+          dispatch(registerReset());
+        }}
+        email={email}
+      />
     </div>
   );
 }
