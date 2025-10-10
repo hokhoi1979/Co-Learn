@@ -1,35 +1,80 @@
-import { Button, Form, Input, Modal, InputNumber } from "antd";
+import { Button, Form, Input, Modal, DatePicker, Upload } from "antd";
 import { useForm } from "antd/es/form/Form";
 import FormItem from "antd/es/form/FormItem";
-import { Mail, Phone, User } from "lucide-react";
-import React, { useEffect } from "react";
-import { toast } from "react-toastify";
-
+import { Mail, Phone, User, Heart } from "lucide-react";
+import { useEffect, useState } from "react";
+import dayjs from "dayjs";
+import { uploadFile } from "../../../utils/uploadFile";
+import { UploadOutlined } from "@ant-design/icons";
+import { useDispatch } from "react-redux";
+import { updateProfileParent } from "../../../redux/parent/updateProfileParent/updateProfileParentSlice";
 function ModalProfileParent({
   isModalOpen,
   handleOk,
   handleCancel,
   initialState,
-  onSubmitData,
 }) {
+  const dispatch = useDispatch();
   const [form] = useForm();
-
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
     if (initialState) {
-      form.setFieldsValue(initialState);
+      const formatted = {
+        ...initialState,
+        born: initialState.born ? dayjs(initialState.born) : null,
+        photo: initialState.photo
+          ? [
+              {
+                uid: "-1",
+                name: "photo.png",
+                status: "done",
+                url: initialState.photo,
+              },
+            ]
+          : [],
+      };
+      form.setFieldsValue(formatted);
     } else {
       form.resetFields();
     }
   }, [initialState, form]);
 
-  const onSubmit = () => {
-    form.validateFields().then((values) => {
-      onSubmitData(values);
+  const onSubmit = async () => {
+    try {
+      const values = await form.validateFields();
+      setLoading(true);
+
+      const auth = localStorage.getItem("auth");
+      const user = auth ? JSON.parse(auth) : null;
+
+      let photoUrl = initialState?.photo;
+      const file = values.photo?.[0]?.originFileObj;
+      if (file) {
+        const uploaded = await uploadFile(file);
+        photoUrl = uploaded.url;
+      }
+
+      const payload = {
+        userId: user?.userId || 0,
+        fullName: values.fullName,
+        email: values.email,
+        phoneNumber: values.phoneNumber,
+        born: values.born ? values.born.toISOString() : null,
+        photo: photoUrl || "",
+        relationship: values.relationship,
+      };
+
+      dispatch(
+        updateProfileParent({ id: initialState?.userId, body: payload })
+      );
+
       handleOk();
-      console.log("DATA", values);
       form.resetFields();
-    });
-    toast.success("Update successful!");
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -38,18 +83,14 @@ function ModalProfileParent({
       onCancel={handleCancel}
       width={720}
       footer={[
-        <Button
-          key="cancel"
-          onClick={handleCancel}
-          className="rounded-lg h-10 px-6"
-        >
+        <Button key="cancel" onClick={handleCancel}>
           Cancel
         </Button>,
-
         <Button
-          key="create"
-          onClick={onSubmit}
+          key="update"
           type="primary"
+          onClick={onSubmit}
+          loading={loading}
           className="!bg-[#00b0ff] hover:!bg-[#0090d9] rounded-lg h-10 px-6 font-semibold"
         >
           Update
@@ -75,40 +116,20 @@ function ModalProfileParent({
       <Form layout="vertical" form={form}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <FormItem
-            name="parent"
-            label="Your Name"
-            rules={[
-              { required: true, message: "Please enter your name!" },
-              { min: 2, message: "Name must be at least 2 characters!" },
-            ]}
+            name="fullName"
+            label="Full Name"
+            rules={[{ required: true, message: "Please enter full name!" }]}
           >
             <Input
               prefix={<User className="text-gray-400 w-4 h-4" />}
-              placeholder="Enter your name"
+              placeholder="Enter your full name"
               className="rounded-lg h-11"
             />
           </FormItem>
 
           <FormItem
-            name="children"
-            label="Your Children Name"
-            rules={[
-              { required: true, message: "Please enter your children name!" },
-              { min: 2, message: "Name must be at least 2 characters!" },
-            ]}
-          >
-            <Input
-              prefix={<User className="text-gray-400 w-4 h-4" />}
-              placeholder="Enter your children name"
-              className="rounded-lg h-11"
-            />
-          </FormItem>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <FormItem
-            name="phone"
-            label="Phone"
+            name="phoneNumber"
+            label="Phone Number"
             rules={[
               { required: true, message: "Please enter your phone number!" },
               {
@@ -123,40 +144,61 @@ function ModalProfileParent({
               className="rounded-lg h-11"
             />
           </FormItem>
+        </div>
 
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <FormItem
-            name="age"
-            label="Age"
+            name="email"
+            label="Email"
             rules={[
-              { required: true, message: "Please enter your age!" },
-              {
-                type: "number",
-                min: 18,
-                message: "Age must be at least 18!",
-              },
+              { required: true, message: "Please enter your email!" },
+              { type: "email", message: "Please enter a valid email!" },
             ]}
           >
-            <InputNumber
-              placeholder="Enter your age"
-              className="rounded-lg w-full h-11"
+            <Input
+              prefix={<Mail className="text-gray-400 w-4 h-4" />}
+              placeholder="Enter your email"
+              className="rounded-lg h-11"
+            />
+          </FormItem>
+
+          <FormItem
+            name="born"
+            label="Date of Birth"
+            rules={[{ required: true, message: "Please select your DOB!" }]}
+          >
+            <DatePicker
+              className="w-full h-11 rounded-lg"
+              format="DD/MM/YYYY"
+              placeholder="Select date of birth"
             />
           </FormItem>
         </div>
 
-        <FormItem
-          name="email"
-          label="Email"
-          rules={[
-            { required: true, message: "Please enter your email!" },
-            { type: "email", message: "Please enter a valid email!" },
-          ]}
-        >
-          <Input
-            prefix={<Mail className="text-gray-400 w-4 h-4" />}
-            placeholder="Enter email"
-            className="rounded-lg h-11"
-          />
-        </FormItem>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Form.Item
+            label="Profile Photo"
+            name="photo"
+            valuePropName="fileList"
+            getValueFromEvent={(e) => e && e.fileList}
+          >
+            <Upload beforeUpload={() => false} listType="picture">
+              <Button icon={<UploadOutlined />}>Upload photo</Button>
+            </Upload>
+          </Form.Item>
+
+          <FormItem
+            name="relationship"
+            label="Relationship"
+            rules={[{ required: true, message: "Please enter relationship!" }]}
+          >
+            <Input
+              prefix={<Heart className="text-gray-400 w-4 h-4" />}
+              placeholder="e.g. Father, Mother, Guardian"
+              className="rounded-lg h-11"
+            />
+          </FormItem>
+        </div>
       </Form>
 
       <p className="text-gray-500 text-sm mt-6 text-center">

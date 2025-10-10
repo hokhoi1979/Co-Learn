@@ -114,19 +114,19 @@ function ParentSchedule() {
 
   const days = Object.keys(courseSchedule);
 
-  const handleEdit = async (course) => {
-    const studentId = profileParentId?.children?.[0]?.studentId;
-    if (!studentId) return;
+  // const handleEdit = async (course) => {
+  //   const studentId = profileParentId?.children?.[0]?.studentId;
+  //   if (!studentId) return;
 
-    await dispatch(getBookingStudent(studentId));
+  //   await dispatch(getBookingStudent(studentId));
 
-    const updated = getBooking_Student?.items?.find(
-      (b) => b.bookingId === course.bookingId
-    );
+  //   const updated = getBooking_Student?.items?.find(
+  //     (b) => b.bookingId === course.bookingId
+  //   );
 
-    setEditData(updated || course);
-    setOpenBooking(true);
-  };
+  //   setEditData(updated || course);
+  //   setOpenBooking(true);
+  // };
 
   const handleDelete = async (id) => {
     setDeleteData({ id });
@@ -278,13 +278,13 @@ function ParentSchedule() {
                   </Tag>
                   {course.status === "Pending" ? (
                     <div className="flex gap-2 mt-3">
-                      <Button
+                      {/* <Button
                         size="small"
                         className="!bg-[#3f7ada] hover:!bg-[#2264cf] !text-white !w-[70px] !rounded-[8px] !h-8"
                         onClick={() => handleEdit(course, idx, activeDay)}
                       >
                         Edit
-                      </Button>
+                      </Button> */}
                       <Button
                         size="small"
                         className="!bg-[#ee5757] hover:!bg-red-700 !text-white !w-[70px] !rounded-[8px] !h-8"
@@ -293,7 +293,7 @@ function ParentSchedule() {
                           handleDelete(course?.bookingId, activeDay);
                         }}
                       >
-                        Delete
+                        Cancel
                       </Button>
                     </div>
                   ) : (

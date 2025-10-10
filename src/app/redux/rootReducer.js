@@ -35,6 +35,10 @@ import getBookingTeacherReducer from "./teacher/booking/getBookingTeacher/getBoo
 import confirmBookingTeacherReducer from "./teacher/statusBooking/confirmBooking/confirmBookingSlice";
 import declineBookingTeacherReducer from "./teacher/statusBooking/declineBooking/declineBookingSlice";
 import getCourseTeacherReducer from "./teacher/courseTeacher/getCourseTeacher/getCourseTeacherSlice";
+import updateProfileParentReducer from "./parent/updateProfileParent/updateProfileParentSlice";
+import postProfileStudentReducer from "./parent/postProfileStudent/postProfileStudentSlice";
+import getProfileStudentIdReducer from "./parent/getProfileStudentId/getProfileStudentSlice";
+import putProfileStudentReducer from "./parent/putProfileStudent/putProfileStudentSlice";
 const rootReducer = combineReducers({
   login: loginReducer,
   register: registerReducer,
@@ -43,6 +47,10 @@ const rootReducer = combineReducers({
   //Parent
   getAllParent: getAllParentReducer,
   getProfileParentId: getProfileParentIdReducer,
+  updateProfileParent: updateProfileParentReducer,
+  postProfileStudent: postProfileStudentReducer,
+  getProfileStudentId: getProfileStudentIdReducer,
+  putProfileStudent: putProfileStudentReducer,
 
   //Parent - Booking
   createBookingId: createBookingIdReducer,

@@ -57,7 +57,7 @@ function TeacherAdmin() {
             <p className="text-gray-500">Pending Review</p>
           </div>
           <h2 className="text-4xl flex justify-center font-bold text-[#4f9cf4]">
-            {allTeacher.filter((t) => !t.isActive).length}
+            {allTeacher?.filter((t) => !t.isActive).length}
           </h2>
         </div>
 
