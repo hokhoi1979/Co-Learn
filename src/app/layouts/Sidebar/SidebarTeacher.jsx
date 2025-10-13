@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Icon } from "@iconify/react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../redux/auth/loginSlice";
 import { toast } from "react-toastify";
+import { getProfileTeacherId } from "../../redux/teacher/profileTeacher/getProfileId/getProfileIdSlice";
 
 const menuItems = [
   {
@@ -18,12 +19,18 @@ const menuItems = [
     icon: "mdi:book-education-outline",
     nav: "/teacher/classes",
   },
-
   {
     key: "schedule",
     label: "Teaching Schedule",
     icon: "mdi:calendar-clock",
     nav: "/teacher/schedule",
+  },
+
+  {
+    key: "booking",
+    label: "Teaching Booking",
+    icon: "mdi:calendar-clock",
+    nav: "/teacher/booking",
   },
   {
     key: "content",
@@ -51,18 +58,30 @@ const SideBarTeacher = ({ toggle, setToggle, active, setActive }) => {
   const handleToggle = () => setToggle((pre) => !pre);
   const [user, setUser] = useState(null);
 
+  const { profileTeacherId } = useSelector(
+    (state) => state.getProfileTeacherId
+  );
+
   useEffect(() => {
-    const infor = localStorage.getItem("auth");
-    const parse = JSON.parse(infor);
-    console.log(parse);
-    setUser(parse);
+    const auth = localStorage.getItem("auth");
+    if (auth) {
+      setUser(JSON.parse(auth));
+    }
   }, []);
+
+  useEffect(() => {
+    if (user?.userId) {
+      dispatch(getProfileTeacherId(user.userId));
+    }
+  }, [dispatch, user]);
 
   const handleLogout = () => {
     dispatch(logout());
     toast.success("Log Out successful!");
     navigate("/");
   };
+
+  console.log("AAAA", profileTeacherId);
 
   const MenuItem = ({ item }) => {
     const isActive = active === item.key;
@@ -123,8 +142,12 @@ const SideBarTeacher = ({ toggle, setToggle, active, setActive }) => {
         <div className="flex mb-5 items-center px-4 py-3 justify-between">
           {!toggle && (
             <div className="flex gap-3 items-center">
-              <div className="h-12 w-12 rounded-full flex justify-center items-center bg-[#3fcba8]">
-                <h1 className="text-xl font-bold text-white">H</h1>
+              <div className="h-12 w-12 rounded-full flex justify-center items-center ">
+                <img
+                  src={profileTeacherId?.photo || "/default-avatar.png"}
+                  alt={profileTeacherId?.fullName || "Teacher"}
+                  className="w-12 h-12 rounded-2xl object-cover border border-gray-200 shadow-sm"
+                />
               </div>
               <div>
                 <h1 className="text-lg font-semibold">Miss {user?.fullName}</h1>

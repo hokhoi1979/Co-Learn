@@ -21,6 +21,7 @@ function ModalProfileParent({
     if (initialState) {
       const formatted = {
         ...initialState,
+        phoneNumber: initialState.phone,
         born: initialState.born ? dayjs(initialState.born) : null,
         photo: initialState.photo
           ? [
@@ -91,7 +92,7 @@ function ModalProfileParent({
           type="primary"
           onClick={onSubmit}
           loading={loading}
-          className="!bg-[#00b0ff] hover:!bg-[#0090d9] rounded-lg h-10 px-6 font-semibold"
+          className="!bg-[#3fcba8] hover:!bg-[#3fcba8] rounded-lg h-10 px-6 font-semibold"
         >
           Update
         </Button>,
@@ -99,7 +100,7 @@ function ModalProfileParent({
       className="custom-modal"
       closable={false}
     >
-      <div className="bg-gradient-to-r from-[#2972cc] to-[#35bdd2] p-6 rounded-t-lg -m-6 mb-8 flex items-center gap-4">
+      <div className="bg-gradient-to-r from-[#3fcba8] to-[#3fcba8] p-6 rounded-t-lg -m-6 mb-8 flex items-center gap-4">
         <div className="bg-white/20 p-3 rounded-full">
           <User className="w-7 h-7 text-white" />
         </div>

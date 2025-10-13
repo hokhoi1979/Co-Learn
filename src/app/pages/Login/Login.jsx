@@ -48,7 +48,7 @@ export default function Login() {
         <div className="bg-white rounded-2xl border shadow-xl p-6 backdrop-blur-sm">
           <div className="text-center mb-6">
             <div className="flex items-center justify-center space-x-2 mb-4">
-              <div className="w-13 h-10 bg-orange-500 rounded-lg flex items-center justify-center shadow-md ">
+              <div className="w-13 h-10 bg-[#20ba93] rounded-lg flex items-center justify-center shadow-md ">
                 <span className="text-white font-bold text-xl ">C&L</span>
               </div>
               <span className="font-bold text-2xl text-gray-800">Co&Learn</span>
@@ -100,7 +100,7 @@ export default function Login() {
             </div>
             <button
               type="submit"
-              className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-4 rounded-lg transition cursor-pointer"
+              className="w-full bg-[#20ba93] hover:bg-[#0d9674] text-white font-semibold py-2 px-4 rounded-lg transition cursor-pointer"
             >
               {t("login")}
             </button>
@@ -115,7 +115,7 @@ export default function Login() {
             {t("noAccount")}{" "}
             <Link
               to="/register"
-              className="text-orange-500 hover:text-orange-600 font-medium"
+              className="text-[#20ba93] hover:text-[#0d9674] font-medium"
             >
               {t("registerNow")}
             </Link>

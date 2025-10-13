@@ -9,7 +9,6 @@ import Home from "../pages/Home/Home";
 import TeacherLayout from "../pages/Teacher/TeacherLayout";
 import TeacherCourses from "../pages/Teacher/TeacherCourses/TeacherCourses";
 import TeacherClass from "../pages/Teacher/TeacherClass/TeacherClass";
-import TeacherSchedule from "../pages/Teacher/TeacherSchedule/TeacherSchedule";
 import TeacherContent from "../pages/Teacher/TeacherContent/TeacherContent";
 import TeacherFeedBack from "../pages/Teacher/TeacherFeedBack/TeacherFeedBack";
 import TeacherIncome from "../pages/Teacher/TeacherIncome/TeacherIncome";
@@ -32,6 +31,8 @@ import AboutUs from "../layouts/Header/AboutUs";
 import FeaturedCourses from "../layouts/Header/FeaturedCourses";
 import PrivateRoute from "./privateRoute";
 import PaymentAdmin from "../pages/Admin/Payments/Payments";
+import TeacherBooking from "../pages/Teacher/TeacherBooking/TeacherBooking";
+import TeacherSchedule from "../pages/Teacher/TeacherSchedule/TeacherSchedule";
 
 const router = createBrowserRouter([
   {
@@ -69,6 +70,7 @@ const router = createBrowserRouter([
 
           { path: "classes", element: <TeacherClass /> },
           { path: "schedule", element: <TeacherSchedule /> },
+          { path: "booking", element: <TeacherBooking /> },
           {
             path: "content",
             element: <TeacherContent />,

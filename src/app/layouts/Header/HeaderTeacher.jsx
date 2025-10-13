@@ -1,18 +1,27 @@
 import React, { useEffect, useState } from "react";
 import { Icon } from "@iconify/react";
-import { stringify } from "postcss";
 import { useDispatch, useSelector } from "react-redux";
-import { getUserId } from "../../redux/user/getUserID/getUserIDSlice";
+import { getProfileTeacherId } from "../../redux/teacher/profileTeacher/getProfileId/getProfileIdSlice";
 
 function HeaderTeacher() {
   const [user, setUser] = useState(null);
   const dispatch = useDispatch();
+  const { profileTeacherId } = useSelector(
+    (state) => state.getProfileTeacherId
+  );
+
   useEffect(() => {
-    const infor = localStorage.getItem("auth");
-    const parse = JSON.parse(infor);
-    console.log(parse);
-    setUser(parse);
+    const auth = localStorage.getItem("auth");
+    if (auth) {
+      setUser(JSON.parse(auth));
+    }
   }, []);
+
+  useEffect(() => {
+    if (user?.userId) {
+      dispatch(getProfileTeacherId(user.userId));
+    }
+  }, [dispatch, user]);
 
   return (
     <>
@@ -41,8 +50,12 @@ function HeaderTeacher() {
           <div className="flex items-center">
             {/* <h1 className="text-xl  text-right">{user?.fullName}</h1> */}
           </div>
-          <div className="h-12 w-12 rounded-4xl flex justify-center items-center bg-[#3fcba8] ">
-            <h1 className="text-3xl text-white">H</h1>
+          <div className="h-12 w-12 rounded-4xl flex justify-center items-center  ">
+            <img
+              src={profileTeacherId?.photo || "/default-avatar.png"}
+              alt={profileTeacherId?.fullName || "Teacher"}
+              className="w-12 h-12 rounded-2xl object-cover border border-gray-200 shadow-sm"
+            />
           </div>
         </div>
       </div>

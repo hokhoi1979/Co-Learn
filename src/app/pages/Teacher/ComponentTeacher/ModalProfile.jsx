@@ -21,13 +21,7 @@ import { getProfileTeacherId } from "../../../redux/teacher/profileTeacher/getPr
 
 const { Option } = Select;
 
-function ModalProfile({
-  isModalOpen,
-  handleOk,
-  handleCancel,
-  initialState,
-  onSubmitData,
-}) {
+function ModalProfile({ isModalOpen, handleOk, handleCancel, initialState }) {
   const [form] = useForm();
   const [user, setUser] = useState(null);
   const dispatch = useDispatch();
@@ -105,6 +99,7 @@ function ModalProfile({
         dispatch(getProfileTeacherId(user?.userId));
       } else {
         dispatch(createProfileTeacher(payload));
+        dispatch(getProfileTeacherId(user?.userId));
       }
       handleOk();
       form.resetFields();

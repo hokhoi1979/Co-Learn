@@ -146,9 +146,6 @@ function FeaturedCourses() {
                   <Star className="w-4 h-4 text-yellow-500" /> {c.rating}
                 </span>
               </div>
-              <button className="mt-6 w-full py-2 rounded-xl bg-cyan-500 text-white font-medium hover:bg-cyan-600 transition">
-                View Details
-              </button>
             </div>
           </motion.div>
         ))}
