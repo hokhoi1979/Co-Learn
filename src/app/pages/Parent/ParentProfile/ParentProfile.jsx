@@ -39,7 +39,7 @@ function ParentProfile() {
     }
   }, [dispatch, user]);
 
-  console.log("AKAJAKA", profileParentId?.children[0]?.userId);
+  console.log("AKAJAKA", profileParentId);
 
   useEffect(() => {
     if (profileParentId?.children[0]?.userId) {
@@ -87,7 +87,7 @@ function ParentProfile() {
             </div>
 
             <h2 className="mt-4 text-xl font-semibold text-center text-[#006d5b]">
-              {profileParentId?.parent?.fullName || "Parent"}
+              {profileParentId?.fullName}
             </h2>
             <p className="text-gray-500 text-center text-sm mb-4">
               Caring and supportive parent.

@@ -18,7 +18,7 @@ export const getAllTeacherFail = (error) => ({
 });
 
 const initialState = {
-  allTeacher: null,
+  allTeacher: [],
   loading: false,
   error: null,
 };

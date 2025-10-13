@@ -8,16 +8,25 @@ import {
   TimePicker,
 } from "antd";
 import { useForm } from "antd/es/form/Form";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import dayjs from "dayjs";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { createBookingId } from "../../../redux/parent/booking/createBookingId/createBookingIdSlice";
 import { editBooking } from "../../../redux/parent/booking/editBooking/editBookingSlice";
 
 function ModalBooking({ open, cancel, initialValues, idTeacher, idStudent }) {
   const [form] = useForm();
+  const { loading, postBookingId } = useSelector(
+    (state) => state.createBookingId
+  );
   const dispatch = useDispatch();
-  console.log("BOOOO", idStudent);
+
+  useEffect(() => {
+    if (postBookingId) {
+      form.resetFields();
+      cancel();
+    }
+  }, [postBookingId, form, cancel]);
   useEffect(() => {
     if (initialValues) {
       const start = dayjs(
@@ -40,28 +49,31 @@ function ModalBooking({ open, cancel, initialValues, idTeacher, idStudent }) {
   }, [initialValues, form]);
 
   const handleFinish = async (values) => {
-    const formatted = {
-      teacherId: idTeacher?.teacherId,
-      studentId: idStudent?.children?.[0]?.studentId,
-      date: values.date.format("YYYY-MM-DD"),
-      startTime: values.startTime.format("HH:mm:ss"),
-      durationMinutes: values.durationMinutes,
-      notes: values.notes,
-    };
-    if (initialValues) {
-      dispatch(editBooking({ id: initialValues?.bookingId, body: formatted }));
-    } else {
-      dispatch(
-        createBookingId({
-          id: idStudent?.children?.[0]?.studentId,
-          body: formatted,
-        })
-      );
-    }
-    // dispatch(getBookingStudent(idStudent?.children?.[0]?.studentId));
+    try {
+      const formatted = {
+        teacherId: idTeacher?.teacherId,
+        studentId: idStudent?.children?.[0]?.studentId,
+        date: values.date.format("YYYY-MM-DD"),
+        startTime: values.startTime.format("HH:mm:ss"),
+        durationMinutes: values.durationMinutes,
+        notes: values.notes,
+      };
 
-    form.resetFields();
-    cancel();
+      if (initialValues) {
+        await dispatch(
+          editBooking({ id: initialValues?.bookingId, body: formatted })
+        );
+      } else {
+        await dispatch(
+          createBookingId({
+            id: idStudent?.children?.[0]?.studentId,
+            body: formatted,
+          })
+        );
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -124,6 +136,7 @@ function ModalBooking({ open, cancel, initialValues, idTeacher, idStudent }) {
           </Button>
           <Button
             type="secondary"
+            loading={loading}
             className="!bg-[#12ad8c] hover:!bg-[#09735c] !text-white"
             htmlType="submit"
           >

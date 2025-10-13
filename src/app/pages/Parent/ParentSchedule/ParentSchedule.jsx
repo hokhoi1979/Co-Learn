@@ -17,6 +17,7 @@ import isoWeek from "dayjs/plugin/isoWeek";
 import { toast } from "react-toastify";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
+import ModalPayment from "../ComponentParent/ModalPayment";
 dayjs.extend(timezone);
 dayjs.tz.setDefault("Asia/Ho_Chi_Minh");
 dayjs.extend(isoWeek);
@@ -26,8 +27,10 @@ function ParentSchedule() {
   const [user, setUser] = useState(null);
   const [teacher, setTeacher] = useState(null);
   const [openBooking, setOpenBooking] = useState(false);
+  const [openPayment, setOpenPayment] = useState(false);
   const [editData, setEditData] = useState(null);
-  const [activeDay, setActiveDay] = useState("Monday");
+  const [activeDay, setActiveDay] = useState(dayjs().format("dddd"));
+  const [choosePayment, setChoosePayment] = useState([]);
   const [deleteData, setDeleteData] = useState(null);
   const [loadingDelete, setLoadingDelete] = useState(false);
   const [weekOffset, setWeekOffset] = useState(0);
@@ -114,20 +117,6 @@ function ParentSchedule() {
 
   const days = Object.keys(courseSchedule);
 
-  // const handleEdit = async (course) => {
-  //   const studentId = profileParentId?.children?.[0]?.studentId;
-  //   if (!studentId) return;
-
-  //   await dispatch(getBookingStudent(studentId));
-
-  //   const updated = getBooking_Student?.items?.find(
-  //     (b) => b.bookingId === course.bookingId
-  //   );
-
-  //   setEditData(updated || course);
-  //   setOpenBooking(true);
-  // };
-
   const handleDelete = async (id) => {
     setDeleteData({ id });
     try {
@@ -151,7 +140,9 @@ function ParentSchedule() {
     toast.success("Delete successful!");
   };
 
-  console.log("AAA", getBooking_Student);
+  const handlePayment = () => {
+    setOpenPayment(true);
+  };
 
   return (
     <div className="w-full min-h-screen p-6 bg-gradient-to-b from-[#F0F6F6] to-[#DBFBFD]">
@@ -278,13 +269,6 @@ function ParentSchedule() {
                   </Tag>
                   {course.status === "Pending" ? (
                     <div className="flex gap-2 mt-3">
-                      {/* <Button
-                        size="small"
-                        className="!bg-[#3f7ada] hover:!bg-[#2264cf] !text-white !w-[70px] !rounded-[8px] !h-8"
-                        onClick={() => handleEdit(course, idx, activeDay)}
-                      >
-                        Edit
-                      </Button> */}
                       <Button
                         size="small"
                         className="!bg-[#ee5757] hover:!bg-red-700 !text-white !w-[70px] !rounded-[8px] !h-8"
@@ -302,7 +286,13 @@ function ParentSchedule() {
 
                   {course.status === "Confirmed" && (
                     <>
-                      <button className="mt-4 px-4 py-1 bg-[#12ad8c] text-white rounded-md cursor-pointer hover:bg-[#24c5a2]">
+                      <button
+                        onClick={() => {
+                          handlePayment();
+                          setChoosePayment(course);
+                        }}
+                        className="mt-4 px-4 py-1 bg-[#12ad8c] text-white rounded-md cursor-pointer hover:bg-[#24c5a2]"
+                      >
                         Payment
                       </button>
                     </>
@@ -337,6 +327,13 @@ function ParentSchedule() {
         onConfirm={confirmDelete}
         loading={loadingDelete}
         courseTitle={deleteData?.title}
+      />
+
+      <ModalPayment
+        open={openPayment}
+        onClose={() => setOpenPayment(false)}
+        dataPayment={choosePayment}
+        userIdParent={profileParentId}
       />
     </div>
   );

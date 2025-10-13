@@ -2,7 +2,7 @@ import { Button, DatePicker, Form, Input, Modal, Select, Upload } from "antd";
 import { useForm } from "antd/es/form/Form";
 import FormItem from "antd/es/form/FormItem";
 import { Mail, User } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { UploadOutlined } from "@ant-design/icons";
 import { uploadFile } from "../../../utils/uploadFile";
 import dayjs from "dayjs";
@@ -20,6 +20,7 @@ function ModalProfileChildren({
 }) {
   const dispatch = useDispatch();
   const [form] = useForm();
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (initialState) {
@@ -45,6 +46,7 @@ function ModalProfileChildren({
   const onSubmit = async () => {
     try {
       const values = await form.validateFields();
+      setLoading(true);
 
       let photoUrl = initialState?.photo;
       const file = values.photo?.[0]?.originFileObj;
@@ -80,6 +82,8 @@ function ModalProfileChildren({
       }
     } catch (error) {
       console.error(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -100,6 +104,7 @@ function ModalProfileChildren({
         <Button
           key="create"
           onClick={onSubmit}
+          loading={loading}
           type="primary"
           className="!bg-[#3fcba8] hover:!bg-[#3fcba8] rounded-lg h-10 px-6 font-semibold"
         >

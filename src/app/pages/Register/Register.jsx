@@ -250,11 +250,11 @@ export default function Register() {
                 />
                 <span className="text-sm text-gray-600">
                   {t("agree")}{" "}
-                  <Link to="#" className="text-orange-500 hover:underline">
+                  <Link to="#" className="text-[#20ba93]  hover:underline">
                     {t("terms")}{" "}
                   </Link>
                   {t("and")}{" "}
-                  <Link to="#" className="text-orange-500 hover:underline">
+                  <Link to="#" className="text-[#20ba93]  hover:underline">
                     {t("policy")}{" "}
                   </Link>
                 </span>
@@ -262,7 +262,7 @@ export default function Register() {
 
               <button
                 type="submit"
-                className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 rounded-lg transition-colors"
+                className="w-full bg-[#20ba93] hover:bg-[#0d9674] text-white font-semibold py-2 rounded-lg transition-colors"
               >
                 {t("createAccount")}
               </button>
@@ -277,7 +277,7 @@ export default function Register() {
 
           <div className="bg-gray-50 px-8 py-10 flex flex-col items-center justify-center">
             <div className="flex items-center justify-center space-x-2 mb-4">
-              <div className="w-12 h-12 bg-orange-500 rounded-lg flex items-center justify-center">
+              <div className="w-12 h-12 bg-[#20ba93]  rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-lg">C&L</span>
               </div>
               <span className="font-bold text-2xl text-gray-800">Co&Learn</span>
@@ -294,7 +294,7 @@ export default function Register() {
               {t("alreadyHaveAccount")}{" "}
               <Link
                 to="/login"
-                className="text-orange-500 hover:underline font-medium"
+                className="text-[#20ba93] hover:underline font-medium"
               >
                 {t("loginNow")}
               </Link>
