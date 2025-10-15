@@ -1,4 +1,3 @@
-// ModalMaterials.js
 import { Modal, Upload, Button, List, Form, Input, Select } from "antd";
 import {
   UploadOutlined,
@@ -22,6 +21,8 @@ function ModalMaterials({ open, onCancel, lessonId }) {
   const [editingMaterial, setEditingMaterial] = useState(null);
   const [submitLoading, setSubmitLoading] = useState(false);
   const [deleteLoadingId, setDeleteLoadingId] = useState(null);
+
+  const { loading } = useSelector((state) => state.deleteMaterialsData);
   useEffect(() => {
     if (lessonId) {
       dispatch(getMaterials(lessonId));
@@ -43,11 +44,13 @@ function ModalMaterials({ open, onCancel, lessonId }) {
       }
 
       const payload = {
-        title: values.title,
+        title: values.optionType + ": " + values.title,
         materialType: values.materialType,
         url: fileUrl,
         format: format,
       };
+
+      console.log("DATA", payload);
 
       if (editingMaterial) {
         await dispatch(
@@ -76,7 +79,6 @@ function ModalMaterials({ open, onCancel, lessonId }) {
     setDeleteLoadingId(id);
     try {
       await dispatch(deleteMaterials({ id, lessonId }));
-      dispatch(getMaterials(lessonId));
     } finally {
       setDeleteLoadingId(null);
     }
@@ -94,6 +96,10 @@ function ModalMaterials({ open, onCancel, lessonId }) {
 
     return item.url;
   };
+
+  useEffect(() => {
+    console.log("Materials updated:", materials);
+  }, [materials]);
 
   return (
     <Modal
@@ -121,21 +127,30 @@ function ModalMaterials({ open, onCancel, lessonId }) {
           <Input placeholder="e.g., Chapter 1 Notes" />
         </Form.Item>
 
-        <Form.Item
-          label="Material Type"
-          name="materialType"
-          rules={[{ required: true, message: "Please select type" }]}
-        >
-          <Select placeholder="Select type">
-            <Select.Option value="pdf">PDF</Select.Option>
-            <Select.Option value="word">Word</Select.Option>
-            <Select.Option value="ppt">PowerPoint</Select.Option>
-            <Select.Option value="excel">Excel</Select.Option>
-            <Select.Option value="image">Image</Select.Option>
-            <Select.Option value="video">Video</Select.Option>
-            <Select.Option value="other">Other</Select.Option>
-          </Select>
-        </Form.Item>
+        <div className="grid grid-cols-2 gap-2">
+          <Form.Item
+            label="File Type"
+            name="materialType"
+            rules={[{ required: true, message: "Please select type" }]}
+          >
+            <Select placeholder="Select type">
+              <Select.Option value="pdf">PDF</Select.Option>
+              <Select.Option value="word">Word</Select.Option>
+              <Select.Option value="ppt">PowerPoint</Select.Option>
+              <Select.Option value="excel">Excel</Select.Option>
+              <Select.Option value="image">Image</Select.Option>
+              <Select.Option value="video">Video</Select.Option>
+              <Select.Option value="other">Other</Select.Option>
+            </Select>
+          </Form.Item>
+
+          <Form.Item label="Material Type" name={"optionType"}>
+            <Select placeholder="Select Practical or Content">
+              <Select.Option value="Practical">Practical</Select.Option>
+              <Select.Option value="Content">Content</Select.Option>
+            </Select>
+          </Form.Item>
+        </div>
 
         <Form.Item label="Upload File">
           <Upload
@@ -173,7 +188,7 @@ function ModalMaterials({ open, onCancel, lessonId }) {
 
       <List
         bordered
-        dataSource={materials}
+        dataSource={[...(materials || [])]}
         renderItem={(item, index) => (
           <List.Item
             actions={[
@@ -190,6 +205,7 @@ function ModalMaterials({ open, onCancel, lessonId }) {
                 }}
               />,
               <Button
+                loading={deleteLoadingId === item.materialId}
                 key="delete"
                 onClick={() => {
                   handleDelete(item.materialId);

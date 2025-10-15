@@ -9,7 +9,6 @@ function CourseKid() {
   const { courseStudent = [] } = useSelector(
     (state) => state.getCourseStudentData
   );
-  console.log("AAA", courseStudent);
 
   return (
     <div>

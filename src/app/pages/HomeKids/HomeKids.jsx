@@ -29,25 +29,24 @@ function HomeKids() {
     }
   }, []);
 
+  console.log("USER", profileStudentById);
+
   useEffect(() => {
     if (user?.userId) {
       dispatch(getProfileStudentById(user?.userId));
     }
   }, [dispatch, user]);
 
-  console.log("USER", profileStudentById);
-
   useEffect(() => {
     if (profileStudentById?.studentId)
-      dispatch(getEnrollment(profileStudentById?.studentId));
+      // dispatch(getEnrollment(profileStudentById?.studentId));
+      dispatch(getEnrollment(1));
   }, [dispatch, profileStudentById]);
 
   useEffect(() => {
     const id = enrollment?.course?.courseId;
     if (enrollment?.course?.courseId) dispatch(getCourseStudent(id));
   }, [dispatch, enrollment]);
-
-  console.log("AAA", courseStudent);
 
   const cards = [
     {
@@ -120,13 +119,10 @@ function HomeKids() {
       ),
     },
     {
-      title: "Lessons",
-      value: courseStudent?.items?.reduce(
-        (total, item) => total + (item.course?.lessons?.length || 0),
-        0
-      ),
-      description: "Total Lessons",
+      title: "Student",
+      value: profileStudentById?.fullName,
       gradient: "from-[#75dff2] to-[#c0d32c]",
+      description: profileStudentById?.email,
       icon: "mdi:school",
     },
   ];
@@ -201,15 +197,15 @@ function HomeKids() {
             </Link>
 
             <Link
-              to="space"
+              to="practical"
               className={`flex items-center gap-2 px-4 py-2 rounded-full cursor-pointer ${
-                option === "space"
+                option === "practical"
                   ? "bg-gradient-to-b from-[#49d0d7] to-[#72ced3] text-white font-medium"
                   : "text-gray-700 hover:bg-gray-100"
               }`}
-              onClick={() => setOption("space")}
+              onClick={() => setOption("practical")}
             >
-              My space
+              Practical
             </Link>
 
             <Link
