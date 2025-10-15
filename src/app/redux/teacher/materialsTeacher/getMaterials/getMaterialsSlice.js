@@ -28,7 +28,18 @@ const getMaterialsReducer = (state = initialState, action) => {
     case GET__MATERIALS:
       return { ...state, loading: true, error: null };
     case GET__MATERIALS__SUCCESS:
-      return { ...state, loading: false, dataMaterials: action.payload };
+      return {
+        ...state,
+        loading: false,
+        dataMaterials: {
+          ...action.payload, // clone payload
+          value: {
+            ...action.payload?.value,
+            items: [...(action.payload?.value?.items ?? [])],
+          },
+        },
+      };
+
     case GET__MATERIALS__FAIL:
       return { ...state, loading: false, error: action.payload };
     default:

@@ -1,4 +1,4 @@
-import { call, put, takeLatest } from "redux-saga/effects";
+import { call, delay, put, takeLatest } from "redux-saga/effects";
 import api from "../../../../config/apiConfig";
 
 import { toast } from "react-toastify";
@@ -7,28 +7,26 @@ import {
   deleteMaterialsFail,
   deleteMaterialsSuccess,
 } from "./deleteMaterialsSlice";
-import { getMaterialsSuccess } from "../getMaterials/getMaterialsSlice";
+import { getMaterials } from "../getMaterials/getMaterialsSlice";
 
 export function* deleteMaterialsSaga(action) {
   try {
-    console.log("ACTION", action);
-
     const { id, lessonId } = action.payload;
     const response = yield call(api.delete, `/materials/${id}`);
-    if (
-      response.status === 200 ||
-      response.status === 201 ||
-      response.status === 204
-    ) {
-      yield put(deleteMaterialsSuccess({ message: "Delete successful!" }));
+    console.log("DELETE RESPONSE", response);
+
+    if ([200, 201, 204].includes(response.status)) {
+      yield put(deleteMaterialsSuccess({ id }));
       toast.success("Delete materials successful!");
 
-      yield put(getMaterialsSuccess(lessonId));
+      console.log("RE-FETCH MATERIALS FOR", lessonId);
+      yield delay(300);
+      yield put(getMaterials(lessonId));
     } else {
       yield put(deleteMaterialsFail(response.status));
     }
   } catch (error) {
-    console.log(error);
+    console.log("DELETE ERROR", error);
   }
 }
 

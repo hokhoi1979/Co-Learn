@@ -33,6 +33,8 @@ import PrivateRoute from "./privateRoute";
 import PaymentAdmin from "../pages/Admin/Payments/Payments";
 import TeacherBooking from "../pages/Teacher/TeacherBooking/TeacherBooking";
 import TeacherSchedule from "../pages/Teacher/TeacherSchedule/TeacherSchedule";
+import PracticalKids from "../pages/HomeKids/PracticalKids";
+import PracticalDetail from "../pages/HomeKids/PracticalDetail";
 
 const router = createBrowserRouter([
   {
@@ -52,7 +54,8 @@ const router = createBrowserRouter([
           { index: true, element: <CourseKid /> },
           { path: "courses", element: <CourseKid /> },
           { path: "courses/:id", element: <CourseDetail /> },
-          { path: "space", element: <div>My Space</div> },
+          { path: "practical", element: <PracticalKids /> },
+          { path: "practical/:id", element: <PracticalDetail /> },
           { path: "schedule", element: <ScheduleKid /> },
         ],
       },
