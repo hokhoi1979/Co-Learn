@@ -10,9 +10,12 @@ import {
 
 export function* postPaymentSaga(action) {
   try {
-    const body = action.payload;
-
-    const response = yield call(api.post, "/Payment", body);
+    const { bookingId, userId } = action.payload;
+    console.log("IAA", `/Payment/payos/booking/${bookingId}/user/${userId}`);
+    const response = yield call(
+      api.post,
+      `/Payment/payos/booking/${bookingId}/user/${userId}`
+    );
 
     if (response.status === 200 || response.status === 201) {
       yield put(postPaymentSuccess(response.data));

@@ -24,7 +24,7 @@ const AdminLayout = () => {
       </div>
       <div
         className={`flex-1 overflow-auto transition-all duration-500 pt-20
-        ${toggle ? "ml-[8%]" : "ml-[14%]"}`}
+        ${toggle ? "ml-[8%]" : "ml-[15%]"}`}
       >
         <Outlet />
       </div>

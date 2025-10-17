@@ -12,11 +12,18 @@ const api = axios.create({
 
 api.interceptors.request.use(
   (config) => {
-    console.log("👉 Request URL:", config.baseURL + config.url);
-    const token = localStorage.getItem("token");
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+    const auth = localStorage.getItem("auth");
+    if (auth) {
+      try {
+        const parsed = JSON.parse(auth);
+        if (parsed.token) {
+          config.headers.Authorization = `Bearer ${parsed.token}`;
+        }
+      } catch (err) {
+        console.error("❌ Failed to parse token:", err);
+      }
     }
+
     return config;
   },
   (error) => Promise.reject(error)

@@ -93,6 +93,12 @@ function TeacherProfile() {
                     {profile.gender}
                   </span>
                 </div>
+                <div className="flex flex-wrap gap-3 mt-3 items-center text-sm text-gray-600">
+                  <span className="flex items-center gap-2">
+                    Rating hours:
+                    {profile.hourlyRate}
+                  </span>
+                </div>
               </div>
 
               <Button

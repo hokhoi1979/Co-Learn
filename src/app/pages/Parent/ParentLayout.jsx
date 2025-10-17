@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Outlet } from "react-router-dom";
 import HeaderTeacher from "../../layouts/Header/HeaderTeacher";
 import SideBarParent from "../../layouts/Sidebar/SidebarParent";
+import HeaderParent from "../../layouts/Header/HeaderParent";
 
 const ParentLayout = () => {
   const [toggle, setToggle] = useState(false);
@@ -19,7 +20,7 @@ const ParentLayout = () => {
         className="fixed top-0 left-0 w-full z-50
              backdrop-blur-md bg-white/70 shadow-sm"
       >
-        <HeaderTeacher />
+        <HeaderParent />
       </div>
       <div
         className={`flex-1 overflow-auto transition-all duration-500 pt-20

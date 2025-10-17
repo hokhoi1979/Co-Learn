@@ -12,7 +12,6 @@ export function* getCourseSaga() {
     }
   } catch (error) {
     yield put(getCourseFail(error));
-    console.log(error);
   }
 }
 

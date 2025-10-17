@@ -40,6 +40,8 @@ import watchPostProfileStudent from "./parent/postProfileStudent/postProfileStud
 import watchGetProfileStudentId from "./parent/getProfileStudentId/getProfileStudentSaga";
 import watchPutProfileStudent from "./parent/putProfileStudent/putProfileStudentSaga";
 import watchPostPaymentStudent from "./payment/postPayment/postPaymentSaga";
+import watchGetPaymentCancel from "./payment/getPaymentCancel/getPaymentCancelSaga";
+import watchPostPaymentCourse from "./payment/postPaymentCourse/postPaymentCourseSaga";
 export default function* rootSaga() {
   yield all([
     watchFetchLogin(),
@@ -63,6 +65,8 @@ export default function* rootSaga() {
 
     //Parent - Payment
     watchPostPaymentStudent(),
+    watchGetPaymentCancel(),
+    watchPostPaymentCourse(),
 
     //Teacher
     watchGetAllTeacher(),

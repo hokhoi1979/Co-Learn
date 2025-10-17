@@ -69,6 +69,8 @@ function ParentSchedule() {
     }
   }, [dispatch, profileParentId]);
 
+  console.log("BOOO", getBooking_Student);
+
   const startOfWeek = dayjs().add(weekOffset, "week").startOf("isoWeek");
   const endOfWeek = dayjs().add(weekOffset, "week").endOf("isoWeek");
   const currentWeek = dayjs().add(weekOffset, "week").isoWeek();
@@ -289,6 +291,7 @@ function ParentSchedule() {
                       <button
                         onClick={() => {
                           handlePayment();
+                          console.log("PAYMEN", course);
                           setChoosePayment(course);
                         }}
                         className="mt-4 px-4 py-1 bg-[#12ad8c] text-white rounded-md cursor-pointer hover:bg-[#24c5a2]"
