@@ -87,7 +87,7 @@ const SideBarAdmin = ({ toggle, setToggle, active, setActive }) => {
     <div className="relative">
       <div
         className={`mt-17 h-full bg-[#2d2d2d] pt-7 pb-4 flex flex-col fixed shadow-lg 
-          ${toggle ? "w-[8%]" : "w-[14%]"} 
+          ${toggle ? "w-[8%]" : "w-[15%]"} 
           transition-all duration-500 ease-in-out`}
       >
         <div
@@ -111,7 +111,7 @@ const SideBarAdmin = ({ toggle, setToggle, active, setActive }) => {
 
         <div className="flex mb-5 items-center py-3 justify-between">
           {!toggle && (
-            <div className="flex gap-3 items-center mb-10">
+            <div className="flex gap-3 items-center mb-10 px-3">
               <div className="h-10 w-10 rounded-full flex justify-center items-center bg-gradient-to-r from-[#898989] to-[#898989]">
                 <span className="text-sm font-bold text-white">A</span>
               </div>
@@ -130,7 +130,7 @@ const SideBarAdmin = ({ toggle, setToggle, active, setActive }) => {
               }
               setOpenLogout(true);
             }}
-            className={`flex items-center p-2 rounded-xl cursor-pointer  mb-10
+            className={`flex items-center p-2 rounded-xl cursor-pointer px-3 mb-10
               hover:bg-gradient-to-r hover:from-[#565757]/20 hover:to-[#3f3f3f]/20
               ${toggle && "w-full justify-center"}`}
           >

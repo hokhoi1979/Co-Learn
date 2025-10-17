@@ -59,6 +59,8 @@ function ModalBooking({ open, cancel, initialValues, idTeacher, idStudent }) {
         notes: values.notes,
       };
 
+      console.log("PAYLOAD", formatted);
+
       if (initialValues) {
         await dispatch(
           editBooking({ id: initialValues?.bookingId, body: formatted })

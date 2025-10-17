@@ -75,13 +75,13 @@ const SideBarTeacher = ({ toggle, setToggle, active, setActive }) => {
     }
   }, [dispatch, user]);
 
+  console.log("TEACHER", profileTeacherId);
+
   const handleLogout = () => {
     dispatch(logout());
     toast.success("Log Out successful!");
     navigate("/");
   };
-
-  console.log("AAAA", profileTeacherId);
 
   const MenuItem = ({ item }) => {
     const isActive = active === item.key;
@@ -150,7 +150,9 @@ const SideBarTeacher = ({ toggle, setToggle, active, setActive }) => {
                 />
               </div>
               <div>
-                <h1 className="text-lg font-semibold">Miss {user?.fullName}</h1>
+                <h1 className="text-md font-semibold">
+                  Miss {profileTeacherId?.fullName}
+                </h1>
                 <p className="text-sm text-gray-500">Teacher Coding</p>
               </div>
             </div>

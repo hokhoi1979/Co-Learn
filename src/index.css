@@ -8,10 +8,8 @@ body {
   margin: 0;
   padding: 0;
   font-family: "Kameron", serif;
-  /* font-family: "Quicksand", sans-serif; */
 }
 :root {
-  /* Updated color tokens to match programming education design brief */
   --background: #ffffff;
   --foreground: #475569;
   --card: #f8fafc;
@@ -48,7 +46,6 @@ body {
 }
 
 .dark {
-  /* Updated dark mode tokens for consistency */
   --background: #0f172a;
   --foreground: #f1f5f9;
   --card: #1e293b;

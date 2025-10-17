@@ -67,7 +67,7 @@ function Header() {
           <Button
             onClick={() => navigate("/register")}
             className="!h-10 !px-5 !rounded-lg 
-                       !bg-gradient-to-r !from-cyan-500 !to-blue-500
+                       !bg-gradient-to-r !from-cyan-500 !to-cyan-500 
                        !text-white !font-semibold shadow-md hover:shadow-lg transition"
           >
             Sign Up

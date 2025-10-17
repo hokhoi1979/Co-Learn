@@ -12,13 +12,11 @@ export function* getProfileParentIdSaga(action) {
     const response = yield call(api.get, `/profile/parent/${id}`);
     if (response.status === 200 || response.status === 201) {
       yield put(getProfileParentIdSuccess(response.data));
-      console.log("DATA", response.data);
     } else {
       yield put(getProfileParentIdFail(response.status));
     }
   } catch (error) {
     yield put(getProfileParentIdFail(error));
-    console.log(error);
   }
 }
 

@@ -35,6 +35,7 @@ import TeacherBooking from "../pages/Teacher/TeacherBooking/TeacherBooking";
 import TeacherSchedule from "../pages/Teacher/TeacherSchedule/TeacherSchedule";
 import PracticalKids from "../pages/HomeKids/PracticalKids";
 import PracticalDetail from "../pages/HomeKids/PracticalDetail";
+import PaymentCancel from "../pages/PaymentCancel/PaymentCancel";
 
 const router = createBrowserRouter([
   {
@@ -116,6 +117,7 @@ const router = createBrowserRouter([
         ],
       },
       { path: "payment", element: <PaymentSuccess /> },
+      { path: "payment/cancel", element: <PaymentCancel /> },
 
       { path: "login", element: <Login /> },
       { path: "register", element: <Register /> },

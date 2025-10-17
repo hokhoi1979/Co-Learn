@@ -2,46 +2,34 @@ import React, { useEffect, useState } from "react";
 import { Modal, Input, Button, Form } from "antd";
 import { DollarSign, CreditCard, Banknote, IdCard } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
-import { useForm } from "antd/es/form/Form";
 import { postPayment } from "../../../redux/payment/postPayment/postPaymentSlice";
 import { useNavigate } from "react-router";
 
 const { TextArea } = Input;
 
-const ModalPayment = ({
-  open,
-  onClose,
-  dataPayment,
-  userIdParent,
-  handleOk,
-}) => {
+const ModalPayment = ({ open, onClose, dataPayment, userIdParent }) => {
   const [selectedMethod, setSelectedMethod] = useState("1");
-  const [form] = useForm();
   const dispatch = useDispatch();
 
   const { createPayment } = useSelector((state) => state.postPayment);
   const navigate = useNavigate();
 
-  console.log("PAPA", createPayment);
   useEffect(() => {
     if (createPayment) {
-      window.location.href = createPayment?.value?.paymentUrl;
+      window.location.href = createPayment?.checkoutUrl;
     }
   }, [createPayment, navigate]);
 
   const onSubmit = async () => {
-    const values = await form.validateFields();
     const payload = {
       bookingId: dataPayment.bookingId,
-      enrollmentId: null,
       payerUserId: userIdParent.userId,
-      amount: 100000,
-      methodId: Number(selectedMethod),
-      description: values.description,
     };
 
-    const res = await dispatch(postPayment(payload)).unwrap();
-    const url = res?.value?.paymentUrl;
+    const res = await dispatch(
+      postPayment({ bookingId: payload.bookingId, userId: payload.payerUserId })
+    ).unwrap();
+    const url = res?.checkoutUrl;
 
     if (url) {
       if (url.startsWith("http")) {
@@ -105,7 +93,7 @@ const ModalPayment = ({
 
         <div className="border-t mt-3 pt-3 flex justify-between items-center">
           <span className="font-medium text-gray-700">Total Amount</span>
-          <span className="text-[#12ad8c] font-semibold text-lg">$20.00</span>
+          <span className="text-[#12ad8c] font-semibold text-lg"></span>
         </div>
       </div>
 
@@ -126,7 +114,7 @@ const ModalPayment = ({
                 selectedMethod === "2" ? "text-[#12ad8c]" : "text-gray-500"
               }`}
             />
-            <span className="text-sm font-medium">Bank Transfer</span>
+            <span className="text-sm font-medium">PayOs</span>
             <span className="text-xs text-gray-400">
               Transfer via bank account
             </span>
@@ -170,21 +158,6 @@ const ModalPayment = ({
             <span className="text-xs text-gray-400">Pay with Momo</span>
           </Button>
         </div>
-      </div>
-
-      <div className="mt-5">
-        <h3 className="font-medium text-gray-700 mb-2">
-          Payment Note (Optional)
-        </h3>
-        <Form layout="vertical" form={form}>
-          <Form.Item name="description">
-            <TextArea
-              placeholder="Add any additional notes about this payment..."
-              rows={3}
-              className="rounded-xl"
-            />
-          </Form.Item>
-        </Form>
       </div>
 
       <div className="flex justify-end mt-6 gap-3">

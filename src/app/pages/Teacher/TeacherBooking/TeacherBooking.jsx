@@ -55,6 +55,8 @@ function TeacherBooking() {
     }
   }, [dispatch, profileTeacherId]);
 
+  console.log("BOOOKJUNBG", getBooking_Teacher);
+
   const startOfWeek = dayjs().add(weekOffset, "week").startOf("isoWeek");
   const endOfWeek = dayjs().add(weekOffset, "week").endOf("isoWeek");
   const currentWeek = startOfWeek.isoWeek();
@@ -111,7 +113,6 @@ function TeacherBooking() {
   };
 
   const handleDecline = async (id) => {
-    console.log("ID", id);
     if (!id) return;
 
     await dispatch(declineBookingTeacher(id));

@@ -89,7 +89,10 @@ function ModalProfile({ isModalOpen, handleOk, handleCancel, initialState }) {
         cv: values.cv,
         photo: values.photo,
         description: values.description,
+        hourlyRate: Number(values.hourlyRate),
       };
+
+      console.log("PÂPPA", payload);
 
       if (initialState) {
         dispatch(
@@ -174,6 +177,11 @@ function ModalProfile({ isModalOpen, handleOk, handleCancel, initialState }) {
           </Form.Item>
         </div>
 
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Form.Item label="Rating hours" name="hourlyRate">
+            <Input placeholder="Enter price" />
+          </Form.Item>
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
