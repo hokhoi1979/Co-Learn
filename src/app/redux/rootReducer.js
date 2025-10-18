@@ -42,6 +42,7 @@ import putProfileStudentReducer from "./parent/putProfileStudent/putProfileStude
 import postPaymentReducer from "./payment/postPayment/postPaymentSlice";
 import getPaymentCancelReducer from "./payment/getPaymentCancel/getPaymentCancelSlice";
 import postPaymentCourseReducer from "./payment/postPaymentCourse/postPaymentCourseSlice";
+import getEnrollmentStudentReducer from "./student/enrollmentStudent/getEnrollmentStudentSlice";
 const rootReducer = combineReducers({
   login: loginReducer,
   register: registerReducer,
@@ -105,6 +106,7 @@ const rootReducer = combineReducers({
   getProfileStudentData: getProfileStudentReducer,
   getProfileStudentByIdData: getProfileStudentByIdReducer,
   getEnrollmentData: getEnrollmentReducer,
+  getEnrollmentStudentData: getEnrollmentStudentReducer,
   getCourseStudentData: getCourseStudentReducer,
 });
 

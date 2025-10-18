@@ -1,14 +1,43 @@
 import { Icon } from "@iconify/react";
 import { Outlet, useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { Book } from "lucide-react";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect, useState } from "react";
+import { getProfileStudentById } from "../../redux/student/profileStudentById/getProfileByIdSlice";
+import { getEnrollmentStudent } from "../../redux/student/enrollmentStudent/getEnrollmentStudentSlice";
 
 function CourseKid() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  const { courseStudent = [] } = useSelector(
-    (state) => state.getCourseStudentData
+  const [user, setUser] = useState(null);
+  const { profileStudentById = [] } = useSelector(
+    (state) => state.getProfileStudentByIdData
   );
+
+  const { enrollmentStudent = [] } = useSelector(
+    (state) => state.getEnrollmentStudentData
+  );
+
+  useEffect(() => {
+    const auth = localStorage.getItem("auth");
+    if (auth) {
+      const parsed = JSON.parse(auth);
+      setUser(parsed);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (user?.userId) {
+      dispatch(getProfileStudentById(user?.userId));
+    }
+  }, [dispatch, user]);
+
+  useEffect(() => {
+    if (profileStudentById?.studentId)
+      dispatch(getEnrollmentStudent(profileStudentById?.studentId));
+  }, [dispatch, profileStudentById?.studentId]);
+
+  console.log("III", enrollmentStudent);
 
   return (
     <div>
@@ -21,9 +50,8 @@ function CourseKid() {
 
       <Outlet />
 
-      {courseStudent?.items?.map((item) => {
+      {enrollmentStudent?.items?.map((item) => {
         const course = item.course;
-
         return (
           <div
             key={course.courseId}
@@ -39,7 +67,7 @@ function CourseKid() {
                 <path
                   fill="none"
                   stroke="#fff"
-                  stroke-width="2"
+                  strokeWidth="2"
                   d="M10 1v10l3-2l3 2V1M5.5 18a2.5 2.5 0 1 0 0 5H22M3 20.5v-17A2.5 2.5 0 0 1 5.5 1H21v17.007H5.492M20.5 18a2.5 2.5 0 1 0 0 5"
                 />
               </svg>
@@ -62,7 +90,7 @@ function CourseKid() {
                 <div className="mt-4 flex gap-4">
                   <button
                     className="px-6 py-2 cursor-pointer bg-white/20 backdrop-blur-md rounded-xl text-white font-medium hover:bg-[#5aa9cb] transition"
-                    onClick={() => navigate(`/kids/courses/${item?.courseId}`)}
+                    onClick={() => navigate(`/kids/courses/${course.courseId}`)}
                   >
                     Continue
                   </button>

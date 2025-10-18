@@ -1,18 +1,48 @@
 import { Flame } from "lucide-react";
-import React from "react";
-import { useSelector } from "react-redux";
+import React, { useEffect, useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { getProfileStudentById } from "../../redux/student/profileStudentById/getProfileByIdSlice";
+import { getEnrollmentStudent } from "../../redux/student/enrollmentStudent/getEnrollmentStudentSlice";
 
 function PracticalKids() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  const { courseStudent = {} } = useSelector(
-    (state) => state.getCourseStudentData
+  const [user, setUser] = useState(null);
+  const { profileStudentById = [] } = useSelector(
+    (state) => state.getProfileStudentByIdData
+  );
+  const { enrollmentStudent = [] } = useSelector(
+    (state) => state.getEnrollmentStudentData
   );
 
-  console.log("AAA", courseStudent);
+  // ✅ Lấy thông tin user từ localStorage
+  useEffect(() => {
+    const auth = localStorage.getItem("auth");
+    if (auth) {
+      const parsed = JSON.parse(auth);
+      setUser(parsed);
+    }
+  }, []);
 
-  const items = Array.isArray(courseStudent?.items) ? courseStudent.items : [];
+  // ✅ Gọi API lấy profile student theo userId
+  useEffect(() => {
+    if (user?.userId) {
+      dispatch(getProfileStudentById(user?.userId));
+    }
+  }, [dispatch, user]);
+
+  // ✅ Khi có studentId → gọi danh sách enrollment
+  useEffect(() => {
+    if (profileStudentById?.studentId) {
+      dispatch(getEnrollmentStudent(profileStudentById?.studentId));
+    }
+  }, [dispatch, profileStudentById?.studentId]);
+
+  const items = Array.isArray(enrollmentStudent?.items)
+    ? enrollmentStudent.items
+    : [];
 
   return (
     <div>
@@ -67,7 +97,7 @@ function PracticalKids() {
                     <button
                       className="px-6 py-2 cursor-pointer bg-white/20 backdrop-blur-md rounded-xl text-white font-medium hover:bg-[#5aa9cb] transition"
                       onClick={() =>
-                        navigate(`/kids/practical/${item?.courseId}`)
+                        navigate(`/kids/practical/${course.courseId}`)
                       }
                     >
                       Continue

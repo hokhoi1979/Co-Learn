@@ -18,6 +18,7 @@ export function* postPaymentCourseSaga(action) {
 
     if (response.status === 200 || response.status === 201) {
       yield put(postPaymentCourseSuccess(response.data));
+      console.log(response.data);
     } else {
       yield put(postPaymentCourseFail(response.status));
       toast.error("Create failed!");

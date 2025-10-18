@@ -10,9 +10,10 @@ import {
 export function* getCourseStudentSaga(action) {
   try {
     const id = action.payload;
-    const response = yield call(api.get, `enrollments/course/${id}`);
+    const response = yield call(api.get, `/enrollments/course/${id}`);
     if (response.status === 200 || response.status === 201) {
       yield put(getCourseStudentSuccess(response.data));
+      console.log("COURSE", response.data);
     } else {
       yield put(getCourseStudentFail(response.status));
     }

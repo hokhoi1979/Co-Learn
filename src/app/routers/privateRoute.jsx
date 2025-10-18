@@ -41,7 +41,7 @@ const PrivateRoute = ({ children, role }) => {
         title="Chưa đăng nhập"
         description="Vui lòng đăng nhập để tiếp tục sử dụng hệ thống học tập của bạn."
         buttonText="Đăng nhập ngay"
-        onClick={() => (window.location.href = "/login")}
+        onClick={() => (window.location.href = " http://localhost:5173/login")}
       />
     );
   }

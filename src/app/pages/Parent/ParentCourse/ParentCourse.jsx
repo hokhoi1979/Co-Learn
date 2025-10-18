@@ -7,6 +7,7 @@ import { getCourse } from "../../../redux/teacher/courseTeacher/getCourse/getCou
 import { getProfileParentId } from "../../../redux/parent/profileParentId/getProfileParentIdSlice";
 import { postPaymentCourse } from "../../../redux/payment/postPaymentCourse/postPaymentCourseSlice";
 import { useNavigate } from "react-router";
+import { toast } from "react-toastify";
 
 function ParentCourse() {
   const dispatch = useDispatch();
@@ -43,24 +44,19 @@ function ParentCourse() {
       studentId: profileParentId?.children[0]?.studentId,
       courseId: item?.courseId,
     };
-    const res = await dispatch(postPaymentCourse(payload)).unwrap();
 
-    const url = res?.value?.paymentUrl;
+    await dispatch(postPaymentCourse(payload));
 
-    if (url) {
-      if (url.startsWith("http")) {
-        window.location.href = url;
-      } else {
-        navigate(url);
+    if (createPaymentCourse.checkoutUrl) {
+      if (
+        createPaymentCourse.checkoutUrl === "Course này đã được thanh toán!"
+      ) {
+        toast.error(createPaymentCourse.checkoutUrl);
       }
+    } else {
+      window.location.href = createPaymentCourse.checkoutUrl;
     }
   };
-
-  useEffect(() => {
-    if (createPaymentCourse) {
-      window.location.href = createPaymentCourse?.checkoutUrl;
-    }
-  }, [createPaymentCourse]);
 
   return (
     <div className="w-full min-h-screen p-6 bg-gradient-to-b from-[#F0F6F6] to-[#DBFBFD]">
@@ -165,7 +161,10 @@ function ParentCourse() {
                     </div>
 
                     <button
-                      onClick={() => handleBuy(item)}
+                      onClick={() => {
+                        handleBuy(item);
+                        console.log(item);
+                      }}
                       className="px-5 py-2 cursor-pointer bg-[#12ad8c] hover:bg-[#0e9e7c] text-white font-semibold rounded-lg transition-all duration-200"
                     >
                       Buy Now
