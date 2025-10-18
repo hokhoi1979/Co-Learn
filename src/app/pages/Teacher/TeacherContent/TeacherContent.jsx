@@ -121,7 +121,7 @@ function TeacherContent() {
       setLoading(false);
     }
   };
-
+  console.log("COURSE", courseTeacher);
   const isViewingContent = location.pathname.includes("viewContent");
 
   return (
