@@ -10,17 +10,14 @@ import {
 
 export function* getPaymentCancelSaga(action) {
   try {
-    console.log(
-      "IAOIAIOA",
-      `/Payment/payos/cancel?orderCode=${action.payload}`
-    );
     const response = yield call(
       api.get,
-      `/Payment/payos/cancel?orderCode=${action.payload}`
+      `/Payment/payos/cancel?payment=${action.payload}`
     );
 
     if (response.status === 200 || response.status === 201) {
       yield put(getPaymentCancelSuccess(response.data));
+      console.log("DATA", response.data);
     } else {
       yield put(getPaymentCancelFail(response.status));
       toast.error("Create failed!");

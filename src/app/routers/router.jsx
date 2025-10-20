@@ -36,6 +36,7 @@ import TeacherSchedule from "../pages/Teacher/TeacherSchedule/TeacherSchedule";
 import PracticalKids from "../pages/HomeKids/PracticalKids";
 import PracticalDetail from "../pages/HomeKids/PracticalDetail";
 import PaymentCancel from "../pages/PaymentCancel/PaymentCancel";
+import ViewTeacherAdmin from "../pages/Admin/TeacherAdmin/ViewTeacherAdmin";
 
 const router = createBrowserRouter([
   {
@@ -111,8 +112,9 @@ const router = createBrowserRouter([
         children: [
           { path: "", element: <Navigate to="dashboard" /> },
           { path: "dashboard", element: <DashboardAdmin /> },
-          { path: "useradmin", element: <UserAdmin /> },
-          { path: "teacheradmin", element: <TeacherAdmin /> },
+          { path: "userAdmin", element: <UserAdmin /> },
+          { path: "teacherAdmin", element: <TeacherAdmin /> },
+          { path: "viewTeacherAdmin/:id", element: <ViewTeacherAdmin /> },
           { path: "payment", element: <PaymentAdmin /> },
         ],
       },

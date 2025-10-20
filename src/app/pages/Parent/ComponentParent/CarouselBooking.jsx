@@ -5,8 +5,8 @@ import "slick-carousel/slick/slick-theme.css";
 import { Image } from "antd";
 
 function CarouselBooking({ profileTeacher = [], onBooking }) {
-  const teachers = Array.isArray(profileTeacher) ? profileTeacher : [];
-
+  let teachers = Array.isArray(profileTeacher) ? profileTeacher : [];
+  teachers = teachers.filter((item) => item.verificationStatus === "Verified");
   const settings = {
     dots: true,
     infinite: true,
@@ -21,6 +21,8 @@ function CarouselBooking({ profileTeacher = [], onBooking }) {
       { breakpoint: 640, settings: { slidesToShow: 1 } },
     ],
   };
+
+  console.log("TEACHER", teachers);
 
   if (teachers.length === 0) {
     return (

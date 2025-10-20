@@ -19,7 +19,6 @@ function UserAdmin() {
     dispatch(getAllTeacher());
   }, [dispatch]);
 
-  // ✅ Map Parents
   useEffect(() => {
     if (allParent?.length) {
       const mapped = allParent.map((p) => ({
