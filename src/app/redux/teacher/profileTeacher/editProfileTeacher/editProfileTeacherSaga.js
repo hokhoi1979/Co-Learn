@@ -6,6 +6,7 @@ import {
 } from "./editProfileTeacherSlice";
 import { toast } from "react-toastify";
 import api from "../../../../config/apiConfig";
+import { getAllTeacher } from "../../../admin/user/getAllTeacher/getAllTeacherSlice";
 
 export function* editProfileTeacherSaga(action) {
   try {
@@ -16,6 +17,10 @@ export function* editProfileTeacherSaga(action) {
     if (response.status === 200 || response.status === 201) {
       yield put(editProfileTeacherSuccess(response.data));
       toast.success("Update successful!");
+
+      // const fetch = yield call(api.get, `/profile/teacher/${id}`);
+      // yield put(getProfileTeacherIdSuccess(fetch.data));
+      yield put(getAllTeacher());
     } else {
       yield put(editProfileTeacherFail(response.status));
     }

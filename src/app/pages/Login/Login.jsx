@@ -26,6 +26,8 @@ export default function Login() {
       navigate("/parent");
     } else if (user?.role === "3") {
       navigate("/teacher");
+    } else if (user?.role === "4") {
+      navigate("/admin");
     }
   }, [user, navigate]);
 

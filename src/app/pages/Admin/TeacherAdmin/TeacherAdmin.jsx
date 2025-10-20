@@ -3,9 +3,12 @@ import { Image } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { getAllTeacher } from "../../../redux/admin/user/getAllTeacher/getAllTeacherSlice";
+import { editProfileTeacher } from "../../../redux/teacher/profileTeacher/editProfileTeacher/editProfileTeacherSlice";
+import { useNavigate } from "react-router-dom";
 
 function TeacherAdmin() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { allTeacher = [], loading } = useSelector(
     (state) => state.getAllTeacher
   );
@@ -16,12 +19,29 @@ function TeacherAdmin() {
 
   console.log("All teachers:", allTeacher);
 
+  const handleApprove = async (values) => {
+    const payload = {
+      userId: values.userId,
+      fullName: values.fullName,
+      born: values.born,
+      phone: values.phone,
+      gender: values.gender,
+      degree: values.degree,
+      hourlyRate: values.hourlyRate,
+      cv: values.cv,
+      photo: values.photo,
+      description: values.description,
+      verificationStatus: "Verified",
+    };
+    console.log(payload);
+    await dispatch(editProfileTeacher({ id: payload.userId, body: payload }));
+  };
+
   return (
     <div className="w-full min-h-screen p-6 bg-[#ebebeb]">
       <h1 className="text-3xl font-bold text-gray-800">Welcome Admin!</h1>
       <p className="text-gray-500 mb-6">Manage and update your system!</p>
 
-      {/* Dashboard summary cards */}
       <div className="grid grid-cols-4 gap-4 mb-6">
         <div className="bg-white rounded-xl p-4 shadow">
           <div className="flex gap-2 items-center">
@@ -148,12 +168,12 @@ function TeacherAdmin() {
                 </div>
                 <span
                   className={`px-3 py-1 text-sm rounded-full ${
-                    t.isActive
+                    t.verificationStatus === "Verified"
                       ? "bg-green-100 text-green-600"
                       : "bg-yellow-100 text-yellow-600"
                   }`}
                 >
-                  {t.isActive ? "Approved" : "Pending"}
+                  {t.verificationStatus === "Verified" ? "Verified" : "Pending"}
                 </span>
               </div>
 
@@ -204,14 +224,35 @@ function TeacherAdmin() {
                 )}
               </div>
 
-              {t.isActive === false && (
+              {t.verificationStatus === "Pending" && (
                 <>
                   <div className="flex gap-3 mt-4">
                     <button className="flex-1 bg-[#ea8576] hover:bg-[#e14f38] text-white py-1 rounded-lg">
                       Reject
                     </button>
-                    <button className="flex-1 bg-[#20ba93] hover:bg-[#2ba788] text-white py-1 rounded-lg">
+                    <button
+                      className="flex-1 bg-[#20ba93] hover:bg-[#2ba788] text-white py-1 rounded-lg cursor-pointer"
+                      onClick={() => {
+                        handleApprove(t);
+                      }}
+                    >
                       Approve
+                    </button>
+                  </div>
+                </>
+              )}
+
+              {t.verificationStatus === "Verified" && (
+                <>
+                  <div className="flex gap-3 mt-4">
+                    <button
+                      onClick={() => {
+                        navigate(`/admin/viewTeacherAdmin/${t.teacherId}`);
+                      }}
+                      className="flex-1 flex items-center justify-center gap-2 bg-[#20ba93] hover:bg-[#2ba788] text-white py-2 rounded-lg cursor-pointer transition"
+                    >
+                      <Eye size={18} />
+                      <span>View information</span>
                     </button>
                   </div>
                 </>

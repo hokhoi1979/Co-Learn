@@ -36,8 +36,8 @@ function ParentCourse() {
     dispatch(getCourse());
   }, [dispatch]);
 
-  const courseList = course?.value?.items || [];
-
+  let courseList = course?.value?.items || [];
+  courseList = courseList.filter((item) => item.isActive === true);
   const handleBuy = async (item) => {
     const payload = {
       userId: profileParentId?.userId,
@@ -47,6 +47,8 @@ function ParentCourse() {
 
     dispatch(postPaymentCourse(payload));
   };
+
+  console.log("first", courseList);
 
   return (
     <div className="w-full min-h-screen p-6 bg-gradient-to-b from-[#F0F6F6] to-[#DBFBFD]">

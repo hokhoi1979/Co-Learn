@@ -179,6 +179,13 @@ function TeacherContent() {
                       </div>
 
                       <div className="flex justify-between gap-2">
+                        <p className="text-gray-500 w-20">Durations:</p>
+                        <p className="font-bold ">
+                          {item.durationMinutes} minutes
+                        </p>
+                      </div>
+
+                      <div className="flex justify-between gap-2">
                         <p className="text-gray-500 w-20">Pricing:</p>
                         <p className="font-semibold text-green-600">
                           {Number(item.pricePerSession).toLocaleString("vi-VN")}

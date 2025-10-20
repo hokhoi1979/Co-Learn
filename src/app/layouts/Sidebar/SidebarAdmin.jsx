@@ -17,13 +17,13 @@ const menuItems = [
     key: "users",
     label: "Users",
     icon: "mdi:account-group-outline",
-    nav: "/admin/useradmin",
+    nav: "/admin/userAdmin",
   },
   {
     key: "teachers",
     label: "Teachers",
     icon: "mdi:account-tie-outline",
-    nav: "/admin/teacheradmin",
+    nav: "/admin/teacherAdmin",
   },
   {
     key: "payments",

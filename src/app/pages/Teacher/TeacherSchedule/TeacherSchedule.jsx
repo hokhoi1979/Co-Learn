@@ -53,10 +53,8 @@ function TeacherSchedule() {
 
   console.log("SCHEDULE", scheduleTeacher);
 
-  // ✅ Xử lý dữ liệu schedule từ API
   const scheduleData = scheduleTeacher?.value || [];
 
-  // ✅ Chia lịch theo ngày
   const scheduleByDay = {
     Monday: [],
     Tuesday: [],
@@ -102,7 +100,6 @@ function TeacherSchedule() {
 
       if (meetingValue) {
         await dispatch(putMeetingSchedule({ id, body: meetingValue }));
-        // Sau khi update thành công thì set lại giá trị vừa nhập
         form.setFieldValue(`meeting-${id}`);
       }
     } catch (error) {
@@ -208,7 +205,7 @@ function TeacherSchedule() {
                       <Form.Item
                         name={`meeting-${item.scheduleId}`}
                         className="mb-0 flex-1"
-                        initialValue={item.meetingLink || ""}
+                        initialValue={""}
                         rules={[
                           {
                             required: true,
