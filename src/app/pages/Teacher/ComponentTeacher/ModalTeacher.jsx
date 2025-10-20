@@ -146,7 +146,7 @@ function ModalTeacher({
 
         <div className="grid grid-cols-2 gap-4">
           <Form.Item
-            label="Price per Session ($)"
+            label="Price per Session (VND)"
             name="pricePerSession"
             rules={[
               { required: true, message: "Please enter price per session" },

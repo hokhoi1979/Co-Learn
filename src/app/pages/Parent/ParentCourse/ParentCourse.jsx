@@ -45,17 +45,7 @@ function ParentCourse() {
       courseId: item?.courseId,
     };
 
-    await dispatch(postPaymentCourse(payload));
-
-    if (createPaymentCourse.checkoutUrl) {
-      if (
-        createPaymentCourse.checkoutUrl === "Course này đã được thanh toán!"
-      ) {
-        toast.error(createPaymentCourse.checkoutUrl);
-      }
-    } else {
-      window.location.href = createPaymentCourse.checkoutUrl;
-    }
+    dispatch(postPaymentCourse(payload));
   };
 
   return (

@@ -43,6 +43,9 @@ import postPaymentReducer from "./payment/postPayment/postPaymentSlice";
 import getPaymentCancelReducer from "./payment/getPaymentCancel/getPaymentCancelSlice";
 import postPaymentCourseReducer from "./payment/postPaymentCourse/postPaymentCourseSlice";
 import getEnrollmentStudentReducer from "./student/enrollmentStudent/getEnrollmentStudentSlice";
+import getScheduleStudentReducer from "./student/getSchedule/getScheduleSlice";
+import putMeetingScheduleReducer from "./teacher/meeting/meetingScheduleSlice";
+import getScheduleTeacherReducer from "./teacher/scheduleTeacher/getScheduleTeacherSlice";
 const rootReducer = combineReducers({
   login: loginReducer,
   register: registerReducer,
@@ -74,6 +77,8 @@ const rootReducer = combineReducers({
   editProfileTeacher: editProfileTeacherReducer,
   getProfileTeacherId: getProfileTeacherIdReducer,
   createProfileTeacherData: createProfileTeacherReducer,
+  putMeetingScheduleData: putMeetingScheduleReducer,
+  getScheduleTeacherData: getScheduleTeacherReducer,
 
   //Teacher - Booking
   getBookingTeacher: getBookingTeacherReducer,
@@ -108,6 +113,7 @@ const rootReducer = combineReducers({
   getEnrollmentData: getEnrollmentReducer,
   getEnrollmentStudentData: getEnrollmentStudentReducer,
   getCourseStudentData: getCourseStudentReducer,
+  getScheduleStudentData: getScheduleStudentReducer,
 });
 
 export default rootReducer;

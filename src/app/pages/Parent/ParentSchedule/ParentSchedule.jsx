@@ -18,6 +18,7 @@ import { toast } from "react-toastify";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 import ModalPayment from "../ComponentParent/ModalPayment";
+import { CheckCircleOutlined, CloseCircleOutlined } from "@ant-design/icons";
 dayjs.extend(timezone);
 dayjs.tz.setDefault("Asia/Ho_Chi_Minh");
 dayjs.extend(isoWeek);
@@ -108,6 +109,7 @@ function ParentSchedule() {
           date: start.format("YYYY-MM-DD"),
           startTime: start.format("HH:mm:ss"),
           durationMinutes,
+          isPaid: booking.isPaid,
         });
       }
     }
@@ -286,7 +288,7 @@ function ParentSchedule() {
                     <div></div>
                   )}
 
-                  {course.status === "Confirmed" && (
+                  {course.status === "Confirmed" && course.isPaid === false && (
                     <>
                       <button
                         onClick={() => {
@@ -298,6 +300,27 @@ function ParentSchedule() {
                       >
                         Payment
                       </button>
+                    </>
+                  )}
+
+                  {course.status === "Confirmed" && course.isPaid === true && (
+                    <>
+                      <Button
+                        className="mt-5"
+                        icon={<CheckCircleOutlined style={{ color: "#fff" }} />}
+                        style={{
+                          background:
+                            "linear-gradient(90deg, #12ad8c, #24c5a2)",
+                          border: "none",
+                          borderRadius: "9999px",
+                          color: "#fff",
+                          fontWeight: "600",
+                          boxShadow: "0 3px 10px rgba(0,0,0,0.15)",
+                          transition: "0.3s",
+                        }}
+                      >
+                        {"Paid"}
+                      </Button>
                     </>
                   )}
                 </div>

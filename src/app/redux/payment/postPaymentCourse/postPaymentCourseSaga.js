@@ -19,6 +19,17 @@ export function* postPaymentCourseSaga(action) {
     if (response.status === 200 || response.status === 201) {
       yield put(postPaymentCourseSuccess(response.data));
       console.log(response.data);
+      if (
+        response.data.checkoutUrl === "Course này đã được thanh toán!" ||
+        response.data.checkoutUrl ===
+          "Khóa học này đang trong quá trình thanh toán!" ||
+        response.data.checkoutUrl ===
+          "Bạn đã có một giao dịch đang xử lý. Vui lòng hoàn tất hoặc đợi hết hạn."
+      ) {
+        toast.error(response.data.checkoutUrl);
+      } else if (response.data.checkoutUrl) {
+        window.location.href = response.data.checkoutUrl;
+      }
     } else {
       yield put(postPaymentCourseFail(response.status));
       toast.error("Create failed!");

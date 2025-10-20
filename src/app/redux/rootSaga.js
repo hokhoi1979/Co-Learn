@@ -43,6 +43,9 @@ import watchPostPaymentStudent from "./payment/postPayment/postPaymentSaga";
 import watchGetPaymentCancel from "./payment/getPaymentCancel/getPaymentCancelSaga";
 import watchPostPaymentCourse from "./payment/postPaymentCourse/postPaymentCourseSaga";
 import watchGetEnrollmentStudent from "./student/enrollmentStudent/getEnrollmentStudentSaga";
+import watchGetScheduleStudent from "./student/getSchedule/getScheduleSaga";
+import watchPutMeetingSchedule from "./teacher/meeting/meetingScheduleSaga";
+import watchGetScheduleTeacher from "./teacher/scheduleTeacher/getScheduleTeacherSaga";
 export default function* rootSaga() {
   yield all([
     watchFetchLogin(),
@@ -75,6 +78,8 @@ export default function* rootSaga() {
     watchEditProfileTeacher(),
     watchGetProfileTeacherId(),
     watchCreateProfileTeacher(),
+    watchPutMeetingSchedule(),
+    watchGetScheduleTeacher(),
 
     //Teacher - Booking
     watchGetBookingTeacher(),
@@ -109,5 +114,6 @@ export default function* rootSaga() {
     watchGetEnrollment(),
     watchGetEnrollmentStudent(),
     watchGetCourseStudent(),
+    watchGetScheduleStudent(),
   ]);
 }
