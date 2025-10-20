@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { Progress, Tag, Button, Modal } from "antd";
-import { ClockCircleOutlined, DeleteOutlined } from "@ant-design/icons";
+import { Tag, Button, Form, Input } from "antd";
+import { ClockCircleOutlined } from "@ant-design/icons";
 import { Icon } from "@iconify/react";
 import { MdOutlineRoom } from "react-icons/md";
 import CarouselTeacher from "../ComponentTeacher/CarouselTeacher";
 import { useDispatch, useSelector } from "react-redux";
 import { getProfileTeacherId } from "../../../redux/teacher/profileTeacher/getProfileId/getProfileIdSlice";
-import { getBookingTeacher } from "../../../redux/teacher/booking/getBookingTeacher/getBookingTeacherSlice";
+import { useForm } from "antd/es/form/Form";
+import { getScheduleTeacher } from "../../../redux/teacher/scheduleTeacher/getScheduleTeacherSlice";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 import isoWeek from "dayjs/plugin/isoWeek";
+import { putMeetingSchedule } from "../../../redux/teacher/meeting/meetingScheduleSlice";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -21,14 +23,15 @@ function TeacherSchedule() {
   const [activeDay, setActiveDay] = useState(dayjs().format("dddd"));
   const [user, setUser] = useState(null);
   const [weekOffset, setWeekOffset] = useState(0);
+  const [form] = useForm();
 
+  const dispatch = useDispatch();
   const { profileTeacherId = {} } = useSelector(
     (state) => state.getProfileTeacherId
   );
-  const { getBooking_Teacher = {} } = useSelector(
-    (state) => state.getBookingTeacher
+  const { scheduleTeacher = {} } = useSelector(
+    (state) => state.getScheduleTeacherData
   );
-  const dispatch = useDispatch();
 
   useEffect(() => {
     const auth = localStorage.getItem("auth");
@@ -44,16 +47,17 @@ function TeacherSchedule() {
 
   useEffect(() => {
     if (profileTeacherId?.teacherId) {
-      dispatch(getBookingTeacher(profileTeacherId?.teacherId));
+      dispatch(getScheduleTeacher(profileTeacherId?.teacherId));
     }
   }, [dispatch, profileTeacherId]);
 
-  const startOfWeek = dayjs().add(weekOffset, "week").startOf("isoWeek");
-  const endOfWeek = dayjs().add(weekOffset, "week").endOf("isoWeek");
-  const currentWeek = startOfWeek.isoWeek();
-  const currentYear = startOfWeek.year();
+  console.log("SCHEDULE", scheduleTeacher);
 
-  const schedule = {
+  // ✅ Xử lý dữ liệu schedule từ API
+  const scheduleData = scheduleTeacher?.value || [];
+
+  // ✅ Chia lịch theo ngày
+  const scheduleByDay = {
     Monday: [],
     Tuesday: [],
     Wednesday: [],
@@ -63,35 +67,48 @@ function TeacherSchedule() {
     Sunday: [],
   };
 
-  getBooking_Teacher?.items?.forEach((booking) => {
-    const start = dayjs.utc(booking?.requestedStartTime);
-    const end = dayjs.utc(booking?.requestedEndTime);
+  scheduleData.forEach((item) => {
+    const start = dayjs(item.startTime);
+    const end = dayjs(item.endTime);
+    const dayName = start.format("dddd");
 
-    if (start.isoWeek() === currentWeek && start.year() === currentYear) {
-      const dayName = start.format("dddd");
-      if (schedule[dayName]) {
-        schedule[dayName].push({
-          title: `Lesson with ${booking.studentName}`,
-          time: `${start.format("HH:mm")} - ${end.format("HH:mm")}`,
-          date: start.format("YYYY-MM-DD"),
-          status: booking.bookingStatusName,
-          student: booking.studentName,
-          studentEmail: booking.studentEmail,
-          notes: booking.notes,
-          bookingId: booking.bookingId,
-          isPaid: booking?.isPaid,
-        });
-      }
+    if (scheduleByDay[dayName]) {
+      scheduleByDay[dayName].push({
+        id: item.scheduleId,
+        title: item.courseTitle || "Private Lesson",
+        student: item.studentName,
+        teacher: item.teacherName,
+        time: `${start.format("HH:mm")} - ${end.format("HH:mm")}`,
+        date: start.format("YYYY-MM-DD"),
+        status: item.status,
+        meetingLink: item.meetingLink,
+        scheduleId: item.scheduleId,
+      });
     }
   });
-  const paidClasses =
-    schedule[activeDay]?.filter((c) => c.isPaid === true) || [];
 
-  Object.keys(schedule).forEach((day) => {
-    schedule[day].sort((a, b) => a.time.localeCompare(b.time));
+  Object.keys(scheduleByDay).forEach((day) => {
+    scheduleByDay[day].sort((a, b) => a.time.localeCompare(b.time));
   });
 
-  const days = Object.keys(schedule);
+  const startOfWeek = dayjs().add(weekOffset, "week").startOf("isoWeek");
+  const endOfWeek = dayjs().add(weekOffset, "week").endOf("isoWeek");
+  const days = Object.keys(scheduleByDay);
+
+  const handleMeeting = async (id) => {
+    try {
+      const values = await form.validateFields();
+      const meetingValue = values[`meeting-${id}`];
+
+      if (meetingValue) {
+        await dispatch(putMeetingSchedule({ id, body: meetingValue }));
+        // Sau khi update thành công thì set lại giá trị vừa nhập
+        form.setFieldValue(`meeting-${id}`);
+      }
+    } catch (error) {
+      console.error("Update meeting failed:", error);
+    }
+  };
 
   return (
     <div className="w-full min-h-screen p-5 bg-gradient-to-b from-[#F0F6F6] to-[#DBFBFD]">
@@ -146,10 +163,10 @@ function TeacherSchedule() {
         </div>
 
         <div className="flex flex-col gap-4">
-          {paidClasses.length > 0 ? (
-            paidClasses.map((course) => (
+          {scheduleByDay[activeDay]?.length > 0 ? (
+            scheduleByDay[activeDay].map((item) => (
               <div
-                key={course.bookingId}
+                key={item.id}
                 className="flex items-center justify-between bg-[#F9FCFC] border rounded-xl shadow-sm p-4 hover:bg-[#f1f9f9] transition"
               >
                 <div className="flex gap-4 items-center">
@@ -162,31 +179,74 @@ function TeacherSchedule() {
                     />
                   </div>
                   <div>
-                    <h2 className="text-lg font-semibold">{course.title}</h2>
+                    <h2 className="text-lg font-semibold">
+                      {item.title} with {item.student}
+                    </h2>
                     <div className="flex gap-4 text-gray-600 text-sm mt-1">
                       <span className="flex items-center gap-1">
-                        <ClockCircleOutlined /> {course.time}
+                        <ClockCircleOutlined /> {item.time}
                       </span>
                       <span className="flex items-center gap-1 text-red-500">
                         <MdOutlineRoom /> Online
                       </span>
                     </div>
-                    <div className="text-sm text-gray-600 mt-1">
-                      Student: {course.student} ({course.studentEmail})
-                    </div>
-                    {course.notes && (
-                      <p className="text-gray-500 text-sm mt-1">
-                        Notes: {course.notes}
-                      </p>
-                    )}
                     <p className="text-gray-400 text-xs mt-1">
-                      Date: {course.date}
+                      Date: {item.date}
                     </p>
+                    <span className="flex items-center gap-1 mb-3">
+                      MeetingURL:{" "}
+                      <a href={item.meetingLink} className="hover:underline">
+                        {item.meetingLink}
+                      </a>
+                    </span>
+
+                    <Form
+                      form={form}
+                      layout="inline"
+                      className="flex items-center gap-1 mt-2"
+                    >
+                      <Form.Item
+                        name={`meeting-${item.scheduleId}`}
+                        className="mb-0 flex-1"
+                        initialValue={item.meetingLink || ""}
+                        rules={[
+                          {
+                            required: true,
+                            message: "Please enter the meeting URL!",
+                          },
+                        ]}
+                      >
+                        <Input
+                          placeholder="Enter meeting link..."
+                          className="text-gray-700 text-sm rounded-md border-gray-300 focus:border-[#0ba2c8] focus:ring-[#0ba2c8] w-[260px]"
+                        />
+                      </Form.Item>
+
+                      <Button
+                        type="secondary"
+                        onClick={() => {
+                          handleMeeting(item.scheduleId);
+                          console.log("ID", item.scheduleId);
+                        }}
+                        className="!bg-[#20ba93] hover:!bg-[#179977] !text-white !font-semibold px-5 rounded-md"
+                      >
+                        Update
+                      </Button>
+                    </Form>
                   </div>
                 </div>
                 <div className="flex flex-col items-end">
-                  <Tag color="green" className="text-sm px-4 py-1 mb-2">
-                    {course.status}
+                  <Tag
+                    color={
+                      item.status === "Scheduled"
+                        ? "blue"
+                        : item.status === "Completed"
+                        ? "green"
+                        : "red"
+                    }
+                    className="text-sm px-4 py-1 mb-2"
+                  >
+                    {item.status}
                   </Tag>
                 </div>
               </div>

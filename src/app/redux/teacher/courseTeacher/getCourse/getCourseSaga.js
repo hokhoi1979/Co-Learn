@@ -4,7 +4,7 @@ import { GET__COURSE, getCourseFail, getCourseSuccess } from "./getCourseSlice";
 
 export function* getCourseSaga() {
   try {
-    const response = yield call(api.get, `/Course`);
+    const response = yield call(api.get, `/Course?pageIndex=1&pageSize=100`);
     if (response.status === 200 || response.status === 201) {
       yield put(getCourseSuccess(response.data));
     } else {

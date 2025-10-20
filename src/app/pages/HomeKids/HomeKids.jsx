@@ -19,10 +19,6 @@ function HomeKids() {
     (state) => state.getEnrollmentStudentData
   );
 
-  // const { courseStudent = [] } = useSelector(
-  //   (state) => state.getCourseStudentData
-  // );
-
   useEffect(() => {
     const auth = localStorage.getItem("auth");
     if (auth) {
@@ -40,13 +36,7 @@ function HomeKids() {
   useEffect(() => {
     if (profileStudentById?.studentId)
       dispatch(getEnrollmentStudent(profileStudentById?.studentId));
-    // dispatch(getEnrollment(1));
   }, [dispatch, profileStudentById?.studentId]);
-
-  // useEffect(() => {
-  //   const id = enrollment?.course?.courseId;
-  //   if (enrollment?.course?.courseId) dispatch(getCourseStudent(id));
-  // }, [dispatch, enrollment]);
 
   const cards = [
     {

@@ -92,8 +92,6 @@ function ModalProfile({ isModalOpen, handleOk, handleCancel, initialState }) {
         hourlyRate: Number(values.hourlyRate),
       };
 
-      console.log("PÂPPA", payload);
-
       if (initialState) {
         dispatch(
           editProfileTeacher({ id: initialState?.teacherId, body: payload })
@@ -104,6 +102,8 @@ function ModalProfile({ isModalOpen, handleOk, handleCancel, initialState }) {
         dispatch(createProfileTeacher(payload));
         dispatch(getProfileTeacherId(user?.userId));
       }
+      dispatch(getProfileTeacherId(user?.userId));
+
       handleOk();
       form.resetFields();
     });
