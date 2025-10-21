@@ -1,0 +1,125 @@
+import React, { useState } from "react";
+import { Image, Modal, Rate, Input, Button, Form, Tag } from "antd";
+import img from "../../../assets/img/bg3.jpg";
+import { useForm } from "antd/es/form/Form";
+import FormItem from "antd/es/form/FormItem";
+import { toast } from "react-toastify";
+import CarouselTeacher from "../../Teacher/ComponentTeacher/CarouselTeacher";
+import { dataFeedback } from "../../../shared";
+
+function ParentFeedback() {
+  const [open, setOpen] = useState(false);
+  const [form] = useForm();
+  const [feedback, setFeedback] = useState([]);
+
+  const handleSubmit = () => {
+    form.validateFields().then((values) => {
+      const dataFeedback = {
+        ...values,
+      };
+      console.log("DATA", dataFeedback);
+      setFeedback(dataFeedback), form.resetFields();
+      setOpen(false);
+    });
+    toast.success("Feedback successful!");
+  };
+
+  return (
+    <div className="w-full min-h-screen p-6 bg-gradient-to-b from-[#F0F6F6] to-[#DBFBFD]">
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold text-gray-800">Welcome Parent!</h1>
+        <p className="text-gray-500">
+          Manage and update your children’s learning process
+        </p>
+        <h1 className="text-5xl flex justify-center text-[#057b5f] mb-8 font-medium">
+          Parent Feedback
+        </h1>
+
+        <div className="grid grid-cols-4 gap-2 mt-5">
+          {dataFeedback.map((item, index) => (
+            <div
+              key={index}
+              className="border-1 shadow-md rounded-2xl bg-gray-100 py-5 flex flex-col h-full"
+            >
+              <div className="relative">
+                <Image
+                  src={img}
+                  height={170}
+                  width="100%"
+                  className="bg-cover"
+                />
+              </div>
+
+              <div className="px-5 flex flex-col flex-1">
+                <h1 className="flex justify-center text-[20px] text-[#138257] font-bold">
+                  {item.title}
+                </h1>
+                <p className="text-gray-500">{item.description}</p>
+
+                {item.status === true ? (
+                  <>
+                    <div className="m-auto">
+                      <Tag color="green" className="">
+                        Give Success
+                      </Tag>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      type="secondary"
+                      className="bg-[#12ad8c] mt-2 self-center text-white px-2 py-1 rounded-md cursor-pointer hover:bg-[#17ba96]"
+                      onClick={() => setOpen(true)}
+                    >
+                      Give Feedback
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <CarouselTeacher />
+
+      <Modal
+        open={open}
+        onCancel={() => setOpen(false)}
+        footer={[
+          <>
+            <button
+              onClick={handleSubmit}
+              className="bg-[#12ad8c] mt-2 self-center text-white px-2 py-1 rounded-md cursor-pointer hover:bg-[#17ba96]"
+            >
+              Submit
+            </button>
+          </>,
+        ]}
+      >
+        <div>
+          <h1 className="flex justify-center text-2xl">Feedback</h1>
+          <Form layout="vertical" form={form}>
+            <Form.Item label="Please rate this course" name={"rating"}>
+              <Rate />
+            </Form.Item>
+            <Form.Item
+              label="Leave a comment"
+              name={"feedback"}
+              rules={[
+                {
+                  required: true,
+                  message: "Pleased enter at least 4 characters",
+                },
+              ]}
+            >
+              <Input.TextArea name="description" rows={3} />
+            </Form.Item>
+          </Form>
+        </div>
+      </Modal>
+    </div>
+  );
+}
+
+export default ParentFeedback;
