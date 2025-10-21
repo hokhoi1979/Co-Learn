@@ -53,13 +53,13 @@ function ParentCourse() {
   return (
     <div className="w-full min-h-screen p-6 bg-gradient-to-b from-[#F0F6F6] to-[#DBFBFD]">
       <div className="mb-6 text-start">
-        <h1 className="text-4xl font-bold text-gray-800">Welcome Parent </h1>
-        <p className="text-gray-500 text-lg mt-2">
+        <h1 className="text-3xl font-bold text-gray-800">Welcome Parent </h1>
+        <p className="text-gray-500 ">
           Explore and choose the best coding courses for your child
         </p>
       </div>
 
-      <h1 className="text-5xl flex justify-center text-[#057b5f] mb-8 font-extrabold">
+      <h1 className="text-5xl flex justify-center text-[#057b5f] mb-8 font-medium">
         Discover Amazing Courses
       </h1>
 

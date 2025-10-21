@@ -46,10 +46,13 @@ import getEnrollmentStudentReducer from "./student/enrollmentStudent/getEnrollme
 import getScheduleStudentReducer from "./student/getSchedule/getScheduleSlice";
 import putMeetingScheduleReducer from "./teacher/meeting/meetingScheduleSlice";
 import getScheduleTeacherReducer from "./teacher/scheduleTeacher/getScheduleTeacherSlice";
+import getAllUserReducer from "./admin/user/getAllUser/getAllUserSlice";
+import getPaymentReducer from "./payment/getPayment/getPaymentSlice";
 const rootReducer = combineReducers({
   login: loginReducer,
   register: registerReducer,
   userIdData: getUserIdReducer,
+  getAllUserData: getAllUserReducer,
 
   //Parent
   getAllParent: getAllParentReducer,
@@ -70,6 +73,7 @@ const rootReducer = combineReducers({
   postPayment: postPaymentReducer,
   getPaymentCancel: getPaymentCancelReducer,
   postPaymentCourse: postPaymentCourseReducer,
+  getPaymentData: getPaymentReducer,
 
   //Teacher
   getAllTeacher: getAllTeacherReducer,

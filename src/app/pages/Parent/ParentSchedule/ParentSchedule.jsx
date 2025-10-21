@@ -157,7 +157,9 @@ function ParentSchedule() {
         </p>
       </div>
 
-      <h1 className="flex justify-center text-3xl ">Our Expert Teachers</h1>
+      <h1 className="text-5xl flex justify-center text-[#057b5f] mb-2 font-medium">
+        Our Expert Teachers
+      </h1>
       <p className="flex justify-center text-gray-500">
         Connect with qualified professionals and advance your learning journey
       </p>

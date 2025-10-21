@@ -158,9 +158,23 @@ function ModalProfile({ isModalOpen, handleOk, handleCancel, initialState }) {
           <Form.Item
             label="Date of Birth"
             name="born"
-            rules={[{ required: true }]}
+            rules={[
+              { required: true, message: "Please select your date of birth" },
+              {
+                validator: (_, value) => {
+                  if (!value) return Promise.resolve();
+                  const age = dayjs().diff(value, "year");
+                  if (age >= 20) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(
+                    new Error("You must be at least 24 years old")
+                  );
+                },
+              },
+            ]}
           >
-            <DatePicker style={{ width: "100%" }} />
+            <DatePicker style={{ width: "100%" }} format="DD/MM/YYYY" />
           </Form.Item>
         </div>
 
