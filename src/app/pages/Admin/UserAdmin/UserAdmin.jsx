@@ -40,7 +40,6 @@ function UserAdmin() {
     }
   }, [allParent]);
 
-  // ✅ Map Teachers
   useEffect(() => {
     if (allTeacher?.length) {
       const mapped = allTeacher.map((t) => ({
@@ -57,7 +56,6 @@ function UserAdmin() {
     }
   }, [allTeacher]);
 
-  // ✅ Toggle ban/unban (for both)
   const handleBanUser = (id, type) => {
     if (type === "parent") {
       setParents((prev) =>
@@ -89,7 +87,6 @@ function UserAdmin() {
     toast.success("Status updated successfully!");
   };
 
-  // ✅ Filter
   const filteredData = activeTab === "parents" ? parents : teachers;
   const searchedData = filteredData.filter(
     (u) =>
@@ -97,7 +94,6 @@ function UserAdmin() {
       u.email.toLowerCase().includes(search.toLowerCase())
   );
 
-  // ✅ Stats
   const totalUsers =
     parents.reduce((acc, p) => acc + 1 + (p.children?.length || 0), 0) +
     teachers.length;

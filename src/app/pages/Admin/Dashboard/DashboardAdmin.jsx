@@ -32,23 +32,15 @@ function DashboardAdmin() {
     dispatch(getPayment());
   }, [dispatch]);
 
-  const totalUser = Array.isArray(allUser?.value?.items)
-    ? allUser.value.items.length
-    : 0;
-
-  const totalTeacher = Array.isArray(allUser?.value?.items)
-    ? allUser.value.items.filter((item) => item.primaryRoleId === 3).length
-    : 0;
-
-  const totalCourse = Array.isArray(course?.value?.items)
-    ? course.value.items.length
-    : 0;
-
+  const totalUser = allUser?.value?.items?.length || 0;
+  const totalTeacher =
+    allUser?.value?.items?.filter((item) => item.primaryRoleId === 3).length ||
+    0;
+  const totalCourse = course?.value?.items?.length || 0;
   const totalMoney = Array.isArray(payment?.value)
     ? payment.value.reduce((acc, cur) => acc + (cur.amount || 0), 0)
     : 0;
 
-  // 🔹 Monthly revenue (group by month from payment.date)
   const monthlyRevenue = useMemo(() => {
     if (!Array.isArray(payment?.value)) return [];
 
@@ -57,12 +49,11 @@ function DashboardAdmin() {
     payment.value.forEach((p) => {
       const date = new Date(p.createdAt);
       if (!isNaN(date)) {
-        const month = `${date.getMonth() + 1}/${date.getFullYear()}`; // e.g., "10/2025"
+        const month = `${date.getMonth() + 1}/${date.getFullYear()}`;
         revenueMap[month] = (revenueMap[month] || 0) + (p.amount || 0);
       }
     });
 
-    // convert to recharts format
     return Object.entries(revenueMap)
       .map(([month, revenue]) => ({ month, revenue }))
       .sort((a, b) => {
@@ -72,19 +63,58 @@ function DashboardAdmin() {
       });
   }, [payment]);
 
-  // 🔹 Top performing courses (fake ranking by random students count or if you have enrollments, map them)
-  const topCourses = useMemo(() => {
-    if (!Array.isArray(course?.value?.items)) return [];
+  // const topCourses = useMemo(() => {
+  //   if (!Array.isArray(payment?.value) || !Array.isArray(course?.value?.items))
+  //     return [];
 
-    // Nếu sau này có API enrollment thì có thể tính theo số lượng học viên
-    return course.value.items
-      .map((c) => ({
-        name: c.title,
-        students: Math.floor(Math.random() * 50) + 10, // demo tạm
-      }))
-      .sort((a, b) => b.students - a.students)
-      .slice(0, 5);
-  }, [course]);
+  //   const revenueByCourse = {};
+
+  //   payment.value.forEach((p) => {
+  //     const enrollment = p.enrollment || {};
+  //     const courseId = enrollment.courseId || p.courseId;
+  //     if (courseId) {
+  //       revenueByCourse[courseId] =
+  //         (revenueByCourse[courseId] || 0) + (p.amount || 0);
+  //     }
+  //   });
+
+  //   return course.value.items
+  //     .map((c) => ({
+  //       name: c.title,
+  //       revenue: revenueByCourse[c.courseId] || 0,
+  //     }))
+  //     .filter((c) => c.revenue > 0)
+  //     .sort((a, b) => b.revenue - a.revenue)
+  //     .slice(0, 5);
+  // }, [course, payment]);
+
+  const topCourse = course?.value?.items?.slice(0, 5);
+
+  const teacherStudentData = useMemo(() => {
+    if (!Array.isArray(allUser?.value?.items)) return [];
+
+    const dataMap = {};
+
+    allUser.value.items.forEach((u) => {
+      const date = new Date(u.createdAt);
+      if (!isNaN(date)) {
+        const month = `${date.getMonth() + 1}/${date.getFullYear()}`;
+        if (!dataMap[month])
+          dataMap[month] = { month, teachers: 0, students: 0 };
+
+        if (u.primaryRoleId === 3) dataMap[month].teachers += 1;
+        if (u.primaryRoleId === 2) dataMap[month].students += 1;
+      }
+    });
+
+    return Object.values(dataMap).sort((a, b) => {
+      const [ma, ya] = a.month.split("/").map(Number);
+      const [mb, yb] = b.month.split("/").map(Number);
+      return ya === yb ? ma - mb : ya - yb;
+    });
+  }, [allUser]);
+
+  console.log("first", course);
 
   return (
     <div className="w-full min-h-screen p-6 bg-gray-100">
@@ -93,59 +123,35 @@ function DashboardAdmin() {
         <p className="text-gray-500">Manage and update your system!</p>
       </div>
 
-      {/* Summary cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-        <div className="bg-white rounded-xl p-4 shadow flex items-center gap-4">
-          <div className="bg-green-100 p-3 rounded-full">
-            <FaUsers className="text-3xl text-green-600" />
-          </div>
-          <div>
-            <p className="text-gray-500">Total Users</p>
-            <h2 className="text-2xl font-bold text-green-600">{totalUser}</h2>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-xl p-4 shadow flex items-center gap-4">
-          <div className="bg-blue-100 p-3 rounded-full">
-            <FaChalkboardTeacher className="text-3xl text-blue-600" />
-          </div>
-          <div>
-            <p className="text-gray-500">Active Teachers</p>
-            <h2 className="text-2xl font-bold text-blue-600">{totalTeacher}</h2>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-xl p-4 shadow flex items-center gap-4">
-          <div className="bg-purple-100 p-3 rounded-full">
-            <FaBook className="text-3xl text-purple-600" />
-          </div>
-          <div>
-            <p className="text-gray-500">Total Courses</p>
-            <h2 className="text-2xl font-bold text-purple-600">
-              {totalCourse}
-            </h2>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-xl p-4 shadow flex items-center gap-4">
-          <div className="bg-yellow-100 p-3 rounded-full">
-            <FaDollarSign className="text-3xl text-yellow-500" />
-          </div>
-          <div>
-            <p className="text-gray-500">Total Revenue</p>
-            <h2 className="text-2xl font-bold text-yellow-600">
-              {totalMoney.toLocaleString("vi-VN")} ₫
-            </h2>
-            <p className="text-xs text-gray-400">+18% from last month</p>
-          </div>
-        </div>
+        <DashboardCard
+          icon={<FaUsers className="text-3xl text-green-600" />}
+          bg="bg-green-100"
+          label="Total Users"
+          value={totalUser}
+        />
+        <DashboardCard
+          icon={<FaChalkboardTeacher className="text-3xl text-blue-600" />}
+          bg="bg-blue-100"
+          label="Active Teachers"
+          value={totalTeacher}
+        />
+        <DashboardCard
+          icon={<FaBook className="text-3xl text-purple-600" />}
+          bg="bg-purple-100"
+          label="Total Courses"
+          value={totalCourse}
+        />
+        <DashboardCard
+          icon={<FaDollarSign className="text-3xl text-yellow-500" />}
+          bg="bg-yellow-100"
+          label="Total Revenue"
+          value={`${totalMoney.toLocaleString("vi-VN")} ₫`}
+        />
       </div>
 
-      {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-        {/* Monthly Revenue */}
-        <div className="bg-white rounded-xl p-6 shadow">
-          <h3 className="text-lg font-semibold mb-4">Monthly Revenue</h3>
+        <ChartCard title="Monthly Revenue">
           <ResponsiveContainer width="100%" height={250}>
             <LineChart data={monthlyRevenue}>
               <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
@@ -165,72 +171,72 @@ function DashboardAdmin() {
               />
             </LineChart>
           </ResponsiveContainer>
-        </div>
+        </ChartCard>
 
-        {/* Top Performing Courses */}
-        <div className="bg-white rounded-xl p-6 shadow">
-          <h3 className="text-lg font-semibold mb-4">Top Performing Courses</h3>
-          <div className="space-y-4">
-            {topCourses.map((course, idx) => (
-              <div
-                key={idx}
-                className="flex justify-between items-center border-b pb-2 last:border-none"
-              >
-                <div>
-                  <p className="font-medium text-gray-800">{course.name}</p>
-                  <p className="text-sm text-gray-500">
-                    {course.students} students
+        <ChartCard title="Top Performing Courses">
+          {course?.value?.items.length > 0 ? (
+            <div className="space-y-4">
+              {topCourse.map((course, idx) => (
+                <div
+                  key={idx}
+                  className="flex justify-between items-center border-b pb-2 last:border-none"
+                >
+                  <p className="font-medium text-gray-800">
+                    {idx + 1}. {course.title}
                   </p>
                 </div>
-                <span className="text-green-600 font-bold">
-                  {Math.round((course.students / topCourses[0].students) * 100)}
-                  %
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-gray-400 italic">No data yet</p>
+          )}
+        </ChartCard>
       </div>
 
-      {/* Teacher vs Student growth chart */}
-      <div className="bg-white rounded-xl p-6 shadow">
-        <div className="w-full h-[300px]">
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart
-              data={[
-                { month: "Jan", teachers: 10, students: 100 },
-                { month: "Feb", teachers: 12, students: 130 },
-                { month: "Mar", teachers: 14, students: 160 },
-              ]}
-            >
-              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-              <XAxis dataKey="month" />
-              <YAxis yAxisId="left" />
-              <YAxis yAxisId="right" orientation="right" />
-              <Tooltip />
-              <Legend />
-              <Line
-                yAxisId="left"
-                type="monotone"
-                dataKey="teachers"
-                stroke="#3b82f6"
-                strokeWidth={3}
-                name="Teachers"
-              />
-              <Line
-                yAxisId="right"
-                type="monotone"
-                dataKey="students"
-                stroke="#f59e0b"
-                strokeWidth={3}
-                name="Students"
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
+      <ChartCard title="Teachers vs Students by Month">
+        <ResponsiveContainer width="100%" height={300}>
+          <LineChart data={teacherStudentData}>
+            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+            <XAxis dataKey="month" />
+            <YAxis />
+            <Tooltip />
+            <Legend />
+            <Line
+              type="monotone"
+              dataKey="teachers"
+              stroke="#3b82f6"
+              strokeWidth={3}
+              name="Teachers"
+            />
+            <Line
+              type="monotone"
+              dataKey="students"
+              stroke="#f59e0b"
+              strokeWidth={3}
+              name="Students"
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      </ChartCard>
     </div>
   );
 }
+
+const DashboardCard = ({ icon, bg, label, value }) => (
+  <div className="bg-white rounded-xl p-4 shadow flex items-center gap-4">
+    <div className={`${bg} p-3 rounded-full`}>{icon}</div>
+    <div>
+      <p className="text-gray-500">{label}</p>
+      <h2 className="text-2xl font-bold text-gray-800">{value}</h2>
+    </div>
+  </div>
+);
+
+const ChartCard = ({ title, children }) => (
+  <div className="bg-white rounded-xl p-6 shadow">
+    <h3 className="text-lg font-semibold mb-4">{title}</h3>
+    {children}
+  </div>
+);
 
 export default DashboardAdmin;

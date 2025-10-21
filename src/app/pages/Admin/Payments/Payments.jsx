@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Table, Input, Select, Button, Tag } from "antd";
 import {
   DownloadOutlined,
@@ -6,12 +6,21 @@ import {
   ArrowUpOutlined,
   ArrowDownOutlined,
 } from "@ant-design/icons";
+import { useDispatch, useSelector } from "react-redux";
+import { getPayment } from "../../../redux/payment/getPayment/getPaymentSlice";
 
 const { Search } = Input;
 const { Option } = Select;
 
 const PaymentAdmin = () => {
   const [searchText, setSearchText] = useState("");
+  const dispatch = useDispatch();
+  const { payment } = useSelector((state) => state.getPaymentData);
+  useEffect(() => {
+    dispatch(getPayment());
+  }, [dispatch]);
+
+  console.log("first", payment);
 
   const transactions = [
     {
