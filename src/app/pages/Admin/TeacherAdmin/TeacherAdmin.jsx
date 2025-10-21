@@ -1,7 +1,7 @@
 import { Mail, Phone, Calendar, GraduationCap, Clock, Eye } from "lucide-react";
 import { Image } from "antd";
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { getAllTeacher } from "../../../redux/admin/user/getAllTeacher/getAllTeacherSlice";
 import { editProfileTeacher } from "../../../redux/teacher/profileTeacher/editProfileTeacher/editProfileTeacherSlice";
 import { useNavigate } from "react-router-dom";
@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 function TeacherAdmin() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [filterStatus, setFilterStatus] = useState("All");
   const { allTeacher = [], loading } = useSelector(
     (state) => state.getAllTeacher
   );
@@ -36,6 +37,14 @@ function TeacherAdmin() {
     console.log(payload);
     await dispatch(editProfileTeacher({ id: payload.userId, body: payload }));
   };
+
+  const filteredTeachers = allTeacher.filter((t) => {
+    if (filterStatus === "All") return true;
+    if (filterStatus === "Pending") return t.verificationStatus === "Pending";
+    if (filterStatus === "Approved") return t.verificationStatus === "Verified";
+    if (filterStatus === "Rejected") return t.verificationStatus === "Rejected";
+    return true;
+  });
 
   return (
     <div className="w-full min-h-screen p-6 bg-[#ebebeb]">
@@ -77,7 +86,10 @@ function TeacherAdmin() {
             <p className="text-gray-500">Pending Review</p>
           </div>
           <h2 className="text-4xl flex justify-center font-bold text-[#4f9cf4]">
-            {allTeacher?.filter((t) => !t.isActive).length}
+            {
+              allTeacher.filter((t) => t.verificationStatus === "Pending")
+                .length
+            }
           </h2>
         </div>
 
@@ -101,7 +113,10 @@ function TeacherAdmin() {
             <p className="text-gray-500">Approved</p>
           </div>
           <h2 className="text-4xl flex justify-center font-bold text-[#52c673]">
-            {allTeacher.filter((t) => t.isActive).length}
+            {
+              allTeacher.filter((t) => t.verificationStatus === "Verified")
+                .length
+            }
           </h2>
         </div>
 
@@ -123,7 +138,10 @@ function TeacherAdmin() {
             <p className="text-gray-500">Rejected</p>
           </div>
           <h2 className="text-4xl flex justify-center font-bold text-[#dc7256]">
-            0
+            {
+              allTeacher.filter((t) => t.verificationStatus === "Rejected")
+                .length
+            }
           </h2>
         </div>
 
@@ -140,20 +158,64 @@ function TeacherAdmin() {
         </div>
       </div>
 
-      <div className="flex gap-4 mb-6">
-        <select className="border rounded-lg px-4 py-2">
-          <option>All Status</option>
-          <option>Pending</option>
-          <option>Approved</option>
-          <option>Rejected</option>
-        </select>
+      <div className="flex items-center gap-3 mb-6">
+        <div className="relative">
+          <select
+            className="appearance-none border border-gray-300 rounded-xl px-5 py-2.5 pr-10 bg-white text-gray-700 font-medium shadow-sm 
+      hover:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-transparent transition-all duration-200"
+            value={filterStatus}
+            onChange={(e) => setFilterStatus(e.target.value)}
+          >
+            <option value="All">All Status</option>
+            <option value="Pending">Pending</option>
+            <option value="Approved">Approved</option>
+            <option value="Rejected">Rejected</option>
+          </select>
+
+          {/* Icon mũi tên đẹp */}
+          <svg
+            className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M19 9l-7 7-7-7"
+            />
+          </svg>
+        </div>
+
+        {/* Nút làm mới */}
+        <button
+          onClick={() => setFilterStatus("All")}
+          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-500 text-white font-medium hover:bg-blue-600 transition-all duration-200 shadow"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="w-4 h-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M4 4v6h6M20 20v-6h-6M4 10a8 8 0 0114.9-2M20 14a8 8 0 01-14.9 2"
+            />
+          </svg>
+          Reset
+        </button>
       </div>
 
       {loading ? (
         <p>Loading...</p>
       ) : (
         <div className="grid md:grid-cols-3 gap-6">
-          {allTeacher.map((t) => (
+          {filteredTeachers.map((t) => (
             <div key={t.teacherId} className="bg-white rounded-xl p-6 shadow">
               <div className="flex justify-between items-center mb-2">
                 <div className="flex gap-3 items-center">
