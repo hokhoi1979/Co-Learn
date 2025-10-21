@@ -1,0 +1,47 @@
+import { call, put, takeLatest } from "redux-saga/effects";
+import api from "../../../config/apiConfig";
+
+import { toast } from "react-toastify";
+import {
+  POST__PAYMENT__COURSE,
+  postPaymentCourseFail,
+  postPaymentCourseSuccess,
+} from "./postPaymentCourseSlice";
+
+export function* postPaymentCourseSaga(action) {
+  try {
+    const { courseId, userId, studentId } = action.payload;
+    const response = yield call(
+      api.post,
+      `/Payment/payos/course/${courseId}/student/${studentId}/user/${userId}`
+    );
+
+    if (response.status === 200 || response.status === 201) {
+      yield put(postPaymentCourseSuccess(response.data));
+      console.log(response.data);
+      if (
+        response.data.checkoutUrl === "Course này đã được thanh toán!" ||
+        response.data.checkoutUrl ===
+          "Khóa học này đang trong quá trình thanh toán!" ||
+        response.data.checkoutUrl ===
+          "Bạn đã có một giao dịch đang xử lý. Vui lòng hoàn tất hoặc đợi hết hạn."
+      ) {
+        toast.error(response.data.checkoutUrl);
+      } else if (response.data.checkoutUrl) {
+        window.location.href = response.data.checkoutUrl;
+      }
+    } else {
+      yield put(postPaymentCourseFail(response.status));
+      toast.error("Create failed!");
+    }
+  } catch (error) {
+    console.error(" postPaymentCourseSaga error:", error);
+    yield put(postPaymentCourseFail(error));
+  }
+}
+
+function* watchPostPaymentCourse() {
+  yield takeLatest(POST__PAYMENT__COURSE, postPaymentCourseSaga);
+}
+
+export default watchPostPaymentCourse;
