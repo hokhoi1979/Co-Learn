@@ -31,7 +31,7 @@ function ParentFeedback() {
         <p className="text-gray-500">
           Manage and update your children’s learning process
         </p>
-        <h1 className="flex justify-center text-5xl text-gray-600 mt-5">
+        <h1 className="text-5xl flex justify-center text-[#057b5f] mb-8 font-medium">
           Parent Feedback
         </h1>
 

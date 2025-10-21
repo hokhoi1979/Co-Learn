@@ -166,7 +166,21 @@ function ModalProfileParent({
           <FormItem
             name="born"
             label="Date of Birth"
-            rules={[{ required: true, message: "Please select your DOB!" }]}
+            rules={[
+              { required: true, message: "Please select your date of birth" },
+              {
+                validator: (_, value) => {
+                  if (!value) return Promise.resolve();
+                  const age = dayjs().diff(value, "year");
+                  if (age >= 24) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(
+                    new Error("You must be at least 24 years old")
+                  );
+                },
+              },
+            ]}
           >
             <DatePicker
               className="w-full h-11 rounded-lg"

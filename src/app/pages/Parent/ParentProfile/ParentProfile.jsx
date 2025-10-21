@@ -118,19 +118,6 @@ function ParentProfile() {
                 <span className="font-semibold">Email:</span>{" "}
                 {profileParentId?.email}
               </p>
-
-              <p className="text-sm text-gray-600 mb-4">
-                <span className="font-semibold">Bio:</span>{" "}
-                {profileParentId?.userProfile?.bio}
-              </p>
-            </div>
-
-            <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm text-gray-600 ">
-              <p className="text-sm text-gray-600 mb-4">
-                <span className="font-semibold">Address:</span>{" "}
-                {profileParentId?.userProfile?.address}
-              </p>
-
               <p className="text-sm text-gray-600 mb-4">
                 <span className="font-semibold">Relationship:</span>{" "}
                 {profileParentId?.relationship}
