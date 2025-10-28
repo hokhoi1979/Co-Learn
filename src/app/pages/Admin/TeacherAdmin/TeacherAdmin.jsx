@@ -18,8 +18,6 @@ function TeacherAdmin() {
     dispatch(getAllTeacher());
   }, [dispatch]);
 
-  console.log("All teachers:", allTeacher);
-
   const handleApprove = async (values) => {
     const payload = {
       userId: values.userId,
@@ -187,28 +185,6 @@ function TeacherAdmin() {
             />
           </svg>
         </div>
-
-        {/* Nút làm mới */}
-        <button
-          onClick={() => setFilterStatus("All")}
-          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-500 text-white font-medium hover:bg-blue-600 transition-all duration-200 shadow"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="w-4 h-4"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth="2"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M4 4v6h6M20 20v-6h-6M4 10a8 8 0 0114.9-2M20 14a8 8 0 01-14.9 2"
-            />
-          </svg>
-          Reset
-        </button>
       </div>
 
       {loading ? (
@@ -286,23 +262,24 @@ function TeacherAdmin() {
                 )}
               </div>
 
-              {t.verificationStatus === "Pending" && (
-                <>
-                  <div className="flex gap-3 mt-4">
-                    <button className="flex-1 bg-[#ea8576] hover:bg-[#e14f38] text-white py-1 rounded-lg">
-                      Reject
-                    </button>
-                    <button
-                      className="flex-1 bg-[#20ba93] hover:bg-[#2ba788] text-white py-1 rounded-lg cursor-pointer"
-                      onClick={() => {
-                        handleApprove(t);
-                      }}
-                    >
-                      Approve
-                    </button>
-                  </div>
-                </>
-              )}
+              {t.verificationStatus === "Pending" ||
+                (t.verificationStatus === null && (
+                  <>
+                    <div className="flex gap-3 mt-4">
+                      <button className="flex-1 bg-[#ea8576] hover:bg-[#e14f38] text-white py-1 rounded-lg">
+                        Reject
+                      </button>
+                      <button
+                        className="flex-1 bg-[#20ba93] hover:bg-[#2ba788] text-white py-1 rounded-lg cursor-pointer"
+                        onClick={() => {
+                          handleApprove(t);
+                        }}
+                      >
+                        Approve
+                      </button>
+                    </div>
+                  </>
+                ))}
 
               {t.verificationStatus === "Verified" && (
                 <>

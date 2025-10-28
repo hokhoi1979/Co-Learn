@@ -66,8 +66,9 @@ function TeacherSchedule() {
   };
 
   scheduleData.forEach((item) => {
-    const start = dayjs(item.startTime);
-    const end = dayjs(item.endTime);
+    console.log("TIME", item);
+    const start = dayjs(item.startTime).tz("Asia/Ho_Chi_Minh");
+    const end = dayjs(item.endTime).tz("Asia/Ho_Chi_Minh");
     const dayName = start.format("dddd");
 
     if (scheduleByDay[dayName]) {
