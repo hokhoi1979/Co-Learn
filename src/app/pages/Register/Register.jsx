@@ -20,7 +20,7 @@ export default function Register() {
   const [phone, setPhone] = useState(null);
   const [dateOfBirth, setDateOfBirth] = useState(null);
   const [gender, setGender] = useState("Male");
-  const [primaryRoleId, setPrimaryRoleId] = useState("1");
+  const [primaryRoleId, setPrimaryRoleId] = useState("2");
   const [open, setOpen] = useState(false);
   const accountRegister = useSelector(
     (state) => state.register.accountRegister
@@ -51,15 +51,6 @@ export default function Register() {
       setOpen(true);
     }
   }, [accountRegister]);
-
-  console.log("RE", accountRegister);
-
-  // useEffect(() => {
-  //   if (accountRegister) {
-  //     navigate("/login");
-  //     dispatch(registerReset());
-  //   }
-  // }, [accountRegister, navigate, dispatch]);
 
   return (
     <div className="min-h-screen relative flex items-center justify-center p-4 overflow-y-auto">
@@ -186,7 +177,7 @@ export default function Register() {
                   className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-orange-400 focus:outline-none"
                   required
                 >
-                  <option value="1">{t("student")}</option>
+                  {/* <option value="1">{t("student")}</option> */}
                   <option value="2">{t("parent")}</option>
                   <option value="3">{t("teacher")}</option>
                 </select>

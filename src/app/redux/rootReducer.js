@@ -48,6 +48,9 @@ import putMeetingScheduleReducer from "./teacher/meeting/meetingScheduleSlice";
 import getScheduleTeacherReducer from "./teacher/scheduleTeacher/getScheduleTeacherSlice";
 import getAllUserReducer from "./admin/user/getAllUser/getAllUserSlice";
 import getPaymentReducer from "./payment/getPayment/getPaymentSlice";
+import banUserReducer from "./admin/banUser/banUserSlice";
+import getAllTransactionReducer from "./transaction/getAllTransaction/getAllTransactionSlice";
+import getTransactionByIdReducer from "./transaction/getTransactionById/getTransactionByIdSlice";
 const rootReducer = combineReducers({
   login: loginReducer,
   register: registerReducer,
@@ -118,6 +121,13 @@ const rootReducer = combineReducers({
   getEnrollmentStudentData: getEnrollmentStudentReducer,
   getCourseStudentData: getCourseStudentReducer,
   getScheduleStudentData: getScheduleStudentReducer,
+
+  //Admin
+  banUserStatus: banUserReducer,
+
+  //Transaction
+  getAllTransactionData: getAllTransactionReducer,
+  getTransactionByIdData: getTransactionByIdReducer,
 });
 
 export default rootReducer;

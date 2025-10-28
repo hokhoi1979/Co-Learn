@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Icon } from "@iconify/react";
 import ConfirmLogout from "../../components/ConfirmLogout/ConfirmLogout";
@@ -31,19 +30,11 @@ const menuItems = [
     icon: "mdi:credit-card-outline",
     nav: "/admin/payment",
   },
-  {
-    key: "settings",
-    label: "Settings",
-    icon: "mdi:cog-outline",
-    nav: "/admin/settings",
-  },
 ];
 
 const SideBarAdmin = ({ toggle, setToggle, active, setActive }) => {
   const navigate = useNavigate();
-  const [openLogout, setOpenLogout] = useState(false);
   const dispatch = useDispatch();
-
   const handleToggle = () => setToggle((pre) => !pre);
 
   const handleLogout = () => {
@@ -128,7 +119,6 @@ const SideBarAdmin = ({ toggle, setToggle, active, setActive }) => {
               if (confirmed) {
                 handleLogout();
               }
-              setOpenLogout(true);
             }}
             className={`flex items-center p-2 rounded-xl cursor-pointer px-3 mb-10
               hover:bg-gradient-to-r hover:from-[#565757]/20 hover:to-[#3f3f3f]/20

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   BarChart,
   Bar,
@@ -25,6 +25,11 @@ import {
 } from "@mui/material";
 import Earning from "../ComponentTeacher/Earning";
 import { paymentsTeacher, topCourses } from "../../../shared";
+import { useDispatch, useSelector } from "react-redux";
+import { parse } from "postcss";
+import { getAllTransaction } from "../../../redux/transaction/getAllTransaction/getAllTransactionSlice";
+import { getTransactionById } from "../../../redux/transaction/getTransactionById/getTransactionByIdSlice";
+import { getEnrollmentStudent } from "../../../redux/student/enrollmentStudent/getEnrollmentStudentSlice";
 
 const incomeData = [
   { month: "Jul", income: 2800 },
@@ -36,6 +41,38 @@ const incomeData = [
 ];
 
 function TeacherIncome() {
+  const dispatch = useDispatch();
+  const [user, setUser] = useState([]);
+
+  const { transactionId } = useSelector(
+    (state) => state.getTransactionByIdData
+  );
+
+  useEffect(() => {
+    const auth = localStorage.getItem("auth");
+    const parse = JSON.parse(auth);
+    if (parse) {
+      setUser(parse);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (user?.userId) {
+      console.log("ID", user?.userId);
+      dispatch(getTransactionById(user?.userId));
+    }
+  }, [dispatch, user?.userId]);
+
+  useEffect(() => {
+    if (transactionId?.paymentDetail?.enrollmentId) {
+      dispatch(
+        getEnrollmentStudent(transactionId?.paymentDetail?.enrollmentId)
+      );
+    }
+  }, [dispatch, transactionId]);
+
+  console.log("TRANSACTION:", transactionId);
+
   return (
     <>
       <div className=" w-full h-auto p-5 bg-gradient-to-b from-[#F0F6F6] to-[#DBFBFD]">

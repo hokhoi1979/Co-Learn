@@ -33,9 +33,11 @@ function TeacherBooking() {
   const { getBooking_Teacher = {} } = useSelector(
     (state) => state.getBookingTeacher
   );
-  const dispatch = useDispatch();
 
-  console.log("BÔKIG", getBooking_Teacher);
+  const { statusConfirm, loading } = useSelector(
+    (state) => state.confirmBookingTeacher
+  );
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const auth = localStorage.getItem("auth");
@@ -54,8 +56,6 @@ function TeacherBooking() {
       dispatch(getBookingTeacher(profileTeacherId?.teacherId));
     }
   }, [dispatch, profileTeacherId]);
-
-  console.log("BOOOKJUNBG", getBooking_Teacher);
 
   const startOfWeek = dayjs().add(weekOffset, "week").startOf("isoWeek");
   const endOfWeek = dayjs().add(weekOffset, "week").endOf("isoWeek");
@@ -102,14 +102,19 @@ function TeacherBooking() {
   const handleConfirm = async (id) => {
     if (!id) return;
 
-    await dispatch(confirmBookingTeacher(id));
-    await new Promise((r) => setTimeout(r, 50));
+    await dispatch(
+      confirmBookingTeacher({
+        id,
+        teacherId: profileTeacherId?.teacherId,
+      })
+    );
 
-    if (profileTeacherId?.teacherId) {
-      await dispatch(getBookingTeacher(profileTeacherId?.teacherId));
-    }
-
-    setOpen(false);
+    setTimeout(async () => {
+      if (profileTeacherId?.teacherId) {
+        await dispatch(getBookingTeacher(profileTeacherId?.teacherId));
+      }
+      setOpen(false);
+    }, 4500);
   };
 
   const handleDecline = async (id) => {
@@ -328,16 +333,47 @@ function TeacherBooking() {
             {status === "Accept" ? (
               <button
                 onClick={() => handleConfirm(idBooking)}
-                style={{ cursor: "pointer" }}
-                className="px-3 py-1 rounded-2xl bg-[#3fdaa6] text-white hover:bg-[#1bd094] flex items-center gap-2"
+                disabled={loading} // 🔹 disable khi đang loading
+                style={{ cursor: loading ? "not-allowed" : "pointer" }}
+                className={`px-3 py-1 rounded-2xl text-white flex items-center gap-2 ${
+                  loading
+                    ? "bg-[#3fdaa6]/60"
+                    : "bg-[#3fdaa6] hover:bg-[#1bd094]"
+                }`}
               >
-                <Check size={18} color="#ffffff" /> {status}
+                {loading ? (
+                  <>
+                    <svg
+                      className="animate-spin h-4 w-4 text-white"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      ></circle>
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                      ></path>
+                    </svg>
+                    <span>Loading...</span>
+                  </>
+                ) : (
+                  <>
+                    <Check size={18} color="#ffffff" /> {status}
+                  </>
+                )}
               </button>
             ) : (
               <button
-                onClick={() => {
-                  handleDecline(idBooking);
-                }}
+                onClick={() => handleDecline(idBooking)}
                 style={{ cursor: "pointer" }}
                 className="px-3 py-1 rounded-2xl bg-[#ee5757] hover:bg-red-700 text-white flex items-center gap-2"
               >
