@@ -1,11 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Table, Input, Select, Button, Tag } from "antd";
-import {
-  DownloadOutlined,
-  FilterOutlined,
-  ArrowUpOutlined,
-  ArrowDownOutlined,
-} from "@ant-design/icons";
+import { DownloadOutlined, FilterOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { getPayment } from "../../../redux/payment/getPayment/getPaymentSlice";
 
@@ -13,83 +8,45 @@ const { Search } = Input;
 const { Option } = Select;
 
 const PaymentAdmin = () => {
-  const [searchText, setSearchText] = useState("");
   const dispatch = useDispatch();
   const { payment } = useSelector((state) => state.getPaymentData);
+
+  const [searchText, setSearchText] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+
   useEffect(() => {
     dispatch(getPayment());
   }, [dispatch]);
 
-  console.log("first", payment);
+  const transactions =
+    payment?.value?.map((item) => ({
+      id: `PAY-${item.paymentId}`,
+      user: item.payerName || `User #${item.payerUserId}`,
+      teacher: item.teacherName || "-",
+      course: item.courseTitle || item.bookingTitle || "N/A",
+      amount: item.amount || 0,
+      teacherShare: (item.amount || 0) * 0.3,
+      platformShare: (item.amount || 0) * 0.7,
+      status:
+        item.statusName ||
+        (item.isPaid ? "Success" : item.bookingId ? "Pending" : "Failed"),
+      date: new Date(item.createdAt).toLocaleString("vi-VN"),
+    })) || [];
 
-  const transactions = [
-    {
-      id: "TX1001",
-      user: "John Doe",
-      teacher: "Prof. Smith",
-      course: "Advanced React",
-      amount: 120,
-      teacherShare: 36,
-      platformShare: 84,
-      status: "Success",
-      date: "2025-10-08 14:32",
-    },
-    {
-      id: "TX1002",
-      user: "Sarah Lee",
-      teacher: "Dr. Johnson",
-      course: "Python Basics",
-      amount: 80,
-      teacherShare: 24,
-      platformShare: 56,
-      status: "Pending",
-      date: "2025-10-08 13:15",
-    },
-    {
-      id: "TX1003",
-      user: "Michael Chan",
-      teacher: "Prof. Smith",
-      course: "Full Stack Dev",
-      amount: 200,
-      teacherShare: 60,
-      platformShare: 140,
-      status: "Failed",
-      date: "2025-10-08 12:45",
-    },
-    {
-      id: "TX1004",
-      user: "Emma Watson",
-      teacher: "Dr. Williams",
-      course: "UI/UX Design",
-      amount: 150,
-      teacherShare: 45,
-      platformShare: 105,
-      status: "Success",
-      date: "2025-10-08 11:20",
-    },
-    {
-      id: "TX1005",
-      user: "David Kim",
-      teacher: "Prof. Brown",
-      course: "Data Science",
-      amount: 95,
-      teacherShare: 28.5,
-      platformShare: 66.5,
-      status: "Success",
-      date: "2025-10-08 10:05",
-    },
-    {
-      id: "TX1006",
-      user: "Lisa Anderson",
-      teacher: "Dr. Johnson",
-      course: "Machine Learning",
-      amount: 175,
-      teacherShare: 52.5,
-      platformShare: 122.5,
-      status: "Success",
-      date: "2025-10-08 09:30",
-    },
-  ];
+  // ✅ Lọc theo search và status
+  const filteredTransactions = transactions.filter((t) => {
+    const search = searchText.toLowerCase();
+    const matchSearch =
+      t.id.toLowerCase().includes(search) ||
+      t.user.toLowerCase().includes(search) ||
+      t.teacher.toLowerCase().includes(search) ||
+      t.course.toLowerCase().includes(search);
+
+    const matchStatus =
+      statusFilter === "all" || t.status.toLowerCase() === statusFilter;
+
+    return matchSearch && matchStatus;
+  });
 
   const columns = [
     { title: "Transaction ID", dataIndex: "id" },
@@ -99,17 +56,17 @@ const PaymentAdmin = () => {
     {
       title: "Amount",
       dataIndex: "amount",
-      render: (value) => `$${value}`,
+      render: (value) => `${Number(value).toLocaleString("vi-VN")} đ`,
     },
     {
       title: "Teacher (30%)",
       dataIndex: "teacherShare",
-      render: (value) => `$${value}`,
+      render: (value) => `${Number(value).toLocaleString("vi-VN")} đ`,
     },
     {
       title: "Platform (70%)",
       dataIndex: "platformShare",
-      render: (value) => `$${value}`,
+      render: (value) => `${Number(value).toLocaleString("vi-VN")} đ`,
     },
     {
       title: "Status",
@@ -126,6 +83,13 @@ const PaymentAdmin = () => {
     },
     { title: "Date", dataIndex: "date" },
   ];
+
+  const totalRevenue = transactions.reduce((sum, t) => sum + t.amount, 0);
+  const totalTransactions = transactions.length;
+  const totalPending = transactions.filter(
+    (t) => t.status === "Pending"
+  ).length;
+  const totalFailed = transactions.filter((t) => t.status === "Failed").length;
 
   const teacherData = [
     {
@@ -164,6 +128,7 @@ const PaymentAdmin = () => {
 
   return (
     <div className="p-8 bg-[#ebebeb] min-h-screen space-y-8">
+      {/* Header */}
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-semibold text-gray-800">
@@ -180,39 +145,36 @@ const PaymentAdmin = () => {
           </Button>
         </div>
       </div>
-
+      {/* Summary cards */}
       <div className="grid grid-cols-4 gap-4">
-        <div className="rounded-xl p-5 bg-[#ffff]">
+        <div className="rounded-xl p-5 bg-white">
           <p className="text-gray-500 text-sm">Total Revenue</p>
-          <h2 className="text-2xl font-semibold mt-1">$8,950</h2>
-          <p className="text-green-500 text-xs mt-1 flex items-center">
-            <ArrowUpOutlined className="mr-1" /> +12.5% from last month
-          </p>
+          <h2 className="text-2xl font-semibold mt-1 text-gray-800">
+            {Number(totalRevenue).toLocaleString("vi-VN")} đ
+          </h2>
         </div>
 
-        <div className="rounded-xl p-5 bg-[#ffff] ">
+        <div className="rounded-xl p-5 bg-white">
           <p className="text-gray-500 text-sm">Transactions</p>
-          <h2 className="text-2xl font-semibold mt-1">156</h2>
-          <p className="text-green-500 text-xs mt-1 flex items-center">
-            <ArrowUpOutlined className="mr-1" /> +8.2% from last month
-          </p>
+          <h2 className="text-2xl font-semibold mt-1 text-gray-800">
+            {totalTransactions}
+          </h2>
         </div>
 
-        <div className="rounded-xl p-5 bg-[#fff] ">
+        <div className="rounded-xl p-5 bg-white">
           <p className="text-gray-500 text-sm">Pending</p>
-          <h2 className="text-2xl font-semibold mt-1">12</h2>
-          <p className="text-gray-500 text-xs mt-1">Awaiting confirmation</p>
+          <h2 className="text-2xl font-semibold mt-1 text-gray-800">
+            {totalPending}
+          </h2>
         </div>
 
-        <div className="rounded-xl p-5 bg-[#ffff] ">
+        <div className="rounded-xl p-5 bg-white">
           <p className="text-gray-500 text-sm">Failed</p>
-          <h2 className="text-2xl font-semibold mt-1">8</h2>
-          <p className="text-red-500 text-xs mt-1 flex items-center">
-            <ArrowDownOutlined className="mr-1" /> -2.1% from last month
-          </p>
+          <h2 className="text-2xl font-semibold mt-1 text-gray-800">
+            {totalFailed}
+          </h2>
         </div>
       </div>
-
       <div className="bg-white rounded-xl border shadow-sm p-6">
         <h2 className="text-lg font-semibold mb-1 text-black-600">
           Teacher Revenue Sharing
@@ -260,20 +222,25 @@ const PaymentAdmin = () => {
           pagination={false}
         />
       </div>
-
+      ;{/* Transactions table */}
       <div className="bg-white rounded-xl border shadow-sm p-6">
         <h2 className="text-lg font-semibold mb-1">Recent Transactions</h2>
         <p className="text-sm text-gray-500 mb-4">
           All user payments and transaction details
         </p>
 
-        <div className="flex justify-between mb-4">
+        <div className="flex justify-between mb-4 gap-2">
           <Search
             placeholder="Search by ID, user, or teacher..."
             onChange={(e) => setSearchText(e.target.value)}
             className="w-1/2"
+            allowClear
           />
-          <Select defaultValue="All Status" className="w-40">
+          <Select
+            value={statusFilter}
+            className="w-40"
+            onChange={(value) => setStatusFilter(value)}
+          >
             <Option value="all">All Status</Option>
             <Option value="success">Success</Option>
             <Option value="pending">Pending</Option>
@@ -283,7 +250,8 @@ const PaymentAdmin = () => {
 
         <Table
           columns={columns}
-          dataSource={transactions}
+          dataSource={filteredTransactions}
+          rowKey="id"
           pagination={{ pageSize: 6 }}
         />
       </div>

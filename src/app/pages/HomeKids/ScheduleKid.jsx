@@ -51,8 +51,8 @@ function ScheduleKid() {
   };
 
   scheduleStudent?.value?.forEach((schedule) => {
-    const start = dayjs.utc(schedule.startTime).tz("Asia/Ho_Chi_Minh");
-    const end = dayjs.utc(schedule.endTime).tz("Asia/Ho_Chi_Minh");
+    const start = dayjs(schedule.startTime).tz("Asia/Ho_Chi_Minh");
+    const end = dayjs(schedule.endTime).tz("Asia/Ho_Chi_Minh");
 
     if (start.isoWeek() === currentWeek && start.year() === currentYear) {
       const dayName = start.format("dddd");

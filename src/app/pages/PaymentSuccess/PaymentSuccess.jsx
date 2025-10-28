@@ -29,24 +29,6 @@ export default function PaymentSuccess() {
           Thank you for purchasing the course 🎓. Your payment has been
           confirmed. Start learning today!
         </p>
-        {/* 
-        <div className="bg-green-50 border border-green-200 rounded-xl p-5 mt-6 text-left">
-          <h2 className="font-semibold text-gray-800 mb-3">
-            Chi tiết đơn hàng
-          </h2>
-          <ul className="space-y-2 text-gray-600">
-            <li>
-              <span className="font-medium">Khóa học:</span> Lập trình ReactJS
-              từ A-Z
-            </li>
-            <li>
-              <span className="font-medium">Mã đơn hàng:</span> #123456
-            </li>
-            <li>
-              <span className="font-medium">Số tiền:</span> 1,200,000 VND
-            </li>
-          </ul>
-        </div> */}
 
         <div className="mt-8 flex flex-col gap-3">
           <button

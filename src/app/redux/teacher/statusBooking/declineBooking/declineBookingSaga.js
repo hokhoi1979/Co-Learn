@@ -14,7 +14,6 @@ export function* declineBookingTeacherSaga(action) {
     const response = yield call(api.post, `/bookings/${id}/decline`);
     if (response.status === 200 || response.status === 201) {
       yield put(declineBookingTeacherSuccess(response.data));
-      console.log("DATA", response.data);
       toast.success("decline booking successful!");
     } else {
       yield put(declineBookingTeacherFail(response.status));

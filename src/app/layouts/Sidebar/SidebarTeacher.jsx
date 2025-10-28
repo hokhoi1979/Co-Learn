@@ -14,40 +14,33 @@ const menuItems = [
     nav: "/teacher",
   },
   {
-    key: "classes",
-    label: "My Classes",
-    icon: "mdi:book-education-outline",
-    nav: "/teacher/classes",
-  },
-  {
     key: "schedule",
     label: "Teaching Schedule",
     icon: "mdi:calendar-clock",
     nav: "/teacher/schedule",
   },
-
   {
     key: "booking",
     label: "Teaching Booking",
-    icon: "mdi:calendar-clock",
+    icon: "mdi:calendar-check-outline",
     nav: "/teacher/booking",
   },
   {
     key: "content",
     label: "Update Content",
-    icon: "mdi:content-save-edit-outline",
+    icon: "mdi:file-edit-outline",
     nav: "/teacher/content",
   },
   {
     key: "feedback",
-    label: "FeedBack",
-    icon: "mdi:content-save-edit-outline",
+    label: "Feedback",
+    icon: "mdi:message-text-outline",
     nav: "/teacher/feedback",
   },
   {
     key: "income",
     label: "Income",
-    icon: "mdi:content-save-edit-outline",
+    icon: "mdi:cash-multiple",
     nav: "/teacher/income",
   },
 ];
