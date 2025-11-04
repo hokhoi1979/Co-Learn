@@ -1,4 +1,4 @@
-import { call, put, takeLatest } from "redux-saga/effects";
+import { call, put, takeLatest, delay } from "redux-saga/effects";
 import api from "../../../../config/apiConfig";
 import {
   CONFIRM__BOOKING__TEACHER,
@@ -9,12 +9,17 @@ import { toast } from "react-toastify";
 
 export function* confirmBookingTeacherSaga(action) {
   try {
-    const id = action.payload;
+    const { id, teacherId } = action.payload;
+
     const response = yield call(api.post, `/bookings/${id}/confirm`);
+
     if (response.status === 200 || response.status === 201) {
       yield put(confirmBookingTeacherSuccess(response.data));
-      console.log("DATA", response.data);
       toast.success("Confirm booking successful!");
+
+      // 🟢 Tự động gọi lại danh sách booking của giáo viên sau khi confirm
+      yield delay(200); // chờ backend cập nhật xong
+      yield put({ type: "GET__BOOKING__TEACHER", payload: teacherId });
     } else {
       yield put(confirmBookingTeacherFail(response.status));
       toast.error("Confirm fail!");
@@ -31,7 +36,7 @@ export function* confirmBookingTeacherSaga(action) {
           "Đã xảy ra lỗi, vui lòng thử lại.";
 
     yield put(confirmBookingTeacherFail(message));
-    toast.error(` ${message}`);
+    toast.error(`${message}`);
   }
 }
 

@@ -1,297 +1,304 @@
-import { useEffect, useState } from "react";
-import { Users, UserPlus, UserMinus } from "lucide-react";
-import { toast } from "react-toastify";
+import React, { useEffect, useState, useMemo } from "react";
+import { Table, Input, Select, Button, Tag, message } from "antd";
+import { DownloadOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllParent } from "../../../redux/admin/user/getAllParent/getAllParentSlice";
-import { getAllTeacher } from "../../../redux/admin/user/getAllTeacher/getAllTeacherSlice";
+import { getEarning } from "../../../redux/report/getEarning/getEarningSlice";
+import * as XLSX from "xlsx";
 
-function UserAdmin() {
-  const [parents, setParents] = useState([]);
-  const [teachers, setTeachers] = useState([]);
-  const [search, setSearch] = useState("");
-  const [activeTab, setActiveTab] = useState("parents");
+const { Search } = Input;
+const { Option } = Select;
+
+const PaymentAdmin = () => {
   const dispatch = useDispatch();
-  const { allParent } = useSelector((state) => state.getAllParent);
-  const { allTeacher } = useSelector((state) => state.getAllTeacher);
+  const { earning } = useSelector((state) => state.getEarningData);
+
+  const [searchText, setSearchText] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
 
   useEffect(() => {
-    dispatch(getAllParent());
-    dispatch(getAllTeacher());
+    dispatch(getEarning());
   }, [dispatch]);
 
-  useEffect(() => {
-    if (allParent?.length) {
-      const mapped = allParent.map((p) => ({
-        id: p.userId,
-        name: p.fullName,
-        email: p.email,
-        phone: p.phone || "-",
-        role: "Parent",
-        status: p.isActive ? "Active" : "Inactive",
-        joinDate: p.createdAt?.split("T")[0] || "",
-        children: (p.children || []).map((c) => ({
-          id: c.userId,
-          name: c.fullName,
-          email: c.email,
-          gradeLevel: c.gradeLevel,
-        })),
-      }));
-      setParents(mapped);
-    }
-  }, [allParent]);
+  // === Chuẩn hóa dữ liệu giao dịch ===
+  const transactions =
+    earning?.teacherEarnings?.flatMap((teacher) =>
+      teacher.bookingBreakdown?.map((b) => ({
+        id: `PAY-${b.bookingId}`,
+        user: b.studentName || `User #${b.studentId}`,
+        teacher: teacher.teacherName,
+        course: b.courseTitle || "N/A",
+        amount: b.amount || 0,
+        teacherShare: (b.amount || 0) * 0.3,
+        platformShare: (b.amount || 0) * 0.7,
+        status: b.paymentStatus || "Success",
+        date: new Date(b.bookingDate).toLocaleString("vi-VN"),
+      }))
+    ) || [];
 
-  useEffect(() => {
-    if (allTeacher?.length) {
-      const mapped = allTeacher.map((t) => ({
-        id: t.teacherId,
-        name: t.fullName,
-        email: t.email,
-        phone: t.phone || "-",
-        gender: t.gender || "-",
-        role: "Teacher",
-        status: t.verificationStatus === "Verified" ? "Active" : "Inactive",
-        joinDate: t.createdAt?.split("T")[0] || "",
-      }));
-      setTeachers(mapped);
-    }
-  }, [allTeacher]);
+  // === Gom theo giáo viên (hiển thị trong Recent Transactions) ===
+  const groupedTransactions = useMemo(() => {
+    const map = new Map();
 
-  const handleBanUser = (id, type) => {
-    if (type === "parent") {
-      setParents((prev) =>
-        prev.map((u) =>
-          u.id === id
-            ? {
-                ...u,
-                status: u.status === "Active" ? "Inactive" : "Active",
-                children: u.children.map((c) => ({
-                  ...c,
-                  status: u.status === "Active" ? "Inactive" : "Active",
-                })),
-              }
-            : u
-        )
-      );
-    } else {
-      setTeachers((prev) =>
-        prev.map((t) =>
-          t.id === id
-            ? {
-                ...t,
-                status: t.status === "Active" ? "Inactive" : "Active",
-              }
-            : t
-        )
-      );
+    transactions.forEach((t) => {
+      const key = t.teacher;
+      if (!map.has(key)) {
+        map.set(key, {
+          teacher: t.teacher,
+          totalAmount: t.amount,
+          teacherShare: t.teacherShare,
+          platformShare: t.platformShare,
+          status: t.status,
+          latestDate: t.date,
+        });
+      } else {
+        const prev = map.get(key);
+        prev.totalAmount += t.amount;
+        prev.teacherShare += t.teacherShare;
+        prev.platformShare += t.platformShare;
+
+        if (new Date(t.date) > new Date(prev.latestDate)) {
+          prev.latestDate = t.date;
+        }
+      }
+    });
+
+    return Array.from(map.values());
+  }, [transactions]);
+
+  // === Lọc tìm kiếm ===
+  const filteredTransactions = useMemo(() => {
+    const search = searchText.toLowerCase();
+    return groupedTransactions.filter((t) => {
+      const matchSearch = t.teacher.toLowerCase().includes(search);
+      const matchStatus =
+        statusFilter === "all" || t.status.toLowerCase() === statusFilter;
+      return matchSearch && matchStatus;
+    });
+  }, [groupedTransactions, searchText, statusFilter]);
+
+  // === Dữ liệu tổng cho bảng "Teacher Revenue Sharing" ===
+  const teacherData = useMemo(() => {
+    const map = new Map();
+
+    transactions.forEach((t) => {
+      const key = t.teacher;
+      if (!map.has(key)) {
+        map.set(key, {
+          teacher: t.teacher,
+          total: t.amount,
+          teacherShare: t.teacherShare,
+          platformShare: t.platformShare,
+          transactions: 1,
+          courses: new Set([t.course]),
+        });
+      } else {
+        const prev = map.get(key);
+        prev.total += t.amount;
+        prev.teacherShare += t.teacherShare;
+        prev.platformShare += t.platformShare;
+        prev.transactions += 1;
+        prev.courses.add(t.course);
+      }
+    });
+
+    return Array.from(map.values()).map((item) => ({
+      ...item,
+      courses: item.courses.size,
+    }));
+  }, [transactions]);
+
+  // === Export Excel ===
+  const handleExportExcel = () => {
+    if (!filteredTransactions.length) {
+      message.warning("Không có dữ liệu để xuất!");
+      return;
     }
-    toast.success("Status updated successfully!");
+
+    const exportData = filteredTransactions.map((item) => ({
+      Teacher: item.teacher,
+      "Total Amount": item.totalAmount,
+      "Teacher Share (30%)": item.teacherShare,
+      "Platform Share (70%)": item.platformShare,
+      Status: item.status,
+      "Latest Transaction": item.latestDate,
+    }));
+
+    const ws = XLSX.utils.json_to_sheet(exportData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Teacher Transactions");
+    XLSX.writeFile(wb, "teacher_transactions.xlsx");
+    message.success("Xuất file Excel thành công!");
   };
 
-  const filteredData = activeTab === "parents" ? parents : teachers;
-  const searchedData = filteredData.filter(
-    (u) =>
-      u.name.toLowerCase().includes(search.toLowerCase()) ||
-      u.email.toLowerCase().includes(search.toLowerCase())
-  );
+  // === Cột bảng "Recent Transactions" ===
+  const columns = [
+    { title: "Teacher", dataIndex: "teacher" },
+    {
+      title: "Total Amount",
+      dataIndex: "totalAmount",
+      render: (value) => `${Number(value).toLocaleString("vi-VN")} đ`,
+    },
+    {
+      title: "Teacher (30%)",
+      dataIndex: "teacherShare",
+      render: (value) => `${Number(value).toLocaleString("vi-VN")} đ`,
+    },
+    {
+      title: "Platform (70%)",
+      dataIndex: "platformShare",
+      render: (value) => `${Number(value).toLocaleString("vi-VN")} đ`,
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      render: (status) => {
+        let color =
+          status === "Success"
+            ? "green"
+            : status === "Pending"
+            ? "orange"
+            : "red";
+        return <Tag color={color}>{status}</Tag>;
+      },
+    },
+    {
+      title: "Latest Transaction",
+      dataIndex: "latestDate",
+    },
+  ];
 
-  const totalUsers =
-    parents.reduce((acc, p) => acc + 1 + (p.children?.length || 0), 0) +
-    teachers.length;
-  const totalActive =
-    parents.filter((p) => p.status === "Active").length +
-    teachers.filter((t) => t.status === "Active").length;
-  const totalInactive = totalUsers - totalActive;
+  const teacherColumns = [
+    { title: "Teacher", dataIndex: "teacher" },
+    {
+      title: "Total Revenue",
+      dataIndex: "total",
+      render: (v) => `${v.toLocaleString("vi-VN")} đ`,
+    },
+    {
+      title: "Teacher Share (30%)",
+      dataIndex: "teacherShare",
+      render: (v) => (
+        <span className="text-green-600">{v.toLocaleString("vi-VN")} đ</span>
+      ),
+    },
+    {
+      title: "Platform Share (70%)",
+      dataIndex: "platformShare",
+      render: (v) => (
+        <span className="text-blue-600">{v.toLocaleString("vi-VN")} đ</span>
+      ),
+    },
+    { title: "Transactions", dataIndex: "transactions" },
+    { title: "Courses", dataIndex: "courses" },
+  ];
 
   return (
-    <div className="w-full min-h-screen p-6 bg-[#ebebeb]">
-      <h1 className="text-3xl font-bold text-gray-800">Welcome Admin!</h1>
-      <p className="text-gray-500 mb-6">Manage and update your system!</p>
+    <div className="p-8 bg-[#ebebeb] min-h-screen space-y-8">
+      {/* Header */}
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-2xl font-semibold text-gray-800">
+            Payment Dashboard
+          </h1>
+          <p className="text-gray-500">
+            Monitor transactions and revenue sharing
+          </p>
+        </div>
+        <Button
+          type="primary"
+          icon={<DownloadOutlined />}
+          onClick={handleExportExcel}
+        >
+          Export Excel
+        </Button>
+      </div>
 
-      {/* ==== STATS ==== */}
-      <div className="grid grid-cols-1 md:grid-cols-6 gap-6 mb-6">
-        <div className="bg-white p-4 rounded-xl shadow flex items-center gap-4">
-          <Users className="text-green-500" />
-          <div>
-            <p className="text-sm text-gray-500">Total Users</p>
-            <h2 className="text-xl font-bold">{totalUsers}</h2>
-          </div>
+      {/* Cards */}
+      <div className="grid grid-cols-4 gap-4">
+        <div className="rounded-xl p-5 bg-white">
+          <p className="text-gray-500 text-sm">Total Teachers</p>
+          <h2 className="text-2xl font-semibold mt-1 text-gray-800">
+            {earning?.totalTeachers || 0}
+          </h2>
         </div>
-        <div className="bg-white p-4 rounded-xl shadow flex items-center gap-4">
-          <Users className="text-blue-500" />
-          <div>
-            <p className="text-sm text-gray-500">Active Users</p>
-            <h2 className="text-xl font-bold">{totalActive}</h2>
-          </div>
+
+        <div className="rounded-xl p-5 bg-white">
+          <p className="text-gray-500 text-sm">Total Teachers Earning</p>
+          <h2 className="text-2xl font-semibold mt-1 text-gray-800">
+            {Number(earning?.totalTeachersEarning || 0).toLocaleString("vi-VN")}{" "}
+            đ
+          </h2>
         </div>
-        <div className="bg-white p-4 rounded-xl shadow flex items-center gap-4">
-          <UserMinus className="text-red-500" />
-          <div>
-            <p className="text-sm text-gray-500">Inactive Users</p>
-            <h2 className="text-xl font-bold">{totalInactive}</h2>
-          </div>
+
+        <div className="rounded-xl p-5 bg-white">
+          <p className="text-gray-500 text-sm">Total Teachers Revenue</p>
+          <h2 className="text-2xl font-semibold mt-1 text-gray-800">
+            {Number(earning?.totalTeachersRevenue || 0).toLocaleString("vi-VN")}{" "}
+            đ
+          </h2>
         </div>
-        <div className="bg-white p-4 rounded-xl shadow flex items-center gap-4">
-          <UserPlus className="text-yellow-500" />
-          <div>
-            <p className="text-sm text-gray-500">Total Teachers</p>
-            <h2 className="text-xl font-bold">{teachers.length}</h2>
-          </div>
-        </div>
-        <div className="bg-white p-4 rounded-xl shadow flex items-center gap-4">
-          <Users className="text-green-600" />
-          <div>
-            <p className="text-sm text-gray-500">Active Teachers</p>
-            <h2 className="text-xl font-bold">
-              {teachers.filter((t) => t.status === "Active").length}
-            </h2>
-          </div>
-        </div>
-        <div className="bg-white p-4 rounded-xl shadow flex items-center gap-4">
-          <UserMinus className="text-red-600" />
-          <div>
-            <p className="text-sm text-gray-500">Inactive Teachers</p>
-            <h2 className="text-xl font-bold">
-              {teachers.filter((t) => t.status !== "Active").length}
-            </h2>
-          </div>
+
+        <div className="rounded-xl p-5 bg-white">
+          <p className="text-gray-500 text-sm">Total System Earnings</p>
+          <h2 className="text-2xl font-semibold mt-1 text-gray-800">
+            {Number(earning?.totalSystemEarnings || 0).toLocaleString("vi-VN")}{" "}
+            đ
+          </h2>
         </div>
       </div>
 
-      <div className="bg-white rounded-xl shadow p-6">
-        <div className="flex justify-between items-center mb-4">
-          <div className="flex gap-4">
-            <button
-              onClick={() => setActiveTab("parents")}
-              className={`px-4 py-2 rounded-lg font-medium ${
-                activeTab === "parents"
-                  ? "bg-[#232323] text-white"
-                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-              }`}
-            >
-              Parents
-            </button>
-            <button
-              onClick={() => setActiveTab("teachers")}
-              className={`px-4 py-2 rounded-lg font-medium ${
-                activeTab === "teachers"
-                  ? "bg-[#232323] text-white"
-                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-              }`}
-            >
-              Teachers
-            </button>
-          </div>
-          <input
-            type="text"
-            placeholder="Search..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="px-4 py-2 border rounded-lg text-sm"
+      {/* Teacher Revenue Summary */}
+      <div className="bg-white rounded-xl border shadow-sm p-6">
+        <h2 className="text-lg font-semibold mb-1 text-black-600">
+          Teacher Revenue Sharing
+        </h2>
+        <p className="text-sm text-gray-500 mb-4">
+          Aggregated totals by teacher (30% teacher / 70% platform)
+        </p>
+
+        <Table
+          columns={teacherColumns}
+          dataSource={teacherData}
+          pagination={false}
+          rowKey="teacher"
+        />
+      </div>
+
+      {/* Recent Transactions */}
+      <div className="bg-white rounded-xl border shadow-sm p-6">
+        <h2 className="text-lg font-semibold mb-1">Recent Transactions</h2>
+        <p className="text-sm text-gray-500 mb-4">
+          All user payments and transaction details
+        </p>
+
+        <div className="flex justify-between mb-4 gap-2">
+          <Search
+            placeholder="Search by teacher..."
+            onChange={(e) => setSearchText(e.target.value)}
+            className="w-1/2"
+            allowClear
           />
+          <Select
+            value={statusFilter}
+            className="w-40"
+            onChange={(value) => setStatusFilter(value)}
+          >
+            <Option value="all">All Status</Option>
+            <Option value="success">Success</Option>
+            <Option value="pending">Pending</Option>
+            <Option value="failed">Failed</Option>
+          </Select>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="border-b text-gray-600">
-                <th className="py-3 px-4">#</th>
-                <th className="py-3 px-4">Name</th>
-                <th className="py-3 px-4">Email</th>
-                {activeTab === "teachers" && (
-                  <>
-                    <th className="py-3 px-4">Phone</th>
-
-                    <th className="py-3 px-4">Gender</th>
-                  </>
-                )}
-                {activeTab === "parents" && (
-                  <>
-                    <th className="py-3 px-4">Children</th>
-                    <th className="py-3 px-4">Email Children</th>
-                  </>
-                )}
-                <th className="py-3 px-4">Status</th>
-                <th className="py-3 px-4">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {searchedData.map((u, i) => (
-                <tr key={u.id} className="border-b hover:bg-gray-50">
-                  <td className="px-4 py-2">{i + 1}</td>
-                  <td className="px-4 py-2">{u.name}</td>
-                  <td className="px-4 py-2">{u.email}</td>
-
-                  {activeTab === "teachers" && (
-                    <>
-                      {" "}
-                      <td className="px-4 py-2">{u.phone}</td>
-                      <td className="px-4 py-2">{u.gender}</td>
-                    </>
-                  )}
-
-                  {activeTab === "parents" && (
-                    <>
-                      <td className="px-4 py-2">
-                        {u.children.map((c) => (
-                          <div key={c.id}>
-                            {c.name} ({c.gradeLevel})
-                          </div>
-                        ))}
-                      </td>
-                      <td className="px-4 py-2">
-                        {u.children.map((c) => (
-                          <div key={c.id}>{c.email}</div>
-                        ))}
-                      </td>
-                    </>
-                  )}
-
-                  <td className="px-4 py-2">
-                    <span
-                      className={`px-3 py-1 rounded-full text-sm font-medium ${
-                        u.status === "Active"
-                          ? "bg-green-100 text-green-600"
-                          : "bg-red-100 text-red-600"
-                      }`}
-                    >
-                      {u.status}
-                    </span>
-                  </td>
-                  <td className="px-4 py-2">
-                    <button
-                      onClick={() =>
-                        handleBanUser(
-                          u.id,
-                          activeTab === "parents" ? "parent" : "teacher"
-                        )
-                      }
-                      className={`px-3 py-1 rounded-lg text-sm font-medium ${
-                        u.status === "Active"
-                          ? "bg-red-100 text-red-600 hover:bg-red-200"
-                          : "bg-green-100 text-green-600 hover:bg-green-200"
-                      }`}
-                    >
-                      {u.status === "Active" ? "Ban" : "Unban"}
-                    </button>
-                  </td>
-                </tr>
-              ))}
-              {searchedData.length === 0 && (
-                <tr>
-                  <td
-                    colSpan={activeTab === "parents" ? 8 : 6}
-                    className="text-center py-6 text-gray-400"
-                  >
-                    No {activeTab} found.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+        <Table
+          columns={columns}
+          dataSource={filteredTransactions}
+          rowKey="teacher"
+          pagination={{ pageSize: 6 }}
+        />
       </div>
     </div>
   );
-}
+};
 
-export default UserAdmin;
+export default PaymentAdmin;

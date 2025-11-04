@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   BarChart,
   Bar,
@@ -8,6 +8,10 @@ import {
   ResponsiveContainer,
   CartesianGrid,
   Cell,
+  LineChart,
+  Line,
+  AreaChart,
+  Area,
 } from "recharts";
 import {
   Table,
@@ -24,98 +28,204 @@ import {
   Chip,
 } from "@mui/material";
 import Earning from "../ComponentTeacher/Earning";
-import { paymentsTeacher, topCourses } from "../../../shared";
-
-const incomeData = [
-  { month: "Jul", income: 2800 },
-  { month: "Aug", income: 3200 },
-  { month: "Sep", income: 2900 },
-  { month: "Oct", income: 3800 },
-  { month: "Nov", income: 3400 },
-  { month: "Dec", income: 3680 },
-];
+import { useDispatch, useSelector } from "react-redux";
+import { getEarningId } from "../../../redux/report/getEarningById/getEarningByIdSlice";
+import { getProfileTeacherId } from "../../../redux/teacher/profileTeacher/getProfileId/getProfileIdSlice";
 
 function TeacherIncome() {
+  const dispatch = useDispatch();
+  const [user, setUser] = useState([]);
+
+  const { earningId } = useSelector((state) => state.getEarningIdData);
+  const { profileTeacherId } = useSelector(
+    (state) => state.getProfileTeacherId
+  );
+
+  useEffect(() => {
+    const auth = localStorage.getItem("auth");
+    const parse = JSON.parse(auth);
+    if (parse) {
+      setUser(parse);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (user?.userId) {
+      dispatch(getProfileTeacherId(user.userId));
+    }
+  }, [dispatch, user]);
+
+  useEffect(() => {
+    if (profileTeacherId?.teacherId) {
+      dispatch(getEarningId(profileTeacherId.teacherId));
+    }
+  }, [profileTeacherId?.teacherId, dispatch]);
+
+  // Thu nhập theo ngày (Daily Income Chart)
+  const incomeData = React.useMemo(() => {
+    if (!earningId?.bookingBreakdown) return [];
+
+    const dayMap = {};
+
+    earningId.bookingBreakdown.forEach((b) => {
+      const date = new Date(b.bookingDate);
+      const day = date.toLocaleDateString("en-GB"); // dd/mm/yyyy
+
+      if (!dayMap[day]) dayMap[day] = 0;
+      dayMap[day] += b.amount;
+    });
+
+    // Chuyển về mảng để bảng đọc
+    return Object.keys(dayMap).map((d) => ({
+      date: d,
+      income: dayMap[d],
+    }));
+  }, [earningId]);
+
   return (
     <>
-      <div className=" w-full h-auto p-5 bg-gradient-to-b from-[#F0F6F6] to-[#DBFBFD]">
-        <h1 className="text-2xl font-bold">Welcome back! Miss Ha </h1>
+      <div className="w-full h-auto p-5 bg-gradient-to-b from-[#F0F6F6] to-[#DBFBFD]">
+        <h1 className="text-2xl font-bold">
+          Welcome back! Miss {profileTeacherId?.teacherName}
+        </h1>
         <p className="text-gray-400">
           Manage your classes and track your teaching progress
         </p>
-        <div className="bg-[#1b9096]"></div>
-        <Earning />
+        {/* Earnings Summary */}
+        <div className="w-[90%] p-3 m-auto mt-5 h-45 rounded-2xl bg-white">
+          <div className="flex gap-3">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 16 16"
+            >
+              <path
+                fill="#16a551"
+                d="M12.32 8a3 3 0 0 0-2-.7H5.63A1.59 1.59 0 0 1 4 5.69a2 2 0 0 1 0-.25a1.59 1.59 0 0 1 1.63-1.33h4.62a1.59 1.59 0 0 1 1.57 1.33h1.5a3.08 3.08 0 0 0-3.07-2.83H8.67V.31H7.42v2.3H5.63a3.08 3.08 0 0 0-3.07 2.83a2 2 0 0 0 0 .25a3.07 3.07 0 0 0 3.07 3.07h4.74A1.59 1.59 0 0 1 12 10.35a2 2 0 0 1 0 .34a1.59 1.59 0 0 1-1.55 1.24h-4.7a1.59 1.59 0 0 1-1.55-1.24H2.69a3.08 3.08 0 0 0 3.06 2.73h1.67v2.27h1.25v-2.27h1.7a3.08 3.08 0 0 0 3.06-2.73v-.34A3.06 3.06 0 0 0 12.32 8"
+              />
+            </svg>
+
+            <h1 className=" text-xl">Earnings Summary</h1>
+          </div>
+
+          <div className="grid grid-cols-4 gap-4 mt-3">
+            <div className="rounded-xl p-6 text-center shadow-md bg-gradient-to-b from-[#e9fff7] to-[#f3fffb]">
+              <p className="text-2xl font-bold">
+                {earningId?.totalEarnings?.toLocaleString()}đ
+              </p>
+              <p className="text-gray-600">Total Earning</p>
+            </div>
+
+            <div className="rounded-xl p-6 text-center shadow-md bg-gradient-to-b from-[#eaf0ff] to-[#f8f9ff]">
+              <p className="text-2xl font-bold">
+                {earningId?.totalFromBookings?.toLocaleString()}đ
+              </p>
+              <p className="text-gray-600">Total From Bookings</p>
+            </div>
+
+            <div className="rounded-xl p-6 text-center shadow-md bg-gradient-to-b from-[#ffeef5] to-[#fff7fa]">
+              <p className="text-2xl font-bold">
+                {earningId?.totalFromEnrollments?.toLocaleString()}đ
+              </p>
+              <p className="text-gray-600">Total From Enrollments</p>
+            </div>
+
+            <div className="rounded-xl p-6 text-center shadow-md bg-gradient-to-b from-[#fff3e6] to-[#fff9f3]">
+              <p className="text-2xl font-bold">
+                {earningId?.totalRevenue?.toLocaleString()}đ
+              </p>
+              <p className="text-gray-600">Total Revenue</p>
+            </div>
+          </div>
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mt-2 p-15">
           <Card className="md:col-span-2 p-5 shadow-lg rounded-2xl">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-bold">Monthly Income</h2>
-              <div className="flex gap-2">
-                <button className="px-3 py-1 rounded-md bg-green-100 text-green-600 font-semibold">
-                  6M
-                </button>
-                <button className="px-3 py-1 rounded-md bg-gray-100 text-gray-600">
-                  1Y
-                </button>
-              </div>
             </div>
             <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={incomeData} barSize={50} margin={{ top: 20 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                <XAxis dataKey="month" />
-                <YAxis hide />
-                <Tooltip
-                  formatter={(value) => `$${value}`}
-                  cursor={{ fill: "rgba(59,130,246,0.1)" }}
-                  contentStyle={{
-                    borderRadius: "10px",
-                    backgroundColor: "white",
-                    border: "1px solid #e5e7eb",
-                    padding: "5px 10px",
-                  }}
-                />
-                <Bar dataKey="income" radius={[12, 12, 0, 0]}>
-                  {incomeData.map((entry, index) => (
-                    <Cell
-                      key={`cell-${index}`}
-                      fill="url(#colorGradient)"
-                      className="transition-all duration-300 hover:opacity-80"
-                    />
-                  ))}
-                </Bar>
+              <AreaChart
+                data={incomeData}
+                margin={{ top: 20, right: 20, left: 0, bottom: 0 }}
+              >
                 <defs>
                   <linearGradient
-                    id="colorGradient"
+                    id="incomeGradient"
                     x1="0"
                     y1="0"
                     x2="0"
                     y2="1"
                   >
-                    <stop offset="0%" stopColor="#3b82f6" />
-                    <stop offset="100%" stopColor="#1b9096" />
+                    <stop offset="0%" stopColor="#3b82f6" stopOpacity={0.8} />
+                    <stop
+                      offset="100%"
+                      stopColor="#3b82f6"
+                      stopOpacity={0.05}
+                    />
                   </linearGradient>
                 </defs>
-              </BarChart>
+
+                <CartesianGrid
+                  strokeDasharray="4 4"
+                  vertical={false}
+                  stroke="#e5e7eb"
+                />
+
+                <XAxis
+                  dataKey="date"
+                  tick={{ fill: "#6b7280", fontSize: 13 }}
+                  tickLine={false}
+                  axisLine={false}
+                />
+
+                <YAxis
+                  tick={{ fill: "#6b7280", fontSize: 12 }}
+                  axisLine={false}
+                  tickLine={false}
+                  tickFormatter={(value) => value.toLocaleString() + "đ"}
+                />
+
+                <Tooltip
+                  formatter={(value) => `${value.toLocaleString()} đ`}
+                  contentStyle={{
+                    borderRadius: 10,
+                    border: "1px solid #d1d5db",
+                    boxShadow: "0px 4px 12px rgba(0,0,0,0.08)",
+                  }}
+                />
+
+                <Area
+                  type="monotone"
+                  dataKey="income"
+                  stroke="#3b82f6"
+                  strokeWidth={3}
+                  fill="url(#incomeGradient)"
+                />
+              </AreaChart>
             </ResponsiveContainer>
           </Card>
 
           <Card className="p-5 shadow-lg rounded-2xl">
             <h2 className="text-xl font-bold mb-4">Top Earning Courses</h2>
             <div className="flex flex-col gap-4">
-              {topCourses.map((course, idx) => (
+              {earningId?.courseBreakdown?.map((course, idx) => (
                 <div key={idx} className="flex justify-between items-center">
                   <div className="flex items-center gap-2">
-                    <span
-                      className={`w-3 h-3 rounded-full ${course.color}`}
-                    ></span>
+                    <span className="w-3 h-3 rounded-full bg-green-500"></span>
                     <div>
-                      <p className="font-medium">{course.name}</p>
+                      <p className="font-medium">
+                        {idx + 1}/ {course.courseTitle}
+                      </p>
                       <p className="text-gray-500 text-sm">
-                        {course.students} students
+                        {course.totalBookings} bookings
                       </p>
                     </div>
                   </div>
-                  <p className="font-bold">${course.income.toLocaleString()}</p>
+                  <p className="font-bold">
+                    {course.courseRevenue.toLocaleString()} đ
+                  </p>
                 </div>
               ))}
             </div>
@@ -136,39 +246,19 @@ function TeacherIncome() {
                 <Typography variant="h6" fontWeight="bold">
                   Payment History
                 </Typography>
-                <Button
-                  variant="contained"
-                  sx={{
-                    borderRadius: 3,
-                    background: "linear-gradient(to right, #06b6d4, #3b82f6)",
-                    textTransform: "none",
-                  }}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      fill="#fff"
-                      d="m12 16l-5-5l1.4-1.45l2.6 2.6V4h2v8.15l2.6-2.6L17 11zm-6 4q-.825 0-1.412-.587T4 18v-3h2v3h12v-3h2v3q0 .825-.587 1.413T18 20z"
-                      stroke-width="0.5"
-                      stroke="#fff"
-                    />
-                  </svg>
-                  Export
-                </Button>
               </Box>
 
               <Table>
                 <TableHead>
                   <TableRow>
                     <TableCell>
+                      <b>Booking ID</b>
+                    </TableCell>
+                    <TableCell>
                       <b>Date</b>
                     </TableCell>
                     <TableCell>
-                      <b>Description</b>
+                      <b>Student</b>
                     </TableCell>
                     <TableCell>
                       <b>Amount</b>
@@ -179,20 +269,28 @@ function TeacherIncome() {
                     <TableCell>
                       <b>Method</b>
                     </TableCell>
+                    <TableCell>
+                      <b>Note</b>
+                    </TableCell>
                   </TableRow>
                 </TableHead>
+
                 <TableBody>
-                  {paymentsTeacher.map((row, index) => (
+                  {earningId?.bookingBreakdown?.map((row, index) => (
                     <TableRow key={index}>
-                      <TableCell>{row.date}</TableCell>
-                      <TableCell>{row.description}</TableCell>
+                      <TableCell>{row.bookingId}</TableCell>
+                      <TableCell>
+                        {new Date(row.bookingDate).toLocaleDateString()}
+                      </TableCell>
+                      <TableCell>{row.studentName}</TableCell>
                       <TableCell>
                         <Typography fontWeight="bold">
-                          ${row.amount.toLocaleString()}
+                          {row.amount.toLocaleString()} đ
                         </Typography>
                       </TableCell>
+
                       <TableCell>
-                        {row.status === "Completed" ? (
+                        {row.paymentStatus === "Success" ? (
                           <Chip
                             label="Completed"
                             size="small"
@@ -214,7 +312,9 @@ function TeacherIncome() {
                           />
                         )}
                       </TableCell>
-                      <TableCell>{row.method}</TableCell>
+
+                      <TableCell>Online</TableCell>
+                      <TableCell>{row.note || "-"}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
