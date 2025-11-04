@@ -1,130 +1,226 @@
-import React, { useEffect, useState } from "react";
-import { Table, Input, Select, Button, Tag } from "antd";
+import React, { useEffect, useState, useMemo } from "react";
+import { Table, Input, Select, Button, Tag, message } from "antd";
 import { DownloadOutlined, FilterOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
-import { getPayment } from "../../../redux/payment/getPayment/getPaymentSlice";
+import { getEarning } from "../../../redux/report/getEarning/getEarningSlice";
+import * as XLSX from "xlsx";
 
 const { Search } = Input;
 const { Option } = Select;
 
 const PaymentAdmin = () => {
   const dispatch = useDispatch();
-  const { payment } = useSelector((state) => state.getPaymentData);
+  const { earning } = useSelector((state) => state.getEarningData || {});
 
   const [searchText, setSearchText] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
 
   useEffect(() => {
-    dispatch(getPayment());
+    dispatch(getEarning());
   }, [dispatch]);
 
-  const transactions =
-    payment?.value?.map((item) => ({
-      id: `PAY-${item.paymentId}`,
-      user: item.payerName || `User #${item.payerUserId}`,
-      teacher: item.teacherName || "-",
-      course: item.courseTitle || item.bookingTitle || "N/A",
-      amount: item.amount || 0,
-      teacherShare: (item.amount || 0) * 0.3,
-      platformShare: (item.amount || 0) * 0.7,
-      status:
-        item.statusName ||
-        (item.isPaid ? "Success" : item.bookingId ? "Pending" : "Failed"),
-      date: new Date(item.createdAt).toLocaleString("vi-VN"),
-    })) || [];
+  // === Flatten giao dịch: lưu thêm dateRaw để so sánh chính xác ===
+  const transactions = useMemo(() => {
+    return (
+      earning?.teacherEarnings?.flatMap(
+        (teacher) =>
+          teacher.bookingBreakdown?.map((b) => {
+            const dateRaw = b.bookingDate; // giữ nguyên gốc (ISO) để so sánh
+            const formattedDate = dateRaw
+              ? new Date(dateRaw).toLocaleString("vi-VN")
+              : "";
+            const amount = Number(b.amount || 0);
 
-  // ✅ Lọc theo search và status
-  const filteredTransactions = transactions.filter((t) => {
-    const search = searchText.toLowerCase();
-    const matchSearch =
-      t.id.toLowerCase().includes(search) ||
-      t.user.toLowerCase().includes(search) ||
-      t.teacher.toLowerCase().includes(search) ||
-      t.course.toLowerCase().includes(search);
+            return {
+              id: `PAY-${b.bookingId}`,
+              user: b.studentName || `User #${b.studentId}`,
+              teacher: teacher.teacherName || "N/A",
+              course: b.courseTitle || "N/A",
+              amount,
+              teacherShare: amount * 0.3,
+              platformShare: amount * 0.7,
+              status: (b.paymentStatus || "Success").toString(),
+              date: formattedDate,
+              dateRaw,
+            };
+          }) || []
+      ) || []
+    );
+  }, [earning]);
 
-    const matchStatus =
-      statusFilter === "all" || t.status.toLowerCase() === statusFilter;
+  // === Grouped transactions (gộp theo teacher) - dùng dateRaw để lấy latest ===
+  const groupedTransactions = useMemo(() => {
+    const map = new Map();
 
-    return matchSearch && matchStatus;
-  });
+    transactions.forEach((t) => {
+      const key = t.teacher;
+      if (!map.has(key)) {
+        map.set(key, {
+          teacher: t.teacher,
+          totalAmount: t.amount,
+          teacherShare: t.teacherShare,
+          platformShare: t.platformShare,
+          status: t.status,
+          latestDate: t.date,
+          latestDateRaw: t.dateRaw,
+          id: t.id,
+        });
+      } else {
+        const prev = map.get(key);
+        prev.totalAmount += t.amount;
+        prev.teacherShare += t.teacherShare;
+        prev.platformShare += t.platformShare;
+
+        if (
+          t.dateRaw &&
+          (!prev.latestDateRaw ||
+            new Date(t.dateRaw) > new Date(prev.latestDateRaw))
+        ) {
+          prev.latestDateRaw = t.dateRaw;
+          prev.latestDate = t.date;
+          prev.status = t.status;
+          prev.id = t.id;
+        }
+      }
+    });
+
+    return Array.from(map.values());
+  }, [transactions]);
+
+  const filteredTransactions = useMemo(() => {
+    const search = (searchText || "").trim().toLowerCase();
+    const filter = (statusFilter || "all").toLowerCase();
+
+    return groupedTransactions.filter((t) => {
+      const matchSearch =
+        !search ||
+        (t.teacher || "").toLowerCase().includes(search) ||
+        (t.id || "").toLowerCase().includes(search);
+
+      const matchStatus =
+        filter === "all" || (t.status || "").toLowerCase() === filter;
+
+      return matchSearch && matchStatus;
+    });
+  }, [groupedTransactions, searchText, statusFilter]);
+
+  const teacherData = useMemo(() => {
+    const map = new Map();
+
+    transactions.forEach((t) => {
+      const key = t.teacher;
+      if (!map.has(key)) {
+        map.set(key, {
+          teacher: t.teacher,
+          total: t.amount,
+          teacherShare: t.teacherShare,
+          platformShare: t.platformShare,
+          transactions: 1,
+          courses: new Set([t.course]),
+        });
+      } else {
+        const prev = map.get(key);
+        prev.total += t.amount;
+        prev.teacherShare += t.teacherShare;
+        prev.platformShare += t.platformShare;
+        prev.transactions += 1;
+        prev.courses.add(t.course);
+      }
+    });
+
+    return Array.from(map.values()).map((item) => ({
+      ...item,
+      courses: item.courses.size,
+    }));
+  }, [transactions]);
 
   const columns = [
-    { title: "Transaction ID", dataIndex: "id" },
-    { title: "User", dataIndex: "user" },
     { title: "Teacher", dataIndex: "teacher" },
-    { title: "Course", dataIndex: "course" },
     {
-      title: "Amount",
-      dataIndex: "amount",
-      render: (value) => `${Number(value).toLocaleString("vi-VN")} đ`,
+      title: "Total Amount",
+      dataIndex: "totalAmount",
+      render: (value) => `${Number(value || 0).toLocaleString("vi-VN")} đ`,
     },
     {
       title: "Teacher (30%)",
       dataIndex: "teacherShare",
-      render: (value) => `${Number(value).toLocaleString("vi-VN")} đ`,
+      render: (value) => `${Number(value || 0).toLocaleString("vi-VN")} đ`,
     },
     {
       title: "Platform (70%)",
       dataIndex: "platformShare",
-      render: (value) => `${Number(value).toLocaleString("vi-VN")} đ`,
+      render: (value) => `${Number(value || 0).toLocaleString("vi-VN")} đ`,
     },
     {
       title: "Status",
       dataIndex: "status",
       render: (status) => {
-        let color =
-          status === "Success"
-            ? "green"
-            : status === "Pending"
-            ? "orange"
-            : "red";
+        const s = (status || "").toLowerCase();
+        const color =
+          s === "success" ? "green" : s === "pending" ? "orange" : "red";
         return <Tag color={color}>{status}</Tag>;
       },
     },
-    { title: "Date", dataIndex: "date" },
-  ];
-
-  const totalRevenue = transactions.reduce((sum, t) => sum + t.amount, 0);
-  const totalTransactions = transactions.length;
-  const totalPending = transactions.filter(
-    (t) => t.status === "Pending"
-  ).length;
-  const totalFailed = transactions.filter((t) => t.status === "Failed").length;
-
-  const teacherData = [
     {
-      teacher: "Prof. Smith",
-      total: 1250,
-      teacherShare: 375,
-      platformShare: 875,
-      transactions: 18,
-      courses: 3,
-    },
-    {
-      teacher: "Dr. Johnson",
-      total: 980,
-      teacherShare: 294,
-      platformShare: 686,
-      transactions: 15,
-      courses: 2,
-    },
-    {
-      teacher: "Dr. Williams",
-      total: 850,
-      teacherShare: 255,
-      platformShare: 595,
-      transactions: 12,
-      courses: 2,
-    },
-    {
-      teacher: "Prof. Brown",
-      total: 720,
-      teacherShare: 216,
-      platformShare: 504,
-      transactions: 10,
-      courses: 1,
+      title: "Latest Transaction Date",
+      dataIndex: "latestDate",
     },
   ];
+
+  const teacherColumns = [
+    { title: "Teacher", dataIndex: "teacher" },
+    {
+      title: "Total Revenue",
+      dataIndex: "total",
+      render: (v) => `${Number(v || 0).toLocaleString("vi-VN")} đ`,
+    },
+    {
+      title: "Teacher Share (30%)",
+      dataIndex: "teacherShare",
+      render: (v) => (
+        <span className="text-green-600">
+          {Number(v || 0).toLocaleString("vi-VN")} đ
+        </span>
+      ),
+    },
+    {
+      title: "Platform Share (70%)",
+      dataIndex: "platformShare",
+      render: (v) => (
+        <span className="text-blue-600">
+          {Number(v || 0).toLocaleString("vi-VN")} đ
+        </span>
+      ),
+    },
+    { title: "Transactions", dataIndex: "transactions" },
+    { title: "Courses", dataIndex: "courses" },
+  ];
+
+  // === Export Excel: xuất filteredTransactions (gộp theo teacher) ===
+  const handleExportExcel = () => {
+    if (!filteredTransactions || filteredTransactions.length === 0) {
+      message.warning("Không có dữ liệu để xuất.");
+      return;
+    }
+
+    const exportData = filteredTransactions.map((r) => ({
+      Teacher: r.teacher,
+      "Total Amount": r.totalAmount,
+      "Teacher (30%)": r.teacherShare,
+      "Platform (70%)": r.platformShare,
+      Status: r.status,
+      "Latest Transaction Date": r.latestDate,
+    }));
+
+    const ws = XLSX.utils.json_to_sheet(exportData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Transactions_by_Teacher");
+    XLSX.writeFile(
+      wb,
+      `transactions_by_teacher_${new Date().toISOString().slice(0, 10)}.xlsx`
+    );
+    message.success("Xuất file Excel thành công.");
+  };
 
   return (
     <div className="p-8 bg-[#ebebeb] min-h-screen space-y-8">
@@ -138,100 +234,80 @@ const PaymentAdmin = () => {
             Monitor transactions and revenue sharing
           </p>
         </div>
+
         <div className="flex items-center gap-3">
           <Button icon={<FilterOutlined />}>Filter</Button>
-          <Button type="primary" icon={<DownloadOutlined />}>
-            Export
+          <Button
+            type="primary"
+            icon={<DownloadOutlined />}
+            onClick={handleExportExcel}
+          >
+            Export Excel
           </Button>
         </div>
       </div>
-      {/* Summary cards */}
+
+      {/* Cards (safe access with fallback) */}
       <div className="grid grid-cols-4 gap-4">
         <div className="rounded-xl p-5 bg-white">
-          <p className="text-gray-500 text-sm">Total Revenue</p>
+          <p className="text-gray-500 text-sm">Total Teachers</p>
           <h2 className="text-2xl font-semibold mt-1 text-gray-800">
-            {Number(totalRevenue).toLocaleString("vi-VN")} đ
+            {Number(earning?.totalTeachers || 0)}
           </h2>
         </div>
 
         <div className="rounded-xl p-5 bg-white">
-          <p className="text-gray-500 text-sm">Transactions</p>
+          <p className="text-gray-500 text-sm">Total Teachers Earning</p>
           <h2 className="text-2xl font-semibold mt-1 text-gray-800">
-            {totalTransactions}
+            {Number(earning?.totalTeachersEarning || 0).toLocaleString("vi-VN")}{" "}
+            đ
           </h2>
         </div>
 
         <div className="rounded-xl p-5 bg-white">
-          <p className="text-gray-500 text-sm">Pending</p>
+          <p className="text-gray-500 text-sm">Total Teachers Revenue</p>
           <h2 className="text-2xl font-semibold mt-1 text-gray-800">
-            {totalPending}
+            {Number(earning?.totalTeachersRevenue || 0).toLocaleString("vi-VN")}{" "}
+            đ
           </h2>
         </div>
 
         <div className="rounded-xl p-5 bg-white">
-          <p className="text-gray-500 text-sm">Failed</p>
+          <p className="text-gray-500 text-sm">Total System Earnings</p>
           <h2 className="text-2xl font-semibold mt-1 text-gray-800">
-            {totalFailed}
+            {Number(earning?.totalSystemEarnings || 0).toLocaleString("vi-VN")}{" "}
+            đ
           </h2>
         </div>
       </div>
+
+      {/* Teacher revenue summary */}
       <div className="bg-white rounded-xl border shadow-sm p-6">
         <h2 className="text-lg font-semibold mb-1 text-black-600">
           Teacher Revenue Sharing
         </h2>
         <p className="text-sm text-gray-500 mb-4">
-          Commission breakdown by teacher (30% teacher / 70% platform)
+          Aggregated totals by teacher (30% teacher / 70% platform)
         </p>
 
-        <div className="grid grid-cols-2 gap-4 mb-6">
-          <div className="p-5 rounded-xl bg-gradient-to-r from-green-50 to-white border">
-            <p className="text-gray-500 text-sm">Total Teacher Share</p>
-            <h2 className="text-2xl font-semibold text-green-600">$2,685</h2>
-            <p className="text-gray-400 text-xs">30% of total revenue</p>
-          </div>
-
-          <div className="p-5 rounded-xl bg-gradient-to-r from-blue-50 to-white border">
-            <p className="text-gray-500 text-sm">Platform Share</p>
-            <h2 className="text-2xl font-semibold text-blue-600">$6,265</h2>
-            <p className="text-gray-400 text-xs">70% of total revenue</p>
-          </div>
-        </div>
-
         <Table
-          columns={[
-            { title: "Teacher", dataIndex: "teacher" },
-            {
-              title: "Total Revenue",
-              dataIndex: "total",
-              render: (v) => `$${v}`,
-            },
-            {
-              title: "Teacher Share (30%)",
-              dataIndex: "teacherShare",
-              render: (v) => <span className="text-green-600">${v}</span>,
-            },
-            {
-              title: "Platform Share (70%)",
-              dataIndex: "platformShare",
-              render: (v) => <span className="text-blue-600">${v}</span>,
-            },
-            { title: "Transactions", dataIndex: "transactions" },
-            { title: "Courses", dataIndex: "courses" },
-          ]}
+          columns={teacherColumns}
           dataSource={teacherData}
           pagination={false}
+          rowKey="teacher"
         />
       </div>
-      ;{/* Transactions table */}
+
+      {/* Recent Transactions (gộp theo teacher) */}
       <div className="bg-white rounded-xl border shadow-sm p-6">
         <h2 className="text-lg font-semibold mb-1">Recent Transactions</h2>
         <p className="text-sm text-gray-500 mb-4">
-          All user payments and transaction details
+          All user payments (grouped by teacher)
         </p>
 
         <div className="flex justify-between mb-4 gap-2">
           <Search
-            placeholder="Search by ID, user, or teacher..."
+            placeholder="Search by teacher or id..."
             onChange={(e) => setSearchText(e.target.value)}
             className="w-1/2"
             allowClear
@@ -251,7 +327,7 @@ const PaymentAdmin = () => {
         <Table
           columns={columns}
           dataSource={filteredTransactions}
-          rowKey="id"
+          rowKey="teacher"
           pagination={{ pageSize: 6 }}
         />
       </div>
