@@ -51,6 +51,8 @@ import watchGetPayment from "./payment/getPayment/getPaymentSaga";
 import watchBanUser from "./admin/banUser/banUserSaga";
 import watchGetAllTransaction from "./transaction/getAllTransaction/getAllTransactionSaga";
 import watchGetTransactionById from "./transaction/getTransactionById/getTransactionById";
+import watchGetEarningId from "./report/getEarningById/getEarningByIdSaga";
+import watchGetEarning from "./report/getEarning/getEarningSaga";
 export default function* rootSaga() {
   yield all([
     watchFetchLogin(),
@@ -129,5 +131,9 @@ export default function* rootSaga() {
     //Transaction
     watchGetAllTransaction(),
     watchGetTransactionById(),
+
+    //Report
+    watchGetEarningId(),
+    watchGetEarning(),
   ]);
 }
