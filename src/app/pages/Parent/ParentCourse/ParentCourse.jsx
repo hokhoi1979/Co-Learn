@@ -38,6 +38,7 @@ function ParentCourse() {
 
   let courseList = course?.value?.items || [];
   courseList = courseList.filter((item) => item.isActive === true);
+
   const handleBuy = async (item) => {
     const payload = {
       userId: profileParentId?.userId,
